@@ -1,0 +1,42 @@
+name: MediOps Model Retraining
+
+on:
+  workflow_run:
+    workflows: ["MediOps Dataset Validation"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  retrain:
+    name: Execute Model Retraining
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.11 Runtime
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas scikit-learn
+
+    - name: Run Model Retraining
+      run: |
+        python scripts/retrain_model.py
+
+    - name: Upload Trained Model Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-ml-model
+        path: |
+          models/latest/health_model_v2.pkl
+          models/version_metadata.json
+        retention-days: 5

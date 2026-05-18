@@ -1,0 +1,51 @@
+name: MediOps Microservice Docker Rebuild
+
+on:
+  workflow_run:
+    workflows: ["MediOps Accuracy Evaluation"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  docker-rebuild:
+    name: Verify Docker Rebuilds
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Verify AI Service Image Rebuild
+      uses: docker/build-push-action@v4
+      with:
+        context: ./ai-service
+        file: ./ai-service/Dockerfile
+        push: false
+        tags: mediops-ai-service:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Verify Backend API Service Image Rebuild
+      uses: docker/build-push-action@v4
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: false
+        tags: mediops-backend:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Verify Frontend Web Server Image Rebuild
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: false
+        tags: mediops-frontend:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max

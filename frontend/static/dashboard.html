@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediOps - Patient Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.3);
+            --secondary: #7000ff;
+            --bg-darker: #050811;
+            --bg-dark: #0a0f1d;
+            --bg-card: rgba(16, 24, 48, 0.65);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.03);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --accent: #7000ff;
+            --light: #f1f5f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            background-image: radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation Glassmorphism */
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 15, 29, 0.85);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border);
+            padding: 2.5rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            padding: 0.5rem;
+        }
+        .logo i {
+            color: var(--primary);
+            -webkit-text-fill-color: initial;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu li {
+            width: 100%;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1.25rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.12);
+            transform: translateX(3px);
+        }
+
+        .sidebar-menu a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.08);
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+
+        .sidebar-menu a.active i {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.15rem;
+            transition: var(--transition);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1400px;
+            width: calc(100% - 280px);
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem 2rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .header h1 i {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .user-greeting {
+            text-align: right;
+        }
+
+        .user-greeting p {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-greeting strong {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.15);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.75rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 240, 255, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.03);
+            transform: translateY(-3px);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1.25rem;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* List Styles */
+        .list-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .list-item:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .list-item-icon {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-right: 1.25rem;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .list-item-meta {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-info {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--primary);
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.25rem;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 1.5rem 0.5rem;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                padding: 1.5rem;
+                width: calc(100% - 80px);
+            }
+
+            .sidebar-menu a span {
+                display: none;
+            }
+
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 0.9rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                padding: 1.25rem;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(0, 240, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>MediOps</span>
+
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#overview" class="menu-link active" data-tab="overview"><i class="fas fa-chart-line"></i>
+                        <span>Overview</span></a></li>
+                <li><a href="#triage" class="menu-link" data-tab="triage"><i class="fas fa-stethoscope"></i>
+                        <span>Health Check</span></a></li>
+                <li><a href="#appointments" class="menu-link" data-tab="appointments"><i
+                            class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="#family" class="menu-link" data-tab="family"><i class="fas fa-users"></i>
+                        <span>Family</span></a></li>
+                <li><a href="#reminders" class="menu-link" data-tab="reminders"><i class="fas fa-pills"></i>
+                        <span>Medications</span></a></li>
+                <li><a href="#history" class="menu-link" data-tab="history"><i class="fas fa-history"></i>
+                        <span>History</span></a></li>
+                <li><a href="#notifications" class="menu-link" data-tab="notifications"><i class="fas fa-inbox"></i>
+                        <span>Alerts</span></a></li>
+                <li><a href="#reports" class="menu-link" data-tab="reports"><i class="fas fa-file-pdf"></i>
+                        <span>Reports</span></a></li>
+                <li><a href="#settings" class="menu-link" data-tab="settings"><i class="fas fa-cog"></i>
+                        <span>Settings</span></a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid rgba(0, 240, 255, 0.1); padding-top: 2rem;">
+                    <a href="/login" class="menu-link" onclick="localStorage.clear();"><i
+                            class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-dashboard"></i> Patient Dashboard</h1>
+                <div class="user-info">
+                    <div class="user-greeting">
+                        <p>Welcome back!</p>
+                        <strong id="username">Hello, Patient</strong>
+                        <span id="userEmailDisplay"
+                            style="display:block;font-size:0.9rem;color:rgba(240,240,240,0.7);margin-top:4px;"></span>
+                        <span id="userIdDisplay"
+                            style="display:block;font-size:0.85rem;color:rgba(240,240,240,0.55);margin-top:4px;"></span>
+                    </div>
+                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div class="content-section active" id="overview">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('overview')"><i class="fas fa-home"></i>
+                        Dashboard</button>
+                </div>
+                <div id="dashboard-loader" style="text-align:center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 15px;">Loading your health dashboard...</p>
+                </div>
+
+                <div id="dashboard-content" style="display: none; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <!-- Left Column: Primary Info -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+                        <!-- Priority Banner: Active Consultation -->
+                        <div id="dash-consultation"
+                            style="display:none; background: linear-gradient(135deg, rgba(131, 56, 236, 0.2), rgba(0, 240, 255, 0.1)); border: 1px solid var(--secondary); border-radius: 15px; padding: 20px; box-shadow: 0 0 20px rgba(131, 56, 236, 0.15);">
+                            <div style="display:flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="margin:0 0 10px 0; color: #fff;"><i class="fas fa-user-md"
+                                            style="color:var(--primary);"></i> Assigned Doctor: <span
+                                            id="dash-doc-name"></span></h3>
+                                    <p style="margin:0 0 5px 0; color: rgba(255,255,255,0.7);"><i
+                                            class="fas fa-stethoscope"></i> <span id="dash-doc-spec"></span></p>
+                                    <p style="margin:0; font-size: 0.9rem; color: var(--primary);">Status: <strong
+                                            id="dash-status"></strong></p>
+                                </div>
+                                <div id="dash-action-btn"></div>
+                            </div>
+                        </div>
+
+                        <!-- Active Prescription & Notes -->
+                        <div class="card" style="cursor:default;">
+                            <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;"><i
+                                    class="fas fa-clipboard-prescription"></i> Current Treatment Plan</h3>
+                            <div id="dash-rx-content">
+                                <p style="color: rgba(255,255,255,0.5);">No active prescriptions.</p>
+                            </div>
+                        </div>
+
+                        <!-- Medicine Tracker -->
+                        <div class="card" style="cursor:default;">
+                            <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;"><i
+                                    class="fas fa-pills"></i> Today's Medicine Tracker</h3>
+                            <div id="dash-meds-list"
+                                style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                                <p style="color: rgba(255,255,255,0.5);">No medicines scheduled for today.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Secondary Info -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+                        <!-- Health Progress -->
+                        <div class="card"
+                            style="cursor:default; background: rgba(34, 197, 94, 0.05); border-color: rgba(34, 197, 94, 0.3);">
+                            <h3 style="margin-top:0; color: #22c55e;"><i class="fas fa-chart-line"></i> Health Progress
+                            </h3>
+                            <div
+                                style="font-size: 2rem; font-weight: bold; color: #fff; text-align: center; margin: 15px 0;">
+                                <i class="fas fa-arrow-up" style="color: #22c55e; font-size: 1.2rem;"></i> Stable
+                            </div>
+                            <p style="text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.6); margin:0;">
+                                Keep following your treatment plan!</p>
+                        </div>
+
+                        <!-- Notification Center -->
+                        <div class="card" style="cursor:default;">
+                            <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;"><i
+                                    class="fas fa-bell"></i> Recent Alerts</h3>
+                            <div id="dash-notifs"
+                                style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                                <p style="color: rgba(255,255,255,0.5);">No recent alerts.</p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="card" style="cursor:default;">
+                            <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;"><i
+                                    class="fas fa-link"></i> Quick Actions</h3>
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;"
+                                onclick="switchTab('triage')"><i class="fas fa-plus"></i> New Health Check</button>
+                            <button class="btn btn-outline" style="width: 100%;" onclick="switchTab('history')"><i
+                                    class="fas fa-history"></i> View Full History</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Check Section (Triage) -->
+            <div class="content-section" id="triage">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('triage')"><i class="fas fa-stethoscope"></i>
+                        Health Check</button>
+                </div>
+
+                <div style="max-width: 600px; margin: 20px auto;">
+                    <div class="form-card"
+                        style="background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(131, 56, 236, 0.1)); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 15px; padding: 25px;">
+                        <h3 style="color: #00f0ff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-hospital-user"></i> Symptom Analysis
+                        </h3>
+                        <form onsubmit="runTriage(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
+                                        class="fas fa-comment-dots"></i> Describe your symptoms</label>
+                                <textarea id="triageSymptoms" placeholder="e.g., fever, cough, headache, body ache"
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff; font-size: 14px; resize: vertical;"
+                                    rows="4" required></textarea>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <label
+                                        style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
+                                            class="fas fa-birthday-cake"></i> Age (years)</label>
+                                    <input type="number" id="triageAge" min="1" max="150" placeholder="25"
+                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                        required>
+                                </div>
+                                <div>
+                                    <label
+                                        style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
+                                            class="fas fa-weight"></i> Weight (kg)</label>
+                                    <input type="number" id="triageWeight" min="1" max="300" step="0.1" placeholder="70"
+                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
+                                        class="fas fa-map-marker-alt"></i> Location (City/Area)</label>
+                                <input type="text" id="triageLocation" placeholder="e.g., New York, Mumbai"
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                    value="Unknown">
+                            </div>
+
+                            <div>
+                                <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
+                                        class="fas fa-leaf"></i> Home Remedy Tried (Optional)</label>
+                                <input type="text" id="triageRemedy" placeholder="e.g., ginger tea, rest"
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;">
+                            </div>
+
+                            <button type="submit"
+                                style="padding: 14px 24px; background: linear-gradient(135deg, #00f0ff, #8338ec); border: none; color: #fff; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);">
+                                <i class="fas fa-stethoscope"></i> Analyze Now
+                            </button>
+                        </form>
+
+                        <!-- Results Section -->
+                        <div id="triageResults" style="margin-top: 25px; display: none;">
+                            <div style="border-top: 2px solid rgba(0, 240, 255, 0.3); padding-top: 20px;">
+                                <h4 style="color: #ff006e; margin-top: 0;"><i class="fas fa-flask-vial"></i> Analysis
+                                    Results</h4>
+
+                                <div id="resultContent" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                                </div>
+
+                                <div
+                                    style="margin-top: 20px; padding: 15px; background: rgba(0, 240, 255, 0.1); border-left: 3px solid #00f0ff; border-radius: 8px;">
+                                    <h5 style="color: #00f0ff; margin-top: 0;"><i class="fas fa-lightbulb"></i> AI
+                                        Insight</h5>
+                                    <p id="aiInsight"
+                                        style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.6;"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="triageLoading" style="display: none; text-align: center; margin-top: 20px;">
+                            <div
+                                style="display: inline-block; width: 40px; height: 40px; border: 3px solid rgba(0, 240, 255, 0.3); border-top: 3px solid #00f0ff; border-radius: 50%; animation: spin 1s linear infinite;">
+                            </div>
+                            <p style="color: #00f0ff; margin-top: 10px;">Analyzing symptoms...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Section -->
+            <div class="content-section" id="family">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('family')"><i class="fas fa-users"></i> Family
+                        Members</button>
+                    <button class="tab-btn" onclick="openModal('addFamilyModal')"><i class="fas fa-plus"></i> Add
+                        Member</button>
+                </div>
+                <div id="familyList"></div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div class="content-section" id="appointments">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('appointments')"><i
+                            class="fas fa-calendar-check"></i> My Appointments</button>
+                </div>
+                <div id="appointmentsList" style="margin-bottom: 2rem;"></div>
+
+                <h3
+                    style="margin-bottom: 1rem; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 0.5rem; color: var(--warning);">
+                    <i class="fas fa-calendar-plus"></i> Pending Follow-Ups</h3>
+                <div id="followupsList"></div>
+            </div>
+
+            <!-- Medications Section -->
+            <div class="content-section" id="reminders">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('reminders')"><i class="fas fa-pills"></i> My
+                        Medications</button>
+                    <button class="tab-btn" onclick="openModal('addReminderModal')"><i class="fas fa-plus"></i> Add
+                        Manual Reminder</button>
+                </div>
+
+                <!-- Adherence Progress -->
+                <div
+                    style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--primary); border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 5px;">Today's Adherence</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Take your medicines on time to stay
+                            healthy!</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--success);" id="adherence-percent">
+                            0%</div>
+                        <div style="color: var(--text-dim); font-size: 0.8rem;" id="adherence-text">0 / 0 medicines
+                            taken</div>
+                    </div>
+                </div>
+
+                <h3
+                    style="margin-bottom: 1rem; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 0.5rem;">
+                    Today's Schedule</h3>
+                <div id="smart-medication-list" style="margin-bottom: 2rem;"></div>
+
+                <h3
+                    style="margin-bottom: 1rem; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 0.5rem;">
+                    Manual Reminders</h3>
+                <div id="remindersList"></div>
+            </div>
+
+            <!-- History Section -->
+            <div class="content-section" id="history">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('history')"><i class="fas fa-history"></i>
+                        Health History</button>
+                </div>
+                <div id="historyList"></div>
+            </div>
+
+            <!-- Notifications Section -->
+            <div class="content-section" id="notifications">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('notifications')"><i class="fas fa-bell"></i>
+                        Alerts</button>
+                </div>
+                <div id="notificationsList"></div>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="content-section" id="reports">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('reports')"><i class="fas fa-file"></i> My
+                        Reports</button>
+                </div>
+                <div class="cards-grid">
+                    <div class="card" onclick="exportAnonymized()">
+                        <div class="card-icon"><i class="fas fa-download"></i></div>
+                        <div class="card-title">Export JSON</div>
+                        <div class="card-desc">Download anonymized trends</div>
+                    </div>
+                    <div class="card" onclick="exportCSV()">
+                        <div class="card-icon"><i class="fas fa-table"></i></div>
+                        <div class="card-title">Export CSV</div>
+                        <div class="card-desc">Research data export</div>
+                    </div>
+                </div>
+                <div id="reportsList"></div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="content-section" id="settings">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchSection('settings')"><i class="fas fa-cog"></i>
+                        Settings</button>
+                </div>
+                <div class="card">
+                    <form id="settingsForm" onsubmit="saveSettings(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" id="location">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save
+                                Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="addFamilyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Add Family Member</h2>
+                <button class="close-btn" onclick="closeModal('addFamilyModal')">&times;</button>
+            </div>
+            <form onsubmit="addFamilyMember(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="familyName" required>
+                </div>
+                <div class="form-group">
+                    <label>Relation</label>
+                    <select id="familyRelation" required>
+                        <option value="">Select Relation</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Child">Child</option>
+                        <option value="Sibling">Sibling</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="familyAge" required>
+                </div>
+                <div class="form-group">
+                    <label>Chronic Conditions</label>
+                    <textarea id="familyConditions" rows="3" placeholder="e.g., Diabetes, Hypertension"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="addReminderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-clock"></i> Add Medicine Reminder</h2>
+                <button class="close-btn" onclick="closeModal('addReminderModal')">&times;</button>
+            </div>
+            <form onsubmit="addReminder(event)">
+                <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" id="medicineName" required>
+                </div>
+                <div class="form-group">
+                    <label>Alarm Time (HH:MM)</label>
+                    <input type="time" id="alarmTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="reminderNote" rows="2" placeholder="e.g., Take with food"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Self-healing role check and session enforcement from token
+        const userToken = localStorage.getItem('user_token') || '';
+        if (userToken.startsWith('doctor_')) {
+            const docId = userToken.split('_')[1];
+            localStorage.setItem('doctorId', docId);
+            localStorage.setItem('userId', docId);
+            localStorage.setItem('role', 'doctor');
+            window.location.href = '/doctor-dashboard';
+        } else if (userToken.startsWith('user_')) {
+            const patId = userToken.split('_')[1];
+            localStorage.setItem('patientId', patId);
+            localStorage.setItem('userId', patId);
+            localStorage.setItem('role', 'patient');
+        }
+
+        let userId = localStorage.getItem('patientId') || localStorage.getItem('userId') || '1';
+        console.log('Dashboard loaded with userId:', userId);
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+
+            document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        function switchSection(sectionName) {
+            switchTab(sectionName);
+            loadSectionData(sectionName);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.borderLeft = `3px solid ${type === 'success' ? '#22c55e' : '#ef4444'}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const result = await response.json();
+                if (result.success && result.user) {
+                    const user = result.user;
+                    const displayName = user.full_name ? `Hello, ${user.full_name}` : 'Hello, Patient';
+                    document.getElementById('username').textContent = displayName;
+                    document.getElementById('userIdDisplay').textContent = `ID: ${user.id}`;
+                    document.getElementById('userEmailDisplay').textContent = user.email || '';
+                    document.getElementById('fullName').value = user.full_name || '';
+                    document.getElementById('email').value = user.email || '';
+                    const savedLocation = localStorage.getItem('userLocation');
+                    if (savedLocation) {
+                        document.getElementById('location').value = savedLocation;
+                    }
+                    localStorage.setItem('userName', user.full_name || 'Patient');
+                    localStorage.setItem('userEmail', user.email || '');
+                } else {
+                    const storedName = localStorage.getItem('userName') || 'Patient';
+                    document.getElementById('username').textContent = `Hello, ${storedName}`;
+                    document.getElementById('userEmailDisplay').textContent = localStorage.getItem('userEmail') || '';
+                    document.getElementById('userIdDisplay').textContent = `ID: ${userId}`;
+                    document.getElementById('fullName').value = storedName;
+                    document.getElementById('email').value = localStorage.getItem('userEmail') || '';
+                    document.getElementById('location').value = localStorage.getItem('userLocation') || '';
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                const storedName = localStorage.getItem('userName') || 'Patient';
+                document.getElementById('username').textContent = storedName;
+                document.getElementById('userIdDisplay').textContent = `ID: ${userId}`;
+                document.getElementById('fullName').value = storedName;
+                document.getElementById('email').value = localStorage.getItem('userEmail') || '';
+                document.getElementById('location').value = localStorage.getItem('userLocation') || '';
+            }
+        }
+
+        async function saveSettings(event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const location = document.getElementById('location').value.trim();
+
+            if (!fullName || !email) {
+                showToast('Full name and email are required.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ full_name: fullName, email }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Profile updated successfully!');
+                    document.getElementById('username').textContent = `Hello, ${fullName}`;
+                    document.getElementById('userEmailDisplay').textContent = email;
+                    localStorage.setItem('userName', fullName);
+                    localStorage.setItem('userEmail', email);
+                    if (location) {
+                        localStorage.setItem('userLocation', location);
+                    }
+                } else {
+                    showToast(result.message || 'Unable to save settings.', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showToast('Error saving settings.', 'error');
+            }
+        }
+
+        async function loadFamilyMembers() {
+            try {
+                const response = await fetch(`/api/patient/family?user_id=${userId}`);
+                const data = await response.json();
+                const list = document.getElementById('familyList');
+
+                if (data.family.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No family members added yet</p>';
+                } else {
+                    list.innerHTML = data.family.map(member => `
+                        <div class="list-item">
+                            <div style="display:flex;align-items:center;flex:1;">
+                                <div class="list-item-icon"><i class="fas fa-user-circle"></i></div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">${member.name}</div>
+                                    <div class="list-item-meta">${member.relation} • Age: ${member.age}</div>
+                                </div>
+                            </div>
+                            <div class="list-item-actions">
+                                <button class="btn btn-secondary" onclick="deleteFamilyMember(${member.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading family:', error);
+            }
+        }
+
+        async function addFamilyMember(event) {
+            event.preventDefault();
+            const formData = {
+                user_id: parseInt(userId),
+                name: document.getElementById('familyName').value,
+                relation: document.getElementById('familyRelation').value,
+                age: parseInt(document.getElementById('familyAge').value),
+                chronic_conditions: document.getElementById('familyConditions').value,
+                notes: ''
+            };
+
+            try {
+                const response = await fetch('/api/patient/family', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if (response.ok) {
+                    showToast('Family member added successfully!');
+                    closeModal('addFamilyModal');
+                    document.getElementById('addFamilyModal').querySelector('form').reset();
+                    loadFamilyMembers();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error adding family member', 'error');
+            }
+        }
+
+        async function deleteFamilyMember(id) {
+            if (confirm('Delete this family member?')) {
+                try {
+                    await fetch(`/api/patient/family/${id}`, { method: 'DELETE' });
+                    showToast('Family member deleted');
+                    loadFamilyMembers();
+                } catch (error) {
+                    showToast('Error deleting family member', 'error');
+                }
+            }
+        }
+
+        async function loadMedicationSchedule() {
+            try {
+                const response = await fetch(`/api/patient/${userId}/medication-schedule`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update Adherence
+                    document.getElementById('adherence-percent').textContent = data.analytics.completion_percentage + '%';
+                    document.getElementById('adherence-text').textContent = `${data.analytics.taken_today} / ${data.analytics.total_today} medicines taken`;
+
+                    const list = document.getElementById('smart-medication-list');
+                    if (data.data.length === 0) {
+                        list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No scheduled medications.</p>';
+                    } else {
+                        list.innerHTML = data.data.map(sched => {
+                            const timeStr = new Date(sched.scheduled_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const isTaken = sched.status === 'taken';
+                            return `
+                            <div class="list-item" style="border-left-color: ${isTaken ? 'var(--success)' : 'var(--warning)'}; opacity: ${isTaken ? '0.6' : '1'};">
+                                <div style="display:flex;align-items:center;flex:1;">
+                                    <div class="list-item-icon" style="color: ${isTaken ? 'var(--success)' : 'var(--primary)'}">
+                                        <i class="fas ${isTaken ? 'fa-check-circle' : 'fa-pills'}"></i>
+                                    </div>
+                                    <div class="list-item-content">
+                                        <div class="list-item-title">${sched.medicine_name} <span style="font-size:0.8em;color:var(--text-dim);">(${sched.dosage || ''})</span></div>
+                                        <div class="list-item-meta"><i class="fas fa-clock"></i> Scheduled: ${timeStr} • ${sched.instructions || 'No special instructions'}</div>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    ${!isTaken ? `
+                                        <button class="btn btn-primary" style="font-size: 0.8rem; padding: 5px 10px;" onclick="actionMedicine(${sched.id}, 'take')">Take</button>
+                                        <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 5px 10px;" onclick="actionMedicine(${sched.id}, 'snooze')">Snooze</button>
+                                    ` : `
+                                        <span class="badge badge-success">Taken</span>
+                                    `}
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading smart schedule:', error);
+            }
+        }
+
+        async function actionMedicine(scheduleId, action) {
+            try {
+                const response = await fetch(`/api/schedule/${scheduleId}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: action })
+                });
+                if (response.ok) {
+                    showToast(`Medicine marked as ${action === 'take' ? 'taken' : 'snoozed'}!`, 'success');
+                    loadMedicationSchedule();
+                }
+            } catch (error) {
+                showToast('Error updating schedule', 'error');
+            }
+        }
+
+        async function loadReminders() {
+            try {
+                const response = await fetch(`/api/patient/reminders?user_id=${userId}`);
+                const data = await response.json();
+                const list = document.getElementById('remindersList');
+
+                if (data.reminders.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No manual reminders set yet</p>';
+                } else {
+                    list.innerHTML = data.reminders.map(reminder => `
+                        <div class="list-item">
+                            <div style="display:flex;align-items:center;flex:1;">
+                                <div class="list-item-icon"><i class="fas fa-bell"></i></div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">${reminder.medicine_name}</div>
+                                    <div class="list-item-meta"><i class="fas fa-clock"></i> ${reminder.alarm_time}</div>
+                                </div>
+                            </div>
+                            <div class="list-item-actions">
+                                <span class="badge ${reminder.active ? 'badge-success' : 'badge-warning'}">${reminder.active ? 'Active' : 'Inactive'}</span>
+                                <button class="btn btn-secondary" onclick="deleteReminder(${reminder.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+            }
+        }
+
+        async function addReminder(event) {
+            event.preventDefault();
+            const formData = {
+                user_id: parseInt(userId),
+                medicine_name: document.getElementById('medicineName').value,
+                alarm_time: document.getElementById('alarmTime').value,
+                note: document.getElementById('reminderNote').value
+            };
+
+            try {
+                const response = await fetch('/api/patient/reminders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if (response.ok) {
+                    showToast('Reminder added successfully!');
+                    closeModal('addReminderModal');
+                    document.getElementById('addReminderModal').querySelector('form').reset();
+                    loadReminders();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error adding reminder', 'error');
+            }
+        }
+
+        async function deleteReminder(id) {
+            if (confirm('Delete this reminder?')) {
+                try {
+                    await fetch(`/api/patient/reminders/${id}`, { method: 'DELETE' });
+                    showToast('Reminder deleted');
+                    loadReminders();
+                } catch (error) {
+                    showToast('Error deleting reminder', 'error');
+                }
+            }
+        }
+
+        async function runTriage(event) {
+            event.preventDefault();
+
+            const symptoms = document.getElementById('triageSymptoms').value;
+            const age = parseInt(document.getElementById('triageAge').value);
+            const weight = parseFloat(document.getElementById('triageWeight').value);
+            const location = document.getElementById('triageLocation').value || 'Unknown';
+            const homeRemedy = document.getElementById('triageRemedy').value || '';
+
+            if (!symptoms || !age || !weight) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            // Show loading, hide results
+            document.getElementById('triageLoading').style.display = 'block';
+            document.getElementById('triageResults').style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('symptoms', symptoms);
+                formData.append('age', age);
+                formData.append('weight', weight);
+                formData.append('user_id', userId);
+                formData.append('location', location);
+                formData.append('home_remedy', homeRemedy);
+
+                const response = await fetch('/triage', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log('Triage Result:', result);
+
+                // Hide loading
+                document.getElementById('triageLoading').style.display = 'none';
+
+                // Build result HTML
+                let resultHTML = '';
+
+                if (result.status === 'Success') {
+                    showToast('✓ Analysis complete!', 'success');
+
+                    // Dynamically update the timeline history and overview
+                    try {
+                        loadHistory();
+                        loadDashboardOverview();
+                    } catch (err) {
+                        console.error('Error refreshing history and overview:', err);
+                    }
+
+                    resultHTML = `
+                        <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.5); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <h5 style="color: #22c55e; margin-top: 0;"><i class="fas fa-check-circle"></i> Likely Condition</h5>
+                            <p style="font-size: 18px; color: #00f0ff; font-weight: bold; margin: 5px 0;">${result.disease_name || 'Unknown'}</p>
+                            <p style="color: #ccc; margin: 5px 0;">Confidence: <span style="color: #ff006e;">${(result.confidence * 100).toFixed(1)}%</span></p>
+                        </div>
+
+                        <div style="background: rgba(131, 56, 236, 0.1); border: 1px solid rgba(131, 56, 236, 0.5); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <h5 style="color: #8338ec; margin-top: 0;"><i class="fas fa-pills"></i> Recommended Treatment</h5>
+                            <p style="color: #ccc; margin: 5px 0;"><strong>Medicine:</strong> ${result.recommended_medicine || 'N/A'}</p>
+                            <p style="color: #ccc; margin: 5px 0;"><strong>Dosage:</strong> ${result.dosage || 'N/A'}</p>
+                        </div>
+
+                        <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.5); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <h5 style="color: #22c55e; margin-top: 0;"><i class="fas fa-leaf"></i> Safe Tips</h5>
+                            <p style="color: #ccc; margin: 5px 0;">${result.safe_tip || 'Follow medical guidance'}</p>
+                        </div>
+
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 8px; padding: 15px;">
+                            <h5 style="color: #ef4444; margin-top: 0;"><i class="fas fa-triangle-exclamation"></i> Myths to Avoid</h5>
+                            <p style="color: #ccc; margin: 5px 0;">${result.dangerous_myth || 'Consult with healthcare professional'}</p>
+                        </div>
+                    `;
+
+                    // Show medical support if needed
+                    if (result.medical_support) {
+                        resultHTML += `
+                            <div style="background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; padding: 15px; margin-top: 15px;">
+                                <h5 style="color: #00f0ff; margin-top: 0;"><i class="fas fa-hospital"></i> Nearby Medical Support</h5>
+                                <p style="color: #ccc; margin: 5px 0;"><strong>${result.medical_support.type}:</strong> ${result.medical_support.name}</p>
+                                <p style="color: #ccc; margin: 5px 0;">Distance: ${result.medical_support.distance}</p>
+                            </div>
+                        `;
+                    }
+
+                    // Show outbreak alert if exists
+                    if (result.outbreak_alert) {
+                        resultHTML += `
+                            <div style="background: rgba(255, 0, 110, 0.1); border: 1px solid rgba(255, 0, 110, 0.8); border-radius: 8px; padding: 15px; margin-top: 15px;">
+                                <h5 style="color: #ff006e; margin-top: 0;"><i class="fas fa-exclamation-circle"></i> Regional Alert</h5>
+                                <p style="color: #ccc; margin: 5px 0;">${result.outbreak_alert.warning}</p>
+                            </div>
+                        `;
+                    }
+
+                    // ADD CTA BUTTON FOR SPECIALIST CONSULTATION
+                    resultHTML += `
+                        <div style="background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(131, 56, 236, 0.2) 100%); border: 2px solid rgba(0, 240, 255, 0.5); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center;">
+                            <h5 style="color: #00f0ff; margin-top: 0; margin-bottom: 15px;"><i class="fas fa-stethoscope"></i> Professional Medical Guidance</h5>
+                            <p style="color: #ccc; margin-bottom: 15px;">Connect with a specialist to discuss your condition and get professional medical advice.</p>
+                            <button onclick="startConsultation(${result.triage_id || 'null'}, '${result.disease_name}', '${symptoms}', ${result.local_verified_data?.severity || 1})" 
+                                    style="background: linear-gradient(135deg, #00f0ff 0%, #8338ec 100%); color: #0a0e27; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: all 0.3s ease;">
+                                🔗 Request Medical Review
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    showToast('Analysis complete but limited info available', 'warning');
+                    resultHTML = `
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 8px; padding: 15px;">
+                            <h5 style="color: #ef4444; margin-top: 0;"><i class="fas fa-info-circle"></i> ${result.status}</h5>
+                            <p style="color: #ccc; margin: 5px 0;">${result.message || 'Please provide more specific symptoms'}</p>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('resultContent').innerHTML = resultHTML;
+                document.getElementById('aiInsight').textContent = result.ai_insight || 'AI analysis not available';
+                document.getElementById('triageResults').style.display = 'block';
+
+            } catch (error) {
+                console.error('Triage Error:', error);
+                document.getElementById('triageLoading').style.display = 'none';
+                showToast('Error during analysis: ' + error.message, 'error');
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch(`/api/patient/${userId}/timeline`);
+                const data = await response.json();
+                const list = document.getElementById('historyList');
+
+                if (!data.success || data.timeline.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);padding:2rem;">No medical history available yet. Complete a triage or consultation to start your timeline.</p>';
+                } else {
+                    list.innerHTML = `
+                        <div style="position: relative; padding-left: 10px; margin-top: 1rem;" id="medical-timeline">
+                            <style>
+                                #medical-timeline::before {
+                                    content: ''; position: absolute; left: 29px; top: 10px; bottom: 10px; width: 2px; background: rgba(0, 240, 255, 0.2); z-index: 1;
+                                }
+                            </style>
+                            ${data.timeline.map(event => `
+                                <div style="display:flex; margin-bottom: 25px; position:relative;">
+                                    <div style="min-width: 50px; text-align:center; z-index:2; margin-top: 5px;">
+                                        <div style="background: ${event.color || 'var(--primary)'}; color: #000; width: 40px; height: 40px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size: 1.1rem; box-shadow: 0 0 10px ${event.color || 'var(--primary)'};">
+                                            <i class="fas ${event.icon}"></i>
+                                        </div>
+                                    </div>
+                                    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 15px 20px; margin-left: 20px; flex-grow: 1; position: relative;">
+                                        <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                                            <h4 style="margin:0; color: ${event.color || 'var(--primary)'}; font-size: 1.1rem;">${event.title}</h4>
+                                            <span style="font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="far fa-clock"></i> ${new Date(event.timestamp).toLocaleDateString()}</span>
+                                        </div>
+                                        <p style="margin:0; font-size: 0.95rem; color: #ccc; line-height: 1.5;">${event.description}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const response = await fetch(`/api/patient/notifications?user_id=${userId}`);
+                const data = await response.json();
+                const list = document.getElementById('notificationsList');
+
+                if (data.notifications.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No notifications</p>';
+                } else {
+                    list.innerHTML = data.notifications.map(notif => `
+                        <div class="list-item">
+                            <div style="flex:1;">
+                                <div class="list-item-title">${notif.message}</div>
+                                <div class="list-item-meta">${new Date(notif.created_at).toLocaleString()}</div>
+                            </div>
+                            <span class="badge badge-${notif.status === 'delivered' ? 'success' : 'info'}">${notif.status}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        async function exportAnonymized() {
+            try {
+                window.location.href = '/reports/export/anonymized';
+                showToast('Downloading anonymized data...');
+            } catch (error) {
+                showToast('Error exporting data', 'error');
+            }
+        }
+
+        async function exportCSV() {
+            try {
+                window.location.href = '/reports/export/csv';
+                showToast('Downloading CSV report...');
+            } catch (error) {
+                showToast('Error exporting CSV', 'error');
+            }
+        }
+
+        function startConsultation(triageId, diseaseName, symptoms, severity) {
+            // Store triage data in localStorage
+            const triageData = {
+                disease_name: diseaseName,
+                symptoms: symptoms,
+                severity: severity,
+                triage_id: triageId
+            };
+            localStorage.setItem('triageData', JSON.stringify(triageData));
+
+            // Navigate to consultation page
+            const params = new URLSearchParams({
+                disease: encodeURIComponent(diseaseName),
+                symptoms: encodeURIComponent(symptoms),
+                severity: severity,
+                triage_id: triageId || ''
+            });
+            window.location.href = `/consultation-request?${params}`;
+        }
+
+        async function loadAppointments() {
+            try {
+                const response = await fetch(`/api/patient/${userId}/consultations`);
+                const data = await response.json();
+                const list = document.getElementById('appointmentsList');
+
+                if (data.data.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No active appointments</p>';
+                } else {
+                    list.innerHTML = data.data.map(app => {
+                        let actionsHtml = '';
+                        let typeIcon = app.type === 'online' ? 'fa-video' : 'fa-hospital';
+
+                        if (app.type === 'online') {
+                            actionsHtml = `<button class="btn btn-primary" style="margin-top: 10px;" onclick="window.open('/static/video-room.html?room=${app.id}', '_blank')"><i class="fas fa-video"></i> Join Online Session</button>`;
+                        } else if (app.type === 'offline') {
+                            actionsHtml = `
+                                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
+                                    <div style="margin-bottom: 5px;"><strong><i class="fas fa-map-marker-alt"></i> Clinic:</strong> ${app.clinic_address || 'Pending'}</div>
+                                    <div style="margin-bottom: 5px;"><strong><i class="fas fa-clock"></i> Time:</strong> ${app.appointment_time ? new Date(app.appointment_time).toLocaleString() : 'Pending'}</div>
+                                    <div style="margin-top: 15px; background: var(--bg-card); padding: 10px; border-radius: 5px; border: 1px dashed var(--primary); text-align: center;">
+                                        <div style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">Visit Token Number</div>
+                                        <div style="color: var(--primary); font-size: 1.5rem; font-weight: bold; letter-spacing: 2px;">
+                                            ${app.token_number || 'AWAITING'}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        return `
+                        <div class="list-item" style="display: flex; flex-direction: column; align-items: stretch; border-left: 4px solid var(--secondary);">
+                            <div style="display:flex;align-items:center; width: 100%;">
+                                <div class="list-item-icon"><i class="fas ${typeIcon}"></i></div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">Consultation #${app.id}</div>
+                                    <div class="list-item-meta">Status: <span style="color:var(--primary); font-weight: bold;">${app.status.toUpperCase()}</span></div>
+                                </div>
+                            </div>
+                            ${actionsHtml}
+                        </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+
+        async function loadDashboardOverview() {
+            document.getElementById('dashboard-loader').style.display = 'block';
+            document.getElementById('dashboard-content').style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/patient/${userId}/dashboard`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const cons = result.active_consultation;
+                    if (cons) {
+                        document.getElementById('dash-consultation').style.display = 'block';
+                        document.getElementById('dash-doc-name').textContent = cons.doctor_name;
+                        document.getElementById('dash-doc-spec').textContent = cons.doctor_specialty;
+                        document.getElementById('dash-status').textContent = cons.status.toUpperCase();
+
+                        let btnHtml = '';
+                        if (cons.type === 'online') {
+                            btnHtml = `<button class="btn btn-primary" onclick="window.open('/static/video-room.html?room=${cons.id}', '_blank')"><i class="fas fa-video"></i> Join Session</button>`;
+                        } else {
+                            btnHtml = `<div style="text-align:right;"><span style="font-size:0.8rem;color:#ccc;display:block;">Visit Token</span><strong style="color:var(--primary);font-size:1.5rem;">${cons.token_number || 'WAITING'}</strong></div>`;
+                        }
+                        document.getElementById('dash-action-btn').innerHTML = btnHtml;
+                    } else {
+                        document.getElementById('dash-consultation').style.display = 'none';
+                    }
+
+                    const rx = result.latest_prescription;
+                    const rxContainer = document.getElementById('dash-rx-content');
+                    if (rx) {
+                        rxContainer.innerHTML = `
+                            <div style="margin-bottom: 10px;"><strong>Diagnosis:</strong> <span style="color:var(--primary);">${rx.disease_name}</span></div>
+                            <div style="margin-bottom: 10px; font-size: 0.9rem; color: #ccc;"><strong>Doctor Notes:</strong> ${rx.doctor_notes || 'None'}</div>
+                            <div style="margin-bottom: 15px; font-size: 0.9rem; color: #ccc;"><strong>Follow Up:</strong> ${rx.follow_up || 'None'}</div>
+                            ${rx.pdf_path ? `<a href="/reports/download/${rx.pdf_path}" class="btn btn-outline" style="width:100%;"><i class="fas fa-file-pdf"></i> View Prescription PDF</a>` : ''}
+                        `;
+                    } else {
+                        rxContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No active prescriptions.</p>`;
+                    }
+
+                    const meds = result.todays_medicines;
+                    const medsContainer = document.getElementById('dash-meds-list');
+                    if (meds && meds.length > 0) {
+                        medsContainer.innerHTML = meds.map(m => `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; border-left: 3px solid ${m.status === 'taken' ? 'var(--success)' : 'var(--warning)'};">
+                                <div>
+                                    <div style="font-weight:bold;">${m.medicine_name} <span style="font-size:0.8rem; color:#aaa;">(${m.dosage})</span></div>
+                                    <div style="font-size:0.8rem; color:var(--primary);"><i class="fas fa-clock"></i> ${m.time}</div>
+                                </div>
+                                <div>
+                                    ${m.status === 'taken' ? '<i class="fas fa-check-circle" style="color:var(--success); font-size:1.5rem;"></i>' : '<i class="far fa-circle" style="color:var(--warning); font-size:1.5rem;"></i>'}
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        medsContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No medicines scheduled for today.</p>`;
+                    }
+
+                    const notifs = result.recent_notifications;
+                    const notifsContainer = document.getElementById('dash-notifs');
+                    if (notifs && notifs.length > 0) {
+                        notifsContainer.innerHTML = notifs.map(n => `
+                            <div style="font-size: 0.85rem; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; border-left: 2px solid var(--secondary);">
+                                ${n.message}
+                            </div>
+                        `).join('');
+                    } else {
+                        notifsContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No recent alerts.</p>`;
+                    }
+                }
+            } catch (error) {
+                console.error("Dashboard error:", error);
+            } finally {
+                document.getElementById('dashboard-loader').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'grid';
+            }
+        }
+
+        async function loadFollowUps() {
+            try {
+                const response = await fetch(`/api/patient/${userId}/follow-ups`);
+                const data = await response.json();
+                const list = document.getElementById('followupsList');
+
+                if (data.data.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No pending follow-ups</p>';
+                } else {
+                    list.innerHTML = data.data.map(f => `
+                        <div class="list-item" style="border-left: 4px solid var(--warning);">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <h4 style="margin:0 0 5px 0; color: var(--warning);">Follow-Up with Dr. ${f.doctor_name}</h4>
+                                    <p style="margin:0; font-size:0.9rem; color: var(--text-dim);"><i class="fas fa-calendar"></i> ${new Date(f.follow_up_date).toLocaleDateString()}</p>
+                                    ${f.notes ? `<p style="margin:5px 0 0 0; font-size:0.85rem; color:#ccc;"><em>"${f.notes}"</em></p>` : ''}
+                                </div>
+                                <div style="text-align:right;">
+                                    <span style="font-size:0.8rem; background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 10px; text-transform: uppercase;">${f.status}</span>
+                                    ${f.status === 'pending' ? `
+                                        <div style="margin-top: 10px;">
+                                            <button class="btn btn-primary" style="font-size:0.8rem; padding: 5px 10px;" onclick="actionFollowUp(${f.id}, 'confirm')"><i class="fas fa-check"></i> Confirm</button>
+                                            <button class="btn btn-outline" style="font-size:0.8rem; padding: 5px 10px;" onclick="actionFollowUp(${f.id}, 'reschedule')">Reschedule</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error("Error loading followups:", e);
+            }
+        }
+
+        async function actionFollowUp(id, action) {
+            try {
+                const res = await fetch(`/api/follow-ups/${id}/${action}`, { method: 'PUT' });
+                if (res.ok) loadFollowUps();
+            } catch (e) { }
+        }
+
+        async function loadNotifications() {
+            try {
+                const response = await fetch(`/api/notifications/${userId}`);
+                const data = await response.json();
+                const list = document.getElementById('notificationsList');
+
+                if (data.data.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:rgba(240,240,240,0.6);">No notifications</p>';
+                } else {
+                    list.innerHTML = data.data.map(notif => `
+                        <div class="list-item" style="border-left: 4px solid ${notif.is_read ? 'rgba(255,255,255,0.2)' : 'var(--primary)'}; background: ${notif.is_read ? 'rgba(0,0,0,0.3)' : 'rgba(0,240,255,0.05)'}; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <h4 style="margin:0 0 5px 0; color: ${notif.is_read ? '#ccc' : '#fff'};">${notif.title}</h4>
+                                <p style="margin:0; font-size:0.9rem; color: var(--text-dim);">${notif.message}</p>
+                                <small style="color: rgba(255,255,255,0.3);">${new Date(notif.created_at).toLocaleString()}</small>
+                            </div>
+                            <div>
+                                ${!notif.is_read ? `<button class="btn btn-outline" style="font-size:0.8rem; padding: 5px 10px;" onclick="markNotificationRead(${notif.id})"><i class="fas fa-check"></i> Mark Read</button>` : '<i class="fas fa-check-double" style="color: rgba(255,255,255,0.2);"></i>'}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error("Error loading notifications:", e);
+            }
+        }
+
+        async function markNotificationRead(id) {
+            try {
+                const res = await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+                if (res.ok) {
+                    loadNotifications();
+                    if (document.getElementById('overview').classList.contains('active')) {
+                        loadDashboardOverview();
+                    }
+                }
+            } catch (e) { }
+        }
+
+        function loadSectionData(sectionName) {
+            if (sectionName === 'overview') loadDashboardOverview();
+            else if (sectionName === 'family') loadFamilyMembers();
+            else if (sectionName === 'appointments') {
+                loadAppointments();
+                loadFollowUps();
+            }
+            else if (sectionName === 'reminders') {
+                loadMedicationSchedule();
+                loadReminders();
+            }
+            else if (sectionName === 'history') loadHistory();
+            else if (sectionName === 'notifications') loadNotifications();
+        }
+
+        // Menu link switching
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const tabName = e.currentTarget.dataset.tab;
+                switchSection(tabName);
+            });
+        });
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Load user data on page load
+        window.addEventListener('load', () => {
+            loadUserProfile();
+            loadDashboardOverview();
+        });
+    </script>
+</body>
+
+</html>

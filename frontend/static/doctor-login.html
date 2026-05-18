@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthOS | Doctor Portal Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #090d16 0%, #0f172a 35%, #052e16 70%, #030712 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.25;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.3), rgba(22, 163, 74, 0.05));
+            animation: float 22s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 320px;
+            height: 320px;
+            top: -40px;
+            right: -20px;
+            animation-duration: 18s;
+        }
+
+        .blob2 {
+            width: 220px;
+            height: 220px;
+            bottom: -30px;
+            left: -40px;
+            background: radial-gradient(circle at 30% 30%, rgba(14, 165, 233, 0.3), rgba(2, 132, 199, 0.05));
+            animation-duration: 22s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -40px) scale(1.06); }
+            66% { transform: translate(-20px, 30px) scale(0.94); }
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-box {
+            background: rgba(9, 15, 29, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 28px;
+            padding: 45px 40px;
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #22c55e, #10b981, #06b6d4);
+        }
+
+        .logo-glow {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.45);
+            color: #0d1527;
+            animation: pulse-ring 2.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+            70% { box-shadow: 0 0 25px 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .input-glow:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .pulse-line {
+            width: 100%;
+            height: 40px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' width='100%25' height='40'%3E%3Cpath d='M0 10 h40 l2 -5 l2 15 l3 -20 l2 15 l1 -5 h48' fill='none' stroke='%2322c55e' stroke-width='0.5' stroke-dasharray='100' stroke-dashoffset='100'/%3E%3C/svg%3E") repeat-x;
+            opacity: 0.15;
+            margin-bottom: 15px;
+        }
+
+        .demo-card {
+            border: 1px dashed rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .demo-card:hover {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            color: #0d1527;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.35);
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(34, 197, 94, 0.5);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <!-- Medical Icon and Header -->
+            <div class="text-center mb-8">
+                <div class="logo-glow">
+                    <i class="fa-solid fa-user-md"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-slate-100 tracking-tight">Clinical Console</h2>
+                <p class="text-slate-400 mt-2 text-sm">Access the Doctor Command & Diagnostics Center</p>
+            </div>
+
+            <!-- EKG Pulse Line Decoration -->
+            <div class="pulse-line"></div>
+
+            <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-sm border"></div>
+
+            <!-- Login Form -->
+            <form onsubmit="handleDoctorLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Professional Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="doctorEmail" 
+                               class="w-full pl-11 pr-4 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
+                               placeholder="physician@healthos.org" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Access Token / Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                        <input type="password" id="doctorPassword" 
+                               class="w-full pl-11 pr-12 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
+                               placeholder="••••••••" required>
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition">
+                            <i id="passwordEye" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 rounded-xl btn-submit text-sm uppercase tracking-wider">
+                    Verify & Connect Portal
+                </button>
+            </form>
+
+            <!-- Quick Fill Demo Doctors Section -->
+            <div class="mt-8 pt-6 border-t border-slate-800/80">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Demo Quick Fill Keys</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="quickFill('dr.sarah@mediops.com', 'password123')" 
+                            class="demo-card p-3 rounded-xl text-left border transition">
+                        <div class="text-xs font-bold text-emerald-400">Dr. Sarah Johnson</div>
+                        <div class="text-[10px] text-slate-400">Dermatologist</div>
+                    </button>
+                    <button onclick="quickFill('dr.ahmed@mediops.com', 'password123')" 
+                            class="demo-card p-3 rounded-xl text-left border transition">
+                        <div class="text-xs font-bold text-emerald-400">Dr. Ahmed Hassan</div>
+                        <div class="text-[10px] text-slate-400">Gastroenterologist</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Return Link -->
+            <div class="mt-6 text-center text-xs">
+                <a href="/login" class="text-slate-500 hover:text-slate-300 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Patient Console
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('doctorPassword');
+            const eyeIcon = document.getElementById('passwordEye');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        function quickFill(email, password) {
+            document.getElementById('doctorEmail').value = email;
+            document.getElementById('doctorPassword').value = password;
+            showStatus('Demo Credentials Loaded. Ready to connect.', 'success');
+        }
+
+        function showStatus(msg, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.classList.remove('hidden', 'bg-red-500/10', 'border-red-500/30', 'text-red-300', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+            
+            if (type === 'error') {
+                statusDiv.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-300');
+            } else {
+                statusDiv.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+            }
+            
+            statusDiv.innerHTML = (type === 'error' ? '<i class="fa-solid fa-triangle-exclamation mr-2"></i>' : '<i class="fa-solid fa-circle-check mr-2"></i>') + msg;
+            statusDiv.classList.remove('hidden');
+        }
+
+        async function handleDoctorLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('doctorEmail').value;
+            const password = document.getElementById('doctorPassword').value;
+
+            showStatus('⏳ Verification in progress... Connecting to HealthOS Mainframe.', 'success');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role: 'doctor' })
+                });
+                
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('✓ Secure link established! Transferring to Doctor Dashboard.', 'success');
+                    
+                    const userId = data.token.split('_')[1] || '1';
+                    localStorage.setItem('user_token', data.token);
+                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('doctorId', userId); // Store in dedicated role key
+                    if (data.user) {
+                        localStorage.setItem('userName', data.user.full_name || 'Doctor');
+                        localStorage.setItem('userEmail', data.user.email || '');
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = '/doctor-dashboard';
+                    }, 1500);
+                } else {
+                    showStatus(data.message || 'Verification failed. Credentials rejected.', 'error');
+                }
+            } catch (error) {
+                showStatus('Connection failed: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

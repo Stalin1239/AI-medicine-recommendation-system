@@ -1,0 +1,4 @@
+Dataset Validation Log
+Total rows scanned: 1001
+Duplicates: ['Typhoid', 'Jaundice', 'Diabetes', 'Dengue', 'Malaria', 'Anemia', 'Asthma', 'Dehydration', 'Acidity', 'Food Poisoning', 'Bronchitis', 'Acne', 'Common Cold', 'Vitamin D Deficiency', 'Allergic Rhinitis', 'Influenza', 'Diarrhea', 'Eczema', 'Gastritis', 'Sinusitis', 'Sunburn', 'Fungal Infection', 'Amoebiasis', 'Heat Rash', 'Heat Stroke', 'Chickenpox']
+Status: SUCCESS

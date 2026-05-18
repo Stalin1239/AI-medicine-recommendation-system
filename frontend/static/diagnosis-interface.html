@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FedMedFlow | Diagnosis Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.3);
+            --secondary: #7000ff;
+            --accent: #ff00c8;
+            --bg-darker: #050810;
+            --bg-dark: #0a0f1e;
+            --bg-card: rgba(16, 24, 48, 0.7);
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(5, 8, 16, 0.95);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        .back-btn:hover { color: var(--primary); }
+
+        .case-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary-glow);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .autosave-indicator {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .autosave-indicator.saving { color: var(--warning); }
+        .autosave-indicator.saved { color: var(--success); }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* Main Workspace */
+        .workspace {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            flex-grow: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: fit-content;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        /* Left Column: Context */
+        .context-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .context-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .context-value {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .image-viewer {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .image-viewer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Right Column: Editor */
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+
+        /* Range Slider */
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 5px;
+            outline: none;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .severity-display {
+            font-weight: bold;
+            color: var(--warning);
+        }
+        
+        /* Smart Prescription Builder */
+        .medicine-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .medicine-card {
+            background: rgba(16, 24, 48, 0.9);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .medicine-card .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .medicine-card .remove-btn:hover {
+            opacity: 1;
+        }
+        
+        .timing-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .timing-btn {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dim);
+            user-select: none;
+        }
+        .timing-btn.active {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-darker);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            margin-top: 4px;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .autocomplete-item:hover {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.1);
+        }
+        
+        .prescription-preview {
+            background: #fff;
+            color: #000;
+            padding: 2rem;
+            border-radius: 10px;
+            font-family: 'Times New Roman', serif;
+            margin-top: 1rem;
+        }
+        .prescription-preview h1 { color: #2c3e50; font-size: 1.5rem; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 20px;}
+        .prescription-preview h3 { color: #34495e; font-size: 1.1rem; margin-top: 20px; margin-bottom: 10px; }
+        .prescription-preview table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .prescription-preview th, .prescription-preview td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; }
+        .prescription-preview th { background: #ecf0f1; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/doctor-dashboard" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <div class="case-title">
+                Diagnosis Module: <span id="patient-name">Loading...</span>
+                <span class="status-badge" id="current-status">PENDING</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <select id="status-select" class="form-select" style="width: auto; padding: 8px 12px; font-size: 0.8rem;" onchange="markDirty()">
+                <option value="pending">Pending</option>
+                <option value="under_review">Under Review</option>
+                <option value="follow_up_required">Follow-up Required</option>
+                <option value="emergency">Emergency</option>
+            </select>
+            <button class="btn btn-outline" onclick="showPreviewModal()">
+                <i class="fas fa-eye"></i> Preview Rx
+            </button>
+            <div class="autosave-indicator" id="autosave-status">
+                <i class="fas fa-cloud"></i> <span>Saved</span>
+            </div>
+            <button class="btn btn-primary" onclick="finalizeDiagnosis()">
+                <i class="fas fa-check-circle"></i> Finalize
+            </button>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Consultation Management Panel -->
+            <div class="panel" style="border-color: var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.1);">
+                <h2 class="panel-title"><i class="fas fa-headset"></i> Connect with Patient</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="setupConsultation('online')"><i class="fas fa-video"></i> Online Session</button>
+                    <button class="btn btn-outline" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="openModal('clinicVisitModal')"><i class="fas fa-hospital"></i> Clinic Visit</button>
+                </div>
+            </div>
+
+            <!-- Follow-up Panel -->
+            <div class="panel" style="border-color: var(--warning); box-shadow: 0 0 15px rgba(255, 170, 0, 0.1);">
+                <h2 class="panel-title" style="color: var(--warning);"><i class="fas fa-calendar-plus"></i> Schedule Follow-Up</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="follow-up-date" class="form-input" style="flex:1; border-color: rgba(255,170,0,0.5);">
+                        <button type="button" class="btn" style="background: var(--warning); color: #000;" onclick="scheduleFollowUp()"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                    <textarea id="follow-up-notes" class="form-input" placeholder="Notes for the patient..." style="height: 60px; border-color: rgba(255,170,0,0.5); resize:none;"></textarea>
+                </div>
+            </div>
+
+            <!-- Left: Context Panel -->
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-clipboard-list"></i> AI Triage Context</h2>
+            
+            <div class="context-item">
+                <div class="context-label">Predicted Disease</div>
+                <div class="context-value" id="ai-disease" style="color: var(--primary); font-weight: 600;">...</div>
+            </div>
+
+            <div class="context-item">
+                <div class="context-label">Initial Symptoms Reported</div>
+                <div class="context-value" id="initial-symptoms">...</div>
+            </div>
+
+            <div id="photo-section" style="display: none;">
+                <div class="context-label" style="margin-bottom: 8px;">Uploaded Image</div>
+                <div class="image-viewer">
+                    <img id="patient-photo" src="" alt="Patient Upload">
+                </div>
+            </div>
+
+            <h2 class="panel-title" style="margin-top: 1rem;"><i class="fas fa-history"></i> Timeline</h2>
+            <div class="context-item">
+                <div class="context-label">Case Created</div>
+                <div class="context-value" id="case-created">...</div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Right: Editor Panel -->
+        <div class="panel">
+            <h2 class="panel-title"><i class="fas fa-user-md"></i> Doctor's Assessment</h2>
+            
+            <form id="diagnosis-form" class="editor-grid">
+                
+                <div class="form-group full">
+                    <label class="form-label">Verified Symptoms</label>
+                    <textarea id="edit-symptoms" class="form-textarea" style="min-height: 60px;" placeholder="Edit or add verified symptoms here..." oninput="markDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Actual Diagnosis</label>
+                    <input type="text" id="actual-diagnosis" class="form-input" placeholder="e.g. Viral Pharyngitis" oninput="markDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Severity Level 
+                        <span class="severity-display" id="severity-val">5/10</span>
+                    </label>
+                    <input type="range" id="severity-slider" class="range-slider" min="1" max="10" value="5" oninput="updateSeverity(this.value); markDirty()">
+                </div>
+                
+                <div class="form-group full">
+                    <label class="form-label">General Precautions</label>
+                    <textarea id="precautions" class="form-textarea" style="min-height: 60px;" placeholder="Dietary restrictions, rest, etc." oninput="markDirty()"></textarea>
+                </div>
+
+            </form>
+            
+            <!-- SMART PRESCRIPTION BUILDER -->
+            <h2 class="panel-title" style="margin-top: 1rem;"><i class="fas fa-prescription-bottle-alt"></i> Smart Prescription Builder</h2>
+            
+            <div id="medicine-list" class="medicine-list">
+                <!-- Medicines inserted here dynamically -->
+            </div>
+            
+            <button class="btn btn-outline" style="align-self: flex-start; margin-bottom: 1rem;" onclick="addMedicineRow()">
+                <i class="fas fa-plus"></i> Add Medicine
+            </button>
+            
+            <!-- Additional Directives -->
+            <h2 class="panel-title" style="margin-top: 1rem;"><i class="fas fa-heartbeat"></i> Additional Directives</h2>
+            <div class="editor-grid">
+                <div class="form-group full">
+                    <label class="form-label">Lab Tests Required</label>
+                    <input type="text" id="lab-tests" class="form-input" placeholder="e.g. CBC, LFT, Chest X-Ray..." oninput="markDirty()">
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Diet Plan</label>
+                    <input type="text" id="diet-plan" class="form-input" placeholder="e.g. High protein, low sodium..." oninput="markDirty()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Exercise Recommendations</label>
+                    <input type="text" id="exercise" class="form-input" placeholder="e.g. Mild walking 20 mins/day..." oninput="markDirty()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Follow-up Instructions</label>
+                    <input type="text" id="follow-up" class="form-input" placeholder="e.g. Return in 7 days..." oninput="markDirty()">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="color: var(--primary);"><i class="fas fa-file-medical"></i> Prescription Preview</h2>
+                <button class="btn btn-outline" onclick="document.getElementById('preview-modal').style.display='none'">Close</button>
+            </div>
+            
+            <div class="prescription-preview" id="prescription-paper">
+                <!-- Generated HTML will go here -->
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="finalizeDiagnosis()"><i class="fas fa-check-circle"></i> Finalize & Send to Patient</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Extract consultation ID
+        const pathParts = window.location.pathname.split('/');
+        const consultationId = pathParts[pathParts.length - 1];
+
+        let isDirty = false;
+        let medicinesData = [];
+        let patientId = null;
+        let currentDoctorId = null;
+
+        async function init() {
+            try {
+                const response = await fetch(`/api/consultations/${consultationId}/diagnosis`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    populateUI(result.data);
+                    setInterval(performAutoSave, 5000); 
+                } else {
+                    alert("Error loading case: " + result.detail);
+                }
+            } catch (err) {
+                console.error("Failed to fetch case data", err);
+            }
+        }
+
+        function populateUI(data) {
+            patientId = data.patient_id;
+            currentDoctorId = data.doctor_id;
+            
+            document.getElementById('patient-name').textContent = data.patient_name;
+            document.getElementById('current-status').textContent = data.status.toUpperCase().replace('_', ' ');
+            document.getElementById('status-select').value = data.status;
+            
+            document.getElementById('ai-disease').textContent = data.ai_predicted_disease;
+            document.getElementById('initial-symptoms').textContent = data.patient_symptoms;
+            document.getElementById('case-created').textContent = new Date(data.created_at).toLocaleString();
+
+            if (data.photo_url) {
+                document.getElementById('patient-photo').src = data.photo_url;
+                document.getElementById('photo-section').style.display = 'block';
+            }
+
+            document.getElementById('edit-symptoms').value = data.patient_symptoms || '';
+            document.getElementById('actual-diagnosis').value = data.actual_diagnosis || data.ai_predicted_disease || '';
+            
+            const sev = data.severity || 5;
+            document.getElementById('severity-slider').value = sev;
+            updateSeverity(sev);
+
+            document.getElementById('precautions').value = data.precautions || '';
+            document.getElementById('follow-up').value = data.follow_up_instructions || '';
+            
+            // Load Smart Prescription JSON
+            if (data.prescription_data) {
+                try {
+                    const parsed = JSON.parse(data.prescription_data);
+                    document.getElementById('lab-tests').value = parsed.lab_tests || '';
+                    document.getElementById('diet-plan').value = parsed.diet_plan || '';
+                    document.getElementById('exercise').value = parsed.exercise || '';
+                    
+                    if (parsed.medicines && parsed.medicines.length > 0) {
+                        medicinesData = parsed.medicines;
+                        renderMedicines();
+                    } else {
+                        addMedicineRow(); // Add one empty row
+                    }
+                } catch(e) {
+                    console.error("Failed to parse prescription_data", e);
+                    addMedicineRow();
+                }
+            } else {
+                addMedicineRow();
+            }
+        }
+        
+        // --- Smart Prescription Logic ---
+
+        function generateUniqueId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        function addMedicineRow() {
+            medicinesData.push({
+                id: generateUniqueId(),
+                name: '',
+                type: 'Tablet',
+                dosage: '',
+                duration: '',
+                timings: [],
+                instructions: '',
+                side_effects: ''
+            });
+            renderMedicines();
+            markDirty();
+        }
+
+        function removeMedicineRow(id) {
+            medicinesData = medicinesData.filter(m => m.id !== id);
+            renderMedicines();
+            markDirty();
+        }
+        
+        function updateMedicine(id, field, value) {
+            const med = medicinesData.find(m => m.id === id);
+            if (med) {
+                med[field] = value;
+                markDirty();
+            }
+        }
+        
+        function toggleTiming(id, timeStr) {
+            const med = medicinesData.find(m => m.id === id);
+            if (!med) return;
+            
+            if (med.timings.includes(timeStr)) {
+                med.timings = med.timings.filter(t => t !== timeStr);
+            } else {
+                med.timings.push(timeStr);
+            }
+            renderMedicines();
+            markDirty();
+        }
+
+        function renderMedicines() {
+            const container = document.getElementById('medicine-list');
+            container.innerHTML = '';
+            
+            medicinesData.forEach((med, index) => {
+                const isMorning = med.timings.includes('Morning');
+                const isAfternoon = med.timings.includes('Afternoon');
+                const isEvening = med.timings.includes('Evening');
+                const isNight = med.timings.includes('Night');
+                
+                const card = document.createElement('div');
+                card.className = 'medicine-card';
+                card.innerHTML = `
+                    <button class="remove-btn" onclick="removeMedicineRow('${med.id}')" title="Remove Medicine"><i class="fas fa-times"></i></button>
+                    
+                    <div class="form-group full">
+                        <label class="form-label">Medicine Name (Auto-complete)</label>
+                        <input type="text" class="form-input" value="${med.name}" placeholder="Start typing..." 
+                            oninput="updateMedicine('${med.id}', 'name', this.value); debounceSearch(this, '${med.id}')"
+                            onfocus="debounceSearch(this, '${med.id}')">
+                        <div class="autocomplete-results" id="ac-${med.id}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" onchange="updateMedicine('${med.id}', 'type', this.value)">
+                            <option value="Tablet" ${med.type === 'Tablet' ? 'selected' : ''}>Tablet</option>
+                            <option value="Capsule" ${med.type === 'Capsule' ? 'selected' : ''}>Capsule</option>
+                            <option value="Syrup" ${med.type === 'Syrup' ? 'selected' : ''}>Syrup</option>
+                            <option value="Injection" ${med.type === 'Injection' ? 'selected' : ''}>Injection</option>
+                            <option value="Drops" ${med.type === 'Drops' ? 'selected' : ''}>Drops</option>
+                            <option value="Ointment" ${med.type === 'Ointment' ? 'selected' : ''}>Ointment</option>
+                            <option value="Other" ${med.type === 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Dosage (e.g. 500mg, 10ml)</label>
+                        <input type="text" class="form-input" value="${med.dosage}" oninput="updateMedicine('${med.id}', 'dosage', this.value)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <input type="text" class="form-input" placeholder="e.g. 5 days, 1 month" value="${med.duration}" oninput="updateMedicine('${med.id}', 'duration', this.value)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Timing</label>
+                        <div class="timing-options">
+                            <span class="timing-btn ${isMorning ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Morning')">Morning</span>
+                            <span class="timing-btn ${isAfternoon ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Afternoon')">Afternoon</span>
+                            <span class="timing-btn ${isEvening ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Evening')">Evening</span>
+                            <span class="timing-btn ${isNight ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Night')">Night</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full">
+                        <label class="form-label">Instructions & Special Notes</label>
+                        <input type="text" class="form-input" placeholder="e.g. After meals, avoid alcohol..." value="${med.instructions}" oninput="updateMedicine('${med.id}', 'instructions', this.value)">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        // Auto-complete logic
+        let searchTimeout = null;
+        async function debounceSearch(inputElem, medId) {
+            const query = inputElem.value;
+            const resDiv = document.getElementById(`ac-${medId}`);
+            
+            if (query.length < 2) {
+                resDiv.style.display = 'none';
+                return;
+            }
+            
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/medicines/search?q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    if (data.success && data.data.length > 0) {
+                        resDiv.innerHTML = data.data.map(m => `<div class="autocomplete-item" onclick="selectAutocomplete('${medId}', '${m}')">${m}</div>`).join('');
+                        resDiv.style.display = 'block';
+                    } else {
+                        resDiv.style.display = 'none';
+                    }
+                } catch(e) {}
+            }, 300);
+        }
+        
+        window.selectAutocomplete = function(medId, val) {
+            updateMedicine(medId, 'name', val);
+            renderMedicines();
+            document.getElementById(`ac-${medId}`).style.display = 'none';
+        };
+        
+        // Hide autocomplete when clicking outside
+        document.addEventListener('click', function(e) {
+            if(!e.target.closest('.autocomplete-results') && !e.target.closest('.form-input')) {
+                document.querySelectorAll('.autocomplete-results').forEach(el => el.style.display = 'none');
+            }
+        });
+
+        // --- Core Functions ---
+
+        function updateSeverity(val) {
+            const display = document.getElementById('severity-val');
+            display.textContent = `${val}/10`;
+            if(val > 7) display.style.color = 'var(--danger)';
+            else if(val > 4) display.style.color = 'var(--warning)';
+            else display.style.color = 'var(--success)';
+        }
+
+        function markDirty() {
+            isDirty = true;
+            const indicator = document.getElementById('autosave-status');
+            indicator.className = 'autosave-indicator saving';
+            indicator.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Unsaved changes...</span>';
+            
+            const sel = document.getElementById('status-select');
+            document.getElementById('current-status').textContent = sel.options[sel.selectedIndex].text.toUpperCase();
+        }
+
+        async function performAutoSave() {
+            if (!isDirty) return;
+            
+            const payload = getFormData();
+            try {
+                const response = await fetch(`/api/consultations/${consultationId}/diagnosis/auto-save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    isDirty = false;
+                    const indicator = document.getElementById('autosave-status');
+                    indicator.className = 'autosave-indicator saved';
+                    indicator.innerHTML = '<i class="fas fa-check"></i> <span>Saved</span>';
+                }
+            } catch (err) {
+                console.error("Auto-save failed", err);
+            }
+        }
+
+        async function finalizeDiagnosis() {
+            await performAutoSave();
+
+            const payload = getFormData();
+            try {
+                const indicator = document.getElementById('autosave-status');
+                indicator.className = 'autosave-indicator saving';
+                indicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Finalizing...</span>';
+
+                const response = await fetch(`/api/consultations/${consultationId}/diagnosis/finalize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert("Diagnosis finalized successfully!");
+                    window.location.href = '/doctor-dashboard';
+                } else {
+                    alert("Failed to finalize: " + result.message);
+                }
+            } catch (err) {
+                console.error("Finalize failed", err);
+                alert("Error connecting to server.");
+            }
+        }
+
+        function getFormData() {
+            // Build the JSON struct for smart prescription
+            const prescriptionObj = {
+                medicines: medicinesData.filter(m => m.name.trim() !== ''),
+                lab_tests: document.getElementById('lab-tests').value,
+                diet_plan: document.getElementById('diet-plan').value,
+                exercise: document.getElementById('exercise').value
+            };
+
+            return {
+                actual_diagnosis: document.getElementById('actual-diagnosis').value,
+                patient_symptoms: document.getElementById('edit-symptoms').value,
+                severity: parseInt(document.getElementById('severity-slider').value),
+                precautions: document.getElementById('precautions').value,
+                follow_up_instructions: document.getElementById('follow-up').value,
+                status: document.getElementById('status-select').value,
+                prescription_data: JSON.stringify(prescriptionObj)
+            };
+        }
+        
+        function showPreviewModal() {
+            const data = getFormData();
+            const pData = JSON.parse(data.prescription_data);
+            const pName = document.getElementById('patient-name').textContent;
+            
+            let medHtml = '';
+            if (pData.medicines.length > 0) {
+                medHtml = `
+                    <h3>Rx / Medications</h3>
+                    <table>
+                        <tr><th>Medicine</th><th>Dosage</th><th>Timing</th><th>Duration</th><th>Instructions</th></tr>
+                        ${pData.medicines.map(m => `
+                            <tr>
+                                <td><strong>${m.name}</strong> (${m.type})</td>
+                                <td>${m.dosage}</td>
+                                <td>${m.timings.join(', ')}</td>
+                                <td>${m.duration}</td>
+                                <td>${m.instructions}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                `;
+            }
+
+            const html = `
+                <h1>FedMedFlow Digital Prescription</h1>
+                <p><strong>Patient Name:</strong> ${pName}</p>
+                <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                <p><strong>Diagnosis:</strong> ${data.actual_diagnosis || 'Not specified'}</p>
+                <hr style="border: 0; border-top: 1px solid #bdc3c7; margin: 20px 0;">
+                
+                ${medHtml}
+                
+                ${pData.lab_tests ? `<h3>Lab Tests</h3><p>${pData.lab_tests}</p>` : ''}
+                ${pData.diet_plan ? `<h3>Diet & Exercise</h3><p>${pData.diet_plan}. ${pData.exercise}</p>` : ''}
+                ${data.precautions ? `<h3>Precautions</h3><p>${data.precautions}</p>` : ''}
+                ${data.follow_up_instructions ? `<h3>Follow-up</h3><p>${data.follow_up_instructions}</p>` : ''}
+                
+                <div style="margin-top: 50px; text-align: right;">
+                    <p>_______________________</p>
+                    <p>Doctor's Digital Signature</p>
+                </div>
+            `;
+            
+            document.getElementById('prescription-paper').innerHTML = html;
+            document.getElementById('preview-modal').style.display = 'flex';
+        }
+
+        // Consultation Setup
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeClinicModal() {
+            document.getElementById('clinicVisitModal').style.display = 'none';
+        }
+        async function setupConsultation(type, address = null, time = null) {
+            try {
+                const response = await fetch(`/api/consultations/${consultationId}/setup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ consultation_type: type, clinic_address: address, appointment_time: time })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if (type === 'online') {
+                        window.open(`/static/video-room.html?room=${consultationId}`, '_blank');
+                    } else {
+                        closeClinicModal();
+                        alert(`Clinic visit scheduled! Token: ${result.token}`);
+                    }
+                }
+            } catch (err) {
+                console.error("Setup error:", err);
+                alert("Failed to setup consultation");
+            }
+        }
+        function submitClinicVisit() {
+            const address = document.getElementById('clinic-address').value;
+            const time = document.getElementById('appointment-time').value;
+            if(!address || !time) return alert("Please fill all fields");
+            setupConsultation('offline', address, time);
+        }
+
+        async function scheduleFollowUp() {
+            const dateStr = document.getElementById('follow-up-date').value;
+            const notes = document.getElementById('follow-up-notes').value;
+            
+            if (!dateStr) return alert("Please select a date for the follow-up");
+            
+            const localDate = new Date(dateStr);
+            localDate.setHours(9, 0, 0);
+            
+            try {
+                const response = await fetch('/api/follow-ups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        consultation_id: parseInt(consultationId),
+                        patient_id: parseInt(patientId),
+                        doctor_id: currentDoctorId,
+                        follow_up_date: localDate.toISOString(),
+                        notes: notes
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert("Follow-up requested successfully! Patient will be notified.");
+                    document.getElementById('follow-up-date').value = '';
+                    document.getElementById('follow-up-notes').value = '';
+                } else {
+                    alert("Error: " + result.error);
+                }
+            } catch(e) {
+                console.error("Follow-up error:", e);
+                alert("Failed to schedule follow up");
+            }
+        }
+
+        // Initialize on load
+        window.onload = init;
+    </script>
+    
+    <!-- Clinic Visit Modal -->
+    <div class="modal-overlay" id="clinicVisitModal">
+        <div class="modal-content" style="max-width: 500px; background: var(--bg-card);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <h2 style="margin:0; color: var(--primary);"><i class="fas fa-hospital"></i> Request Clinic Visit</h2>
+                <button class="btn btn-outline" onclick="closeClinicModal()" style="padding: 5px 10px;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label">Clinic Address</label>
+                <textarea id="clinic-address" class="form-textarea" rows="3" placeholder="Enter full clinic address..."></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Appointment Time</label>
+                <input type="datetime-local" id="appointment-time" class="form-input">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="submitClinicVisit()"><i class="fas fa-calendar-check"></i> Schedule & Generate Token</button>
+        </div>
+    </div>
+</body>
+</html>

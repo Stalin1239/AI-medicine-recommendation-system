@@ -1,0 +1,62 @@
+name: MediOps Model Synchronization
+
+on:
+  workflow_run:
+    workflows: ["MediOps Accuracy Evaluation"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  sync-back:
+    name: Commit & Sync Model Back
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }} # Uses built-in token with push access
+
+    - name: Set up Python 3.11 Runtime
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas scikit-learn
+
+    - name: Step 1 - Execute Retraining locally (generates latest pickle)
+      run: |
+        python scripts/retrain_model.py
+
+    - name: Step 2 - Execute Evaluation (generates latest metrics)
+      run: |
+        python scripts/test_accuracy.py
+
+    - name: Step 3 - Commit and Push Back
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # Add updated files
+        git add models/version_metadata.json
+        git add models/latest/health_model_v2.pkl
+        git add health_model_v2.pkl
+        git add logs/accuracy_reports/*.json
+        git add logs/training_logs/*.log
+        
+        # Commit only if changes exist to avoid empty commit failures
+        if git diff --staged --quiet; then
+          echo "No model changes detected. Skipping push."
+        else
+          git commit -m "Auto-MLOps: Synchronized latest trained model & accuracy metrics [skip ci]"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+          print("[SUCCESS] Latest model successfully synchronized back to git branch.")
+        fi

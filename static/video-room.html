@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FedMedFlow - Live Consultation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(15, 23, 42, 0.7);
+            --primary: #00f0ff;
+            --secondary: #8338ec;
+            --text-main: #f8fafc;
+            --border: rgba(0, 240, 255, 0.2);
+        }
+        body {
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .video-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+        .main-video {
+            flex: 1;
+            background: #000;
+            border-radius: 20px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        .main-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .self-video {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: #111;
+            border-radius: 12px;
+            border: 2px solid var(--secondary);
+            overflow: hidden;
+        }
+        .self-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .controls {
+            height: 80px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover { background: rgba(0, 240, 255, 0.2); color: var(--primary); }
+        .control-btn.end-call { background: #ff0044; }
+        .control-btn.end-call:hover { background: #ff3366; color: white; box-shadow: 0 0 15px rgba(255, 0, 68, 0.5); }
+        
+        .chat-container {
+            flex: 1;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .message.self {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-bottom-right-radius: 2px;
+        }
+        .message.other {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            outline: none;
+        }
+        .chat-input button {
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            width: 50px;
+            color: #000;
+            cursor: pointer;
+        }
+        .status-overlay {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc00; }
+        .status-dot.connected { background: #00ff00; }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <div class="main-video">
+            <div class="status-overlay">
+                <div class="status-dot" id="connection-dot"></div>
+                <span id="connection-status">Connecting to room...</span>
+            </div>
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="self-video">
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="toggleMute()"><i class="fas fa-microphone" id="mic-icon"></i></button>
+            <button class="control-btn" onclick="toggleVideo()"><i class="fas fa-video" id="vid-icon"></i></button>
+            <button class="control-btn" onclick="triggerFileSelect()"><i class="fas fa-paperclip"></i></button>
+            <button class="control-btn end-call" onclick="window.close()"><i class="fas fa-phone-slash"></i></button>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-comments"></i> Live Chat & Files
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message other">
+                <em>Welcome to the secure consultation room. All messages are encrypted.</em>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="msgInput" placeholder="Type a message..." onkeypress="handleEnter(event)">
+            <input type="file" id="fileInput" style="display: none;" onchange="sendFile(event)">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        
+        if (!roomId) {
+            alert("No room specified!");
+            window.close();
+        }
+
+        let ws;
+        let localStream;
+        let peerConnection;
+        const configuration = { 'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}] };
+        
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const statusText = document.getElementById('connection-status');
+        const statusDot = document.getElementById('connection-dot');
+
+        async function init() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localVideo.srcObject = localStream;
+                
+                // Connect WebSocket
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                ws = new WebSocket(`${protocol}//${window.location.host}/ws/consultation/${roomId}`);
+                
+                ws.onopen = () => {
+                    statusText.textContent = "Waiting for peer...";
+                    // Initiator sends offer
+                    createPeerConnection();
+                    // Just wait for other peer or send an offer blindly.
+                    // We'll broadcast a 'join' event.
+                    ws.send(JSON.stringify({ type: 'join' }));
+                };
+                
+                ws.onmessage = async (event) => {
+                    const message = JSON.parse(event.data);
+                    
+                    if (message.type === 'join') {
+                        // Someone joined, we should send an offer if we are the "caller"
+                        createOffer();
+                    } else if (message.type === 'offer') {
+                        if (!peerConnection) createPeerConnection();
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        ws.send(JSON.stringify({ type: 'answer', answer: answer }));
+                    } else if (message.type === 'answer') {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
+                    } else if (message.type === 'ice-candidate') {
+                        if (peerConnection) {
+                            await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+                        }
+                    } else if (message.type === 'chat') {
+                        appendMessage(message.text, 'other');
+                    } else if (message.type === 'file') {
+                        appendFile(message.filename, message.filedata, 'other');
+                    }
+                };
+            } catch (e) {
+                console.error("Error accessing media devices.", e);
+                statusText.textContent = "Camera/Mic access denied";
+            }
+        }
+
+        function createPeerConnection() {
+            peerConnection = new RTCPeerConnection(configuration);
+            
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+            
+            peerConnection.ontrack = event => {
+                remoteVideo.srcObject = event.streams[0];
+                statusText.textContent = "Connected (Encrypted)";
+                statusDot.classList.add('connected');
+            };
+            
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    ws.send(JSON.stringify({ type: 'ice-candidate', candidate: event.candidate }));
+                }
+            };
+        }
+
+        async function createOffer() {
+            if (!peerConnection) createPeerConnection();
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            ws.send(JSON.stringify({ type: 'offer', offer: offer }));
+        }
+
+        // --- UI Controls ---
+        
+        let isMuted = false;
+        function toggleMute() {
+            isMuted = !isMuted;
+            localStream.getAudioTracks()[0].enabled = !isMuted;
+            document.getElementById('mic-icon').className = isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
+        }
+
+        let isVideoOff = false;
+        function toggleVideo() {
+            isVideoOff = !isVideoOff;
+            localStream.getVideoTracks()[0].enabled = !isVideoOff;
+            document.getElementById('vid-icon').className = isVideoOff ? 'fas fa-video-slash' : 'fas fa-video';
+        }
+
+        // --- Chat & Files ---
+
+        function appendMessage(text, side) {
+            const msgs = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `message ${side}`;
+            div.textContent = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function appendFile(filename, dataUrl, side) {
+            const msgs = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `message ${side}`;
+            div.innerHTML = `<i class="fas fa-file"></i> <a href="${dataUrl}" download="${filename}" style="color:inherit;">${filename}</a>`;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (text) {
+                appendMessage(text, 'self');
+                ws.send(JSON.stringify({ type: 'chat', text: text }));
+                input.value = '';
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function triggerFileSelect() {
+            document.getElementById('fileInput').click();
+        }
+
+        function sendFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                appendFile(file.name, dataUrl, 'self');
+                ws.send(JSON.stringify({
+                    type: 'file',
+                    filename: file.name,
+                    filedata: dataUrl
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Start
+        window.onload = init;
+    </script>
+</body>
+</html>

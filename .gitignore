@@ -1,0 +1,57 @@
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Local Secrets & Credentials
+.env
+.env.local
+*.key
+*.pem
+
+# SQLite Databases & Cache
+*.db
+health_app.db
+healthos.db
+backend/*.db
+!backend/health_app.db.example
+
+# Large Trained Model Binaries (MLOps artifacts are versioned in registries or bucket mounts)
+*.pkl
+health_model.pkl
+health_model_v2.pkl
+mlb_transformer.pkl
+models/latest/*.pkl
+models/v*/*.pkl
+retraining/models/latest/*.pkl
+retraining/models/v*/*.pkl
+
+# Generated Patient Medical PDF Prescriptions & Exported Data Spreadsheets
+reports/*.pdf
+reports/
+exports/*
+backend/reports/*
+backend/exports/*
+!exports/.gitkeep
+!backend/exports/.gitkeep
+
+# IDEs, Editors & Metadata Cache
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker Cache & Temporary Storage
+.docker/
+docker-compose.override.yml

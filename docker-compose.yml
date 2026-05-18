@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # 1. AI Inference Prediction Service (FastAPI)
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: mediops-ai-service
+    restart: unless-stopped
+    volumes:
+      # Persistent volume mount for model artifacts
+      - ./models:/models
+    networks:
+      - mediops-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:5000/health\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 2. Main Platform Backend API (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mediops-backend
+    restart: unless-stopped
+    depends_on:
+      ai-service:
+        condition: service_healthy
+    environment:
+      - AI_SERVICE_URL=http://ai-service:5000
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      # Persistent SQLite Database storage
+      - ./backend/health_app.db:/app/health_app.db
+      # Persistent CSV dataset storage
+      - ./dataset:/app/dataset
+      # Shared mount for model retraining suite execution
+      - ./retraining:/app/retraining
+      - ./models:/app/models
+      # PDF prescription reports and spreadsheet outputs
+      - ./backend/reports:/app/reports
+      - ./backend/exports:/app/exports
+    networks:
+      - mediops-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/api/admin/doctors\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 3. High-Performance Client Web Server & Reverse Proxy (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mediops-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - mediops-network
+
+networks:
+  mediops-network:
+    name: mediops-network
+    driver: bridge

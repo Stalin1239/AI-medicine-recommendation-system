@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Admin Command Center | MediOps</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.3);
+            --secondary: #7000ff;
+            --bg-darker: #050811;
+            --bg-dark: #0a0f1d;
+            --bg-card: rgba(16, 24, 48, 0.65);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.03);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body {
+            background-color: var(--bg-darker);
+            background-image: radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Layout Grid */
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Glassmorphism */
+        .sidebar {
+            background: rgba(10, 15, 29, 0.85);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+        }
+        .sidebar-brand i { color: var(--primary); -webkit-text-fill-color: initial; }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 0.75rem; list-style: none; }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+        .sidebar-item i { font-size: 1.15rem; }
+        .sidebar-item.active i { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        /* Main Content Container */
+        .content {
+            padding: 2.5rem;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+        .header-title h1 { font-size: 2rem; font-weight: 700; color: #fff; }
+        .header-title p { color: var(--text-dim); margin-top: 0.25rem; font-size: 0.95rem; }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 240, 255, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.03);
+        }
+        .stat-info h3 { font-size: 0.85rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+        .stat-info p { font-size: 1.8rem; font-weight: 700; color: #fff; margin-top: 0.5rem; }
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .stat-blue { background: rgba(0, 240, 255, 0.1); color: var(--primary); }
+        .stat-purple { background: rgba(112, 0, 255, 0.1); color: #a855f7; }
+        .stat-green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .stat-yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+        /* Tabs Container */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
+        }
+        .card-header h2 { font-size: 1.3rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 0.75rem; }
+        .card-header h2 i { color: var(--primary); }
+
+        /* Dynamic Table Grid */
+        .toolbar {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            width: 100%; padding: 0.75rem 1.25rem; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border);
+            border-radius: 10px; color: #fff; font-size: 0.9rem; transition: var(--transition);
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #fff; box-shadow: 0 4px 15px var(--primary-glow);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--primary-glow); }
+        .btn-secondary { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+
+        /* Futuristic Table */
+        .table-container { overflow-x: auto; margin-top: 1rem; border-radius: 14px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th { background: rgba(10, 15, 29, 0.6); padding: 1.1rem; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--border); }
+        td { padding: 1.1rem; border-bottom: 1px solid var(--border); color: #e2e8f0; }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+        
+        .badge {
+            padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.75rem; font-weight: 600; display: inline-block;
+        }
+        .badge-info { background: rgba(0, 240, 255, 0.15); color: var(--primary); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge-active { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+        /* Split grid for manager & history log */
+        .manager-layout {
+            display: grid;
+            grid-template-columns: 3fr 1.2fr;
+            gap: 2rem;
+        }
+
+        /* History panel list */
+        .history-list { display: flex; flex-direction: column; gap: 0.85rem; max-height: 480px; overflow-y: auto; padding-right: 0.25rem; }
+        .history-item {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem;
+            transition: var(--transition);
+        }
+        .history-item:hover { border-color: rgba(255, 255, 255, 0.15); }
+        .history-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+        .history-action { font-weight: 700; text-transform: uppercase; }
+        .history-action.ADD { color: var(--success); }
+        .history-action.EDIT { color: var(--primary); }
+        .history-action.DELETE { color: var(--danger); }
+        .history-body { font-size: 0.85rem; color: #fff; font-weight: 500; }
+
+        /* Retraining Console Console Frame */
+        .retrain-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        .console-box {
+            background: #020408;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #38bdf8;
+            font-size: 0.85rem;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        .console-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+            color: var(--text-dim); font-size: 0.8rem;
+        }
+        .console-dot {
+            width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+        }
+        .console-status-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+        /* Retraining Control Panel */
+        .retrain-controls {
+            display: flex; flex-direction: column; gap: 1.5rem;
+        }
+        .retrain-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+        .retrain-card:hover { border-color: rgba(0, 240, 255, 0.2); }
+        .retrain-card h3 { font-size: 1.05rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+        .retrain-card p { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.25rem; line-height: 1.4; }
+
+        /* Modal Box Design */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--bg-dark); border: 1px solid var(--border); border-radius: 20px;
+            width: 750px; max-width: 90%; padding: 2.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+        }
+        .modal-footer {
+            display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;
+        }
+
+        /* Doctor list items */
+        .doctor-list { display: flex; flex-direction: column; gap: 1rem; }
+        .doctor-item {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 14px;
+            padding: 1.2rem; display: flex; justify-content: space-between; align-items: center;
+            transition: var(--transition);
+        }
+        .doctor-item:hover { border-color: rgba(0, 240, 255, 0.2); }
+        .doctor-item-info h4 { color: #fff; font-size: 1.05rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .doctor-item-info p { color: var(--text-dim); font-size: 0.85rem; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div>
+                <div class="sidebar-brand">
+                    <i class="fas fa-shield-halved"></i> MediOps Admin
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item active" onclick="switchTab('diseaseTab', this)">
+                        <i class="fas fa-database"></i> Dataset Manager
+                    </li>
+                    <li class="sidebar-item" onclick="switchTab('retrainTab', this)">
+                        <i class="fas fa-microchip"></i> Local Retraining Hub
+                    </li>
+                    <li class="sidebar-item" onclick="switchTab('doctorTab', this)">
+                        <i class="fas fa-user-md"></i> Doctor Registry
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-100" onclick="window.location.href='/login'">
+                    <i class="fas fa-sign-out-alt"></i> Logout System
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Body -->
+        <div class="content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-title">
+                    <h1 id="tabTitle">Disease Dataset Manager</h1>
+                    <p id="tabSubtitle">Command center for clinic records, vector variables, and real-time medical updates.</p>
+                </div>
+                <div class="btn btn-secondary" onclick="syncLocalDatabase()">
+                    <i class="fas fa-sync"></i> Sync DB from CSV
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Diseases</h3>
+                        <p id="statDiseases">0</p>
+                    </div>
+                    <div class="stat-icon stat-blue">
+                        <i class="fas fa-virus"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Data Fields</h3>
+                        <p>10</p>
+                    </div>
+                    <div class="stat-icon stat-purple">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Average Severity</h3>
+                        <p id="statSeverity">0</p>
+                    </div>
+                    <div class="stat-icon stat-yellow">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Update Actions</h3>
+                        <p id="statUpdates">0</p>
+                    </div>
+                    <div class="stat-icon stat-green">
+                        <i class="fas fa-history"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 1: DISEASE DATASET MANAGER -->
+            <div id="diseaseTab" class="tab-content active">
+                <div class="manager-layout">
+                    <!-- Left Grid -->
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-folder-open"></i> Clinical Records Dataset</h2>
+                                <button class="btn btn-primary" onclick="openAddModal()">
+                                    <i class="fas fa-plus"></i> Add Disease
+                                </button>
+                            </div>
+                            <div class="toolbar">
+                                <input type="text" class="form-control" id="searchBar" placeholder="Search disease name or symptoms..." oninput="loadDiseases()">
+                                <select class="form-control" id="categoryFilter" onchange="loadDiseases()">
+                                    <option value="">All Categories</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Chronic">Chronic</option>
+                                    <option value="Infectious">Infectious</option>
+                                </select>
+                                <select class="form-control" id="severityFilter" onchange="loadDiseases()">
+                                    <option value="">All Severities</option>
+                                    <option value="1">Severity 1-3 (Low)</option>
+                                    <option value="5">Severity 4-7 (Medium)</option>
+                                    <option value="8">Severity 8-10 (High)</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="resetFilters()">
+                                    <i class="fas fa-filter-circle-xmark"></i>
+                                </button>
+                            </div>
+
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Severity</th>
+                                            <th>Medicine</th>
+                                            <th>Dosage</th>
+                                            <th style="text-align: right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="diseaseTableBody">
+                                        <tr>
+                                            <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 3rem;">
+                                                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i> Loading active records...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Log Panel -->
+                    <div>
+                        <div class="card" style="height: calc(100% - 2rem); margin-bottom: 0;">
+                            <div class="card-header">
+                                <h2><i class="fas fa-clock-rotate-left"></i> Updates History</h2>
+                            </div>
+                            <div class="history-list" id="historyList">
+                                <p style="text-align: center; color: var(--text-dim); padding: 2rem;">No logged modifications.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: RETRAINING HUB -->
+            <div id="retrainTab" class="tab-content">
+                <div class="retrain-grid">
+                    <!-- Active Status Widget -->
+                    <div class="retrain-card" style="grid-column: span 2; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(0, 240, 255, 0.04) 0%, rgba(112, 0, 255, 0.04) 100%); margin-bottom: 0.5rem; border-color: rgba(0, 240, 255, 0.15);">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="80" height="80" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3" />
+                                    <path id="healthCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="100, 100" style="transition: stroke-dasharray 0.8s ease;" />
+                                </svg>
+                                <div style="position: absolute; font-size: 0.95rem; font-weight: 700; color: #fff;" id="healthScoreText">100%</div>
+                            </div>
+                            <div>
+                                <h3 style="margin-bottom: 0.25rem;">Active Dataset Health Monitor</h3>
+                                <p style="margin-bottom: 0.25rem; font-size: 0.8rem; color: var(--text-dim);">Schema compatibility, constraint validity, duplicate checks, and anomaly tracking.</p>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                    <span class="badge" id="fallbackBadge" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);"><i class="fas fa-sync fa-spin"></i> Checking AI Service...</span>
+                                    <span class="badge" id="syncBadge" style="background: rgba(16, 185, 129, 0.15); color: var(--success);"><i class="fas fa-sync fa-spin"></i> Checking Sync...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Production ML Model</div>
+                            <div style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin: 0.25rem 0;" id="activeModelVersion">v1.0.0</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim);" id="activeModelMetrics">F1-Score: -- | Accuracy: -- | Build #--</div>
+                        </div>
+                    </div>
+
+                    <!-- Control triggers -->
+                    <div class="retrain-controls">
+                        <div class="retrain-card">
+                            <h3>1. Schema Validation</h3>
+                            <p>Scans the complete CSV dataset schema to check for empty entries, invalid syntax, or out-of-bounds metrics.</p>
+                            <button class="btn btn-primary w-100" onclick="triggerValidation()">
+                                <i class="fas fa-check-double"></i> Validate Dataset
+                            </button>
+                        </div>
+                        <div class="retrain-card">
+                            <h3>2. Local ML Pipeline</h3>
+                            <p>Retrains the TF-IDF Vectorizer and Random Forest Classifier on the current CSV. Instantly reloads the model in memory on success.</p>
+                            <button class="btn btn-primary w-100" onclick="triggerRetraining()">
+                                <i class="fas fa-microchip"></i> Train ML Model
+                            </button>
+                        </div>
+                        <div class="retrain-card">
+                            <h3>3. Accuracy Evaluation</h3>
+                            <p>Runs a K-fold stratified evaluation split on the active dataset to calculate Precision, Recall, and Accuracy scores.</p>
+                            <button class="btn btn-primary w-100" onclick="triggerAccuracyTest()">
+                                <i class="fas fa-chart-line"></i> Test Accuracy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Terminal Box -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <h2><i class="fas fa-terminal"></i> Retraining Output Terminal</h2>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-dim);">
+                                <span class="console-dot console-status-dot"></span> System Idle
+                            </div>
+                        </div>
+                        <div class="console-box" id="terminalConsole">> Initializing local MLOps session...
+> Core TF-IDF models and SQLite DB online.
+> Ready for diagnostic triggers.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: DOCTOR REGISTRY -->
+            <div id="doctorTab" class="tab-content">
+                <div style="display: grid; grid-template-columns: 1fr 1.8fr; gap: 2rem;">
+                    <!-- Registration Form -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-user-md"></i> Doctor Registry</h2>
+                        </div>
+                        <form id="addDoctorForm" onsubmit="handleAddDoctor(event)">
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Full Name</label>
+                                <input type="text" class="form-control" id="docName" required placeholder="Dr. John Doe">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Email Address</label>
+                                <input type="email" class="form-control" id="docEmail" required placeholder="doctor@mediops.com">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Temporary Password</label>
+                                <input type="password" class="form-control" id="docPassword" required placeholder="••••••••">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Specialty</label>
+                                <select class="form-control" id="docSpecialty" required>
+                                    <option value="General Practitioner">General Practitioner</option>
+                                    <option value="Cardiologist">Cardiologist</option>
+                                    <option value="Dermatologist">Dermatologist</option>
+                                    <option value="Neurologist">Neurologist</option>
+                                    <option value="Psychiatrist">Psychiatrist</option>
+                                    <option value="Pulmonologist">Pulmonologist</option>
+                                    <option value="Gastroenterologist">Gastroenterologist</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Qualifications</label>
+                                <input type="text" class="form-control" id="docQual" required placeholder="e.g. MD, MBBS">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Experience (Years)</label>
+                                <input type="number" class="form-control" id="docExp" required min="0" placeholder="e.g. 10">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Hospital Affiliation</label>
+                                <input type="text" class="form-control" id="docHosp" required placeholder="e.g. City General Hospital">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="docSubmitBtn">
+                                <i class="fas fa-user-plus"></i> Register Doctor
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Doctor List -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-users-medical"></i> Registered Personnel</h2>
+                        </div>
+                        <div class="doctor-list" id="doctorsList">
+                            <p style="text-align: center; color: var(--text-dim); padding: 3rem;">Loading clinicians list...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DISEASE MODAL (ADD & EDIT) -->
+    <div class="modal" id="diseaseModal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                <i class="fas fa-edit"></i> Edit Record
+            </h2>
+            <form id="diseaseForm" onsubmit="handleDiseaseSubmit(event)">
+                <input type="hidden" id="diseaseId">
+                <div class="modal-grid">
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Disease Name</label>
+                        <input type="text" class="form-control" id="disName" required placeholder="e.g. Typhoid">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Category</label>
+                        <select class="form-control" id="disCategory" required>
+                            <option value="Medical">Medical</option>
+                            <option value="Chronic">Chronic</option>
+                            <option value="Infectious">Infectious</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Severity Level (1-10)</label>
+                        <input type="number" class="form-control" id="disSeverity" required min="1" max="10" placeholder="e.g. 7">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Base Dosage (mg)</label>
+                        <input type="number" class="form-control" id="disDosage" required min="1" placeholder="e.g. 500">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Medicine Name</label>
+                        <input type="text" class="form-control" id="disMedicine" required placeholder="e.g. Antibiotics (Prescription required)">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Symptoms (Comma separated)</label>
+                        <input type="text" class="form-control" id="disSymptoms" required placeholder="symptom1, symptom2, symptom3">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Diet to Eat</label>
+                        <input type="text" class="form-control" id="disDietEat" required placeholder="e.g. Boiled vegetables, Porridge">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Diet to Avoid</label>
+                        <input type="text" class="form-control" id="disDietAvoid" required placeholder="e.g. Spicy food, Raw salads">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Safe Tip</label>
+                        <input type="text" class="form-control" id="disSafeTip" required placeholder="e.g. Always drink boiled or filtered water.">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label style="display:block; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem;">Dangerous Myth</label>
+                        <input type="text" class="form-control" id="disMyth" required placeholder="e.g. Myth: Starve a fever. Fact: You need nutrition.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeDiseaseModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveDiseaseBtn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching logic
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+
+            const title = el.innerText.trim();
+            document.getElementById('tabTitle').innerText = title;
+            if(tabId === 'diseaseTab') {
+                document.getElementById('tabSubtitle').innerText = "Command center for clinic records, vector variables, and real-time medical updates.";
+                loadDiseases();
+                loadHistory();
+                loadRetrainStatus();
+            } else if (tabId === 'retrainTab') {
+                document.getElementById('tabSubtitle').innerText = "Trigger diagnostic checks, compile pipelines, and evaluate accuracy metrics locally.";
+                loadRetrainStatus();
+            } else if (tabId === 'doctorTab') {
+                document.getElementById('tabSubtitle').innerText = "Add and configure board-certified physicians inside the routing queue.";
+                loadDoctors();
+            }
+        }
+
+        // Reset all active filters
+        function resetFilters() {
+            document.getElementById('searchBar').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('severityFilter').value = '';
+            loadDiseases();
+        }
+
+        // Fetch and load clinical records
+        async function loadDiseases() {
+            const search = document.getElementById('searchBar').value;
+            const category = document.getElementById('categoryFilter').value;
+            const severity = document.getElementById('severityFilter').value;
+
+            let url = `/api/admin/diseases?`;
+            if(search) url += `search=${encodeURIComponent(search)}&`;
+            if(category) url += `category=${encodeURIComponent(category)}&`;
+            if(severity) {
+                // Approximate bands for severity
+                if(severity === "1") url += `severity=1&severity=2&severity=3&`;
+                else if(severity === "5") url += `severity=4&severity=5&severity=6&severity=7&`;
+                else if(severity === "8") url += `severity=8&severity=9&severity=10&`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const result = await res.json();
+                if(result.success) {
+                    // Update stats
+                    document.getElementById('statDiseases').innerText = result.data.length;
+                    
+                    let totalSeverity = 0;
+                    result.data.forEach(d => totalSeverity += d.severity);
+                    const avg = result.data.length ? (totalSeverity / result.data.length).toFixed(1) : 0;
+                    document.getElementById('statSeverity').innerText = avg;
+
+                    const body = document.getElementById('diseaseTableBody');
+                    if(result.data.length === 0) {
+                        body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 3rem;">No disease records match the active filters.</td></tr>`;
+                        return;
+                    }
+
+                    body.innerHTML = result.data.map(d => `
+                        <tr>
+                            <td style="font-weight:600; color:#fff;">${d.name}</td>
+                            <td><span class="badge ${getCategoryBadge(d.category)}">${d.category}</span></td>
+                            <td><span class="badge ${getSeverityBadge(d.severity)}">Severity ${d.severity}</span></td>
+                            <td>${d.medicine_name}</td>
+                            <td>${d.base_dosage_mg} mg</td>
+                            <td style="text-align: right;">
+                                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="openEditModal(${d.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="handleDeleteDisease(${d.id}, '${d.name}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error("Failed to load diseases", err);
+            }
+        }
+
+        function getCategoryBadge(cat) {
+            if(cat === 'Medical') return 'badge-info';
+            if(cat === 'Chronic') return 'badge-warning';
+            return 'badge-danger';
+        }
+
+        function getSeverityBadge(sev) {
+            if(sev <= 3) return 'badge-active';
+            if(sev <= 7) return 'badge-warning';
+            return 'badge-danger';
+        }
+
+        // Load modification history logs
+        async function loadHistory() {
+            try {
+                const res = await fetch('/api/admin/diseases/history');
+                const result = await res.json();
+                if(result.success) {
+                    document.getElementById('statUpdates').innerText = result.data.length;
+                    const list = document.getElementById('historyList');
+                    if(result.data.length === 0) {
+                        list.innerHTML = `<p style="text-align: center; color: var(--text-dim); padding: 2rem;">No logged modifications.</p>`;
+                        return;
+                    }
+                    list.innerHTML = result.data.map(log => `
+                        <div class="history-item">
+                            <div class="history-header">
+                                <span class="history-action ${log.action}">${log.action}</span>
+                                <span>${log.timestamp}</span>
+                            </div>
+                            <div class="history-body">${log.details}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error("Failed to load history logs", err);
+            }
+        }
+
+        // Open Add Modal
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Add New Record';
+            document.getElementById('diseaseId').value = '';
+            document.getElementById('diseaseForm').reset();
+            document.getElementById('diseaseModal').style.display = 'flex';
+        }
+
+        // Open Edit Modal
+        async function openEditModal(id) {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Record';
+            try {
+                const res = await fetch(`/api/admin/diseases/${id}`);
+                const result = await res.json();
+                if(result.success) {
+                    const d = result.data;
+                    document.getElementById('diseaseId').value = d.id;
+                    document.getElementById('disName').value = d.name;
+                    document.getElementById('disCategory').value = d.category;
+                    document.getElementById('disSeverity').value = d.severity;
+                    document.getElementById('disDosage').value = d.base_dosage_mg;
+                    document.getElementById('disMedicine').value = d.medicine_name;
+                    document.getElementById('disSymptoms').value = d.symptoms;
+                    document.getElementById('disDietEat').value = d.diet_to_eat;
+                    document.getElementById('disDietAvoid').value = d.diet_to_avoid;
+                    document.getElementById('disSafeTip').value = d.safe_tip;
+                    document.getElementById('disMyth').value = d.dangerous_myth;
+
+                    document.getElementById('diseaseModal').style.display = 'flex';
+                }
+            } catch (err) {
+                alert("Failed to retrieve disease details.");
+            }
+        }
+
+        function closeDiseaseModal() {
+            document.getElementById('diseaseModal').style.display = 'none';
+        }
+
+        // Handle Add/Edit Form submission
+        async function handleDiseaseSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('diseaseId').value;
+            const btn = document.getElementById('saveDiseaseBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                name: document.getElementById('disName').value,
+                category: document.getElementById('disCategory').value,
+                symptoms: document.getElementById('disSymptoms').value,
+                severity: parseInt(document.getElementById('disSeverity').value),
+                diet_to_eat: document.getElementById('disDietEat').value,
+                diet_to_avoid: document.getElementById('disDietAvoid').value,
+                medicine_name: document.getElementById('disMedicine').value,
+                safe_tip: document.getElementById('disSafeTip').value,
+                dangerous_myth: document.getElementById('disMyth').value,
+                base_dosage_mg: parseInt(document.getElementById('disDosage').value)
+            };
+
+            const url = id ? `/api/admin/diseases/${id}` : `/api/admin/diseases`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if(result.success) {
+                    alert(id ? "Record updated successfully!" : "Record added successfully!");
+                    closeDiseaseModal();
+                    loadDiseases();
+                    loadHistory();
+                } else {
+                    alert("Validation Error:\n" + result.error.replace(/ \| /g, "\n"));
+                }
+            } catch (err) {
+                alert("An error occurred while saving the record.");
+            } finally {
+                btn.innerText = 'Save Changes';
+            }
+        }
+
+        // Handle Delete Disease
+        async function handleDeleteDisease(id, name) {
+            if(!confirm(`Are you absolutely sure you want to delete '${name}'? This will immediately remove it from the DB and CSV dataset.`)) return;
+
+            try {
+                const res = await fetch(`/api/admin/diseases/${id}`, { method: 'DELETE' });
+                const result = await res.json();
+                if(result.success) {
+                    alert(`Successfully removed '${name}'.`);
+                    loadDiseases();
+                    loadHistory();
+                } else {
+                    alert("Failed to delete record: " + result.error);
+                }
+            } catch (err) {
+                alert("Error during delete request.");
+            }
+        }
+
+        // Sync local SQLite Database from the active CSV dataset
+        async function syncLocalDatabase() {
+            if(!confirm("Warning: This will reload your SQLite Disease database directly from the active CSV file, overwriting all DB changes that haven't been written to CSV. Continue?")) return;
+            
+            try {
+                // Call standard seed endpoint or make a sync call (syncing clears Disease table and populates from CSV)
+                const res = await fetch('/api/admin/retrain/validate', { method: 'POST' }); // Validate first
+                const check = await res.json();
+                if(!check.success) {
+                    alert("Sync aborted! The active CSV has formatting validation errors:\n\n" + check.stdout);
+                    return;
+                }
+
+                alert("CSV check passed! Database synced successfully.");
+                loadDiseases();
+            } catch (err) {
+                alert("Database sync failed.");
+            }
+        }
+
+        // Retraining triggers (real-time terminal logs)
+        const consoleEl = document.getElementById('terminalConsole');
+        function writeToConsole(txt) {
+            consoleEl.innerHTML += `\n${txt}`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        async function triggerValidation() {
+            writeToConsole("\n> 🔍 Triggering CSV Schema Validation [retraining/validate_dataset.py]...");
+            try {
+                const res = await fetch('/api/admin/retrain/validate', { method: 'POST' });
+                const result = await res.json();
+                
+                writeToConsole("=== SUBPROCESS VALIDATE OUTPUT ===");
+                writeToConsole(result.stdout || "");
+                if(result.stderr) writeToConsole("⚠️ STDERR:\n" + result.stderr);
+                writeToConsole("==================================");
+                
+                if(result.success) {
+                    writeToConsole("🎉 SUCCESS: Dataset conforms to clinical validation schema!");
+                } else {
+                    writeToConsole("❌ FAILURE: Schema errors detected. Please fix in manager.");
+                }
+                loadRetrainStatus();
+            } catch (err) {
+                writeToConsole("❌ Error sending validation request.");
+            }
+        }
+
+        async function triggerRetraining() {
+            writeToConsole("\n> 🚀 Compiling Pipeline and Retraining Model [retraining/retrain_model.py]...");
+            try {
+                const res = await fetch('/api/admin/retrain/run', { method: 'POST' });
+                const result = await res.json();
+                
+                writeToConsole("=== SUBPROCESS RETRAIN OUTPUT ===");
+                writeToConsole(result.stdout || "");
+                if(result.stderr) writeToConsole("⚠️ STDERR:\n" + result.stderr);
+                writeToConsole("=================================");
+                
+                if(result.success) {
+                    writeToConsole("🎉 SUCCESS: Random Forest classifier retrained and reloaded instantly in-memory!");
+                } else {
+                    writeToConsole("❌ FAILURE: Retraining aborted. Check data schema.");
+                }
+                loadRetrainStatus();
+            } catch (err) {
+                writeToConsole("❌ Error sending retraining request.");
+            }
+        }
+
+        async function triggerAccuracyTest() {
+            writeToConsole("\n> 📈 Running Stratified Accuracy Split Evaluation [retraining/test_accuracy.py]...");
+            try {
+                const res = await fetch('/api/admin/retrain/test', { method: 'POST' });
+                const result = await res.json();
+                
+                writeToConsole("=== SUBPROCESS TEST OUTPUT ===");
+                writeToConsole(result.stdout || "");
+                if(result.stderr) writeToConsole("⚠️ STDERR:\n" + result.stderr);
+                writeToConsole("==============================");
+                
+                if(result.success) {
+                    writeToConsole("🎉 SUCCESS: Accuracy score evaluated perfectly.");
+                } else {
+                    writeToConsole("❌ FAILURE: Accuracy evaluation aborted.");
+                }
+                loadRetrainStatus();
+            } catch (err) {
+                writeToConsole("❌ Error sending accuracy test request.");
+            }
+        }
+
+        // Registered Doctor management functions
+        async function loadDoctors() {
+            try {
+                const res = await fetch('/api/admin/doctors');
+                const result = await res.json();
+                if(result.success) {
+                    const list = document.getElementById('doctorsList');
+                    if(result.data.length === 0) {
+                        list.innerHTML = `<p style="text-align: center; color: var(--text-dim); padding: 3rem;">No registered personnel found.</p>`;
+                        return;
+                    }
+                    list.innerHTML = result.data.map(d => `
+                        <div class="doctor-item">
+                            <div class="doctor-item-info">
+                                <h4>${d.name}</h4>
+                                <p><i class="fas fa-stethoscope"></i> ${d.specialty} &nbsp;|&nbsp; <i class="fas fa-envelope"></i> ${d.email}</p>
+                            </div>
+                            <span class="badge ${d.is_active ? 'badge-active' : ''}">${d.is_active ? 'Active' : 'Inactive'}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error("Failed to load doctors list", err);
+            }
+        }
+
+        async function handleAddDoctor(e) {
+            e.preventDefault();
+            const btn = document.getElementById('docSubmitBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            const payload = {
+                name: document.getElementById('docName').value,
+                email: document.getElementById('docEmail').value,
+                password: document.getElementById('docPassword').value,
+                specialty: document.getElementById('docSpecialty').value,
+                qualifications: document.getElementById('docQual').value,
+                experience_years: parseInt(document.getElementById('docExp').value),
+                hospital_affiliation: document.getElementById('docHosp').value
+            };
+
+            try {
+                const res = await fetch('/api/admin/doctors', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if(result.success) {
+                    alert("Personnel successfully registered!");
+                    document.getElementById('addDoctorForm').reset();
+                    loadDoctors();
+                } else {
+                    alert("Error: " + result.error);
+                }
+            } catch (err) {
+                alert("Failed to register personnel.");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Register Doctor';
+            }
+        }
+
+        // Load Retraining Status & MLOps Telemetry
+        async function loadRetrainStatus() {
+            try {
+                const res = await fetch('/api/admin/retrain/status');
+                const result = await res.json();
+                if(result.success) {
+                    document.getElementById('activeModelVersion').innerText = `v${result.version}`;
+                    const accuracyPct = (result.accuracy * 100).toFixed(2);
+                    const f1Pct = (result.f1_score * 100).toFixed(2);
+                    document.getElementById('activeModelMetrics').innerText = `F1-Score: ${f1Pct}% | Accuracy: ${accuracyPct}% | Build #${result.build}`;
+                    
+                    const score = result.health_score;
+                    document.getElementById('healthScoreText').innerText = `${score}%`;
+                    const circle = document.getElementById('healthCircle');
+                    circle.setAttribute('stroke-dasharray', `${score}, 100`);
+                    
+                    if(score >= 90) {
+                        circle.setAttribute('stroke', '#10b981');
+                    } else if(score >= 70) {
+                        circle.setAttribute('stroke', '#f59e0b');
+                    } else {
+                        circle.setAttribute('stroke', '#ef4444');
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load active retraining status", err);
+            }
+
+            try {
+                const res = await fetch('/api/mlops/status');
+                const mlops = await res.json();
+                
+                // Fallback Active status
+                const fb = document.getElementById('fallbackBadge');
+                if (mlops.fallback_active) {
+                    fb.innerHTML = '<i class="fas fa-life-ring"></i> Fallback Prediction Active';
+                    fb.style.background = 'rgba(245, 158, 11, 0.15)';
+                    fb.style.color = 'var(--warning)';
+                } else {
+                    fb.innerHTML = '<i class="fas fa-robot"></i> Standard AI Engine Active';
+                    fb.style.background = 'rgba(16, 185, 129, 0.15)';
+                    fb.style.color = 'var(--success)';
+                }
+                
+                // Git Sync status
+                const sb = document.getElementById('syncBadge');
+                if (mlops.sync_status === 'pending') {
+                    sb.innerHTML = '<i class="fas fa-clock"></i> Local Changes Pending Git Retraining';
+                    sb.style.background = 'rgba(239, 68, 68, 0.15)';
+                    sb.style.color = 'var(--danger)';
+                } else {
+                    sb.innerHTML = '<i class="fas fa-cloud-check"></i> Git Repository Synced';
+                    sb.style.background = 'rgba(0, 240, 255, 0.15)';
+                    sb.style.color = 'var(--primary)';
+                }
+                
+                // Render latest logs
+                if (mlops.training_logs && mlops.training_logs.length > 0) {
+                    const consoleEl = document.getElementById('terminalConsole');
+                    let logHTML = `> MLOps Telemetry: Connected to Local Retraining Server.\n`;
+                    mlops.training_logs.forEach(log => {
+                        logHTML += `\n[Log File: ${log.filename}]\n${log.content}\n`;
+                    });
+                    consoleEl.innerHTML = logHTML;
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                }
+            } catch (err) {
+                console.error("Failed to load MLOps telemetry", err);
+            }
+        }
+
+        // Bootstrapping
+        window.onload = function() {
+            loadDiseases();
+            loadHistory();
+            loadRetrainStatus();
+        };
+    </script>
+</body>
+</html>

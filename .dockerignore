@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.dockerignore
+Dockerfile
+docker-compose.yml
+.gemini/
+exports/*
+reports/*
+.idea/
+.vscode/
+health_model.pkl
