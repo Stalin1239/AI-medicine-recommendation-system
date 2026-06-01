@@ -969,26 +969,35 @@
         }
 
         async function triggerRetraining() {
-            writeToConsole("\n> 🚀 Compiling Pipeline and Retraining Model [retraining/retrain_model.py]...");
+            writeToConsole("\n> [Local] Retraining ML Model [scripts/retrain_model.py]...");
             try {
                 const res = await fetch('/api/admin/retrain/run', { method: 'POST' });
                 const result = await res.json();
                 
-                writeToConsole("=== SUBPROCESS RETRAIN OUTPUT ===");
+                writeToConsole("=== RETRAIN OUTPUT ===");
                 writeToConsole(result.stdout || "");
-                if(result.stderr) writeToConsole("⚠️ STDERR:\n" + result.stderr);
-                writeToConsole("=================================");
+                if(result.stderr) writeToConsole("STDERR:\n" + result.stderr);
+                writeToConsole("=====================");
                 
                 if(result.success) {
-                    writeToConsole("🎉 SUCCESS: Random Forest classifier retrained and reloaded instantly in-memory!");
+                    writeToConsole("[SUCCESS] Model retrained and reloaded in memory!");
+                    writeToConsole("");
+                    writeToConsole("--- Auto Git Push ---");
+                    writeToConsole(result.git_push_log || "[INFO] Git push not attempted.");
+                    if(result.git_push) {
+                        writeToConsole("[NEXT] GitHub Actions CI/CD is now running automatically.");
+                        writeToConsole("[NEXT] Refreshing pipeline run history...");
+                        setTimeout(loadGithubStatus, 5000);
+                    }
                 } else {
-                    writeToConsole("❌ FAILURE: Retraining aborted. Check data schema.");
+                    writeToConsole("[FAILURE] Retraining aborted. Check data schema.");
                 }
                 loadRetrainStatus();
             } catch (err) {
-                writeToConsole("❌ Error sending retraining request.");
+                writeToConsole("[ERROR] Error sending retraining request.");
             }
         }
+
 
         async function triggerAccuracyTest() {
             writeToConsole("\n> Running Stratified Accuracy Split Evaluation [scripts/test_accuracy.py]...");

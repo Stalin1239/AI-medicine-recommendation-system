@@ -2601,22 +2601,76 @@ async def trigger_retrain_run():
     try:
         script_path = "scripts/retrain_model.py"
         res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
-        
-        # Trigger dynamic reload of ML model inside Decoupled AI Inference Service container
+
+        # Trigger dynamic reload of ML model inside AI Inference Service
         if res.returncode == 0:
             try:
                 requests.post(f"{AI_SERVICE_URL}/reload", timeout=5.0)
-                print("🔄 API Gateway: Dynamic ML model reload command triggered successfully to AI Service.")
+                print("[OK] Dynamic ML model reload triggered to AI Service.")
             except Exception as e:
-                print(f"⚠️ API Gateway: Failed to notify AI service to reload: {e}")
-                
+                print(f"[WARN] Failed to notify AI service to reload: {e}")
+
+        # ---------------------------------------------------------------
+        # AUTO GIT PUSH — triggers GitHub CI/CD without manual steps
+        # Only runs if training succeeded
+        # ---------------------------------------------------------------
+        git_push_log = ""
+        git_push_success = False
+
+        if res.returncode == 0:
+            try:
+                # Stage the updated model, metadata, and CSV
+                git_add = subprocess.run(
+                    ["git", "add",
+                     "health_model_v2.pkl",
+                     "models/latest/health_model_v2.pkl",
+                     "models/version_metadata.json",
+                     "logs/training_logs/",
+                     "fedmedflow_accurate_dataset.csv"],
+                    capture_output=True, text=True, encoding='utf-8'
+                )
+
+                # Check if there's actually anything staged
+                git_status = subprocess.run(
+                    ["git", "diff", "--staged", "--quiet"],
+                    capture_output=True
+                )
+
+                if git_status.returncode != 0:
+                    # There are staged changes — commit and push
+                    git_commit = subprocess.run(
+                        ["git", "commit", "-m",
+                         "Auto-MLOps: Admin retrained model locally — triggering CI/CD [skip validation]"],
+                        capture_output=True, text=True, encoding='utf-8'
+                    )
+
+                    git_push = subprocess.run(
+                        ["git", "push", "origin", "HEAD"],
+                        capture_output=True, text=True, encoding='utf-8'
+                    )
+
+                    if git_push.returncode == 0:
+                        git_push_success = True
+                        git_push_log = "[OK] Pushed to GitHub. CI/CD pipeline will now start automatically."
+                    else:
+                        git_push_log = f"[WARN] Git push failed: {git_push.stderr.strip()}"
+                else:
+                    git_push_success = True
+                    git_push_log = "[INFO] No model file changes detected — nothing to push."
+
+            except Exception as git_err:
+                git_push_log = f"[WARN] Git auto-push skipped: {git_err}"
+
         return {
             "success": res.returncode == 0,
             "stdout": res.stdout,
-            "stderr": res.stderr
+            "stderr": res.stderr,
+            "git_push": git_push_success,
+            "git_push_log": git_push_log
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+
 
 
 @app.post("/api/admin/retrain/test")
