@@ -2618,6 +2618,7 @@ async def trigger_retrain_run():
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+
 @app.post("/api/admin/retrain/test")
 async def trigger_retrain_test():
     try:
@@ -2631,4 +2632,116 @@ async def trigger_retrain_test():
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+
+# --- GITHUB CI/CD TRIGGER ENDPOINTS ---
+
+import urllib.request
+import urllib.error
+
+@app.post("/api/admin/retrain/github")
+async def trigger_github_pipeline():
+    """
+    Triggers the full CI/CD retraining pipeline on GitHub Actions
+    via the workflow_dispatch event on sync-model.yml.
+    Requires GITHUB_TOKEN and GITHUB_REPO in .env
+    """
+    github_token = os.getenv("GITHUB_TOKEN", "")
+    github_repo = os.getenv("GITHUB_REPO", "")  # e.g. "Stalin1239/AI-medicine-recommendation-system"
+    branch = os.getenv("GITHUB_BRANCH", "main")
+
+    if not github_token:
+        return {
+            "success": False,
+            "error": "GITHUB_TOKEN not set in .env. Add it to trigger CI/CD from the admin panel."
+        }
+    if not github_repo:
+        return {
+            "success": False,
+            "error": "GITHUB_REPO not set in .env. Example: Stalin1239/AI-medicine-recommendation-system"
+        }
+
+    # Trigger the master sync workflow (Step 4 — it runs validate → retrain → accuracy → push)
+    workflow_file = "sync-model.yml"
+    url = f"https://api.github.com/repos/{github_repo}/actions/workflows/{workflow_file}/dispatches"
+
+    payload = json.dumps({"ref": branch}).encode("utf-8")
+    headers = {
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+
+    try:
+        req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+        with urllib.request.urlopen(req) as response:
+            # GitHub returns 204 No Content on success
+            return {
+                "success": True,
+                "message": f"GitHub Actions pipeline triggered successfully on branch '{branch}'.",
+                "workflow": workflow_file,
+                "repo": github_repo
+            }
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        return {
+            "success": False,
+            "error": f"GitHub API error {e.code}: {body}"
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/admin/retrain/github/status")
+async def get_github_pipeline_status():
+    """
+    Returns the last 5 workflow runs for sync-model.yml from GitHub API.
+    """
+    github_token = os.getenv("GITHUB_TOKEN", "")
+    github_repo = os.getenv("GITHUB_REPO", "")
+
+    if not github_token or not github_repo:
+        return {
+            "success": False,
+            "configured": False,
+            "error": "GITHUB_TOKEN and GITHUB_REPO must be set in .env"
+        }
+
+    workflow_file = "sync-model.yml"
+    url = f"https://api.github.com/repos/{github_repo}/actions/workflows/{workflow_file}/runs?per_page=5"
+    headers = {
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+
+    try:
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            runs = data.get("workflow_runs", [])
+            return {
+                "success": True,
+                "configured": True,
+                "repo": github_repo,
+                "runs": [
+                    {
+                        "id": r["id"],
+                        "status": r["status"],           # queued / in_progress / completed
+                        "conclusion": r.get("conclusion"),  # success / failure / None
+                        "created_at": r["created_at"],
+                        "updated_at": r["updated_at"],
+                        "html_url": r["html_url"]
+                    }
+                    for r in runs
+                ]
+            }
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        return {"success": False, "configured": True, "error": f"GitHub API {e.code}: {body}"}
+    except Exception as e:
+        return {"success": False, "configured": True, "error": str(e)}
+
+
 # Clean transaction reset and uvicorn auto-reload trigger.
+

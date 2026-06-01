@@ -515,6 +515,34 @@
                                 <i class="fas fa-chart-line"></i> Test Accuracy
                             </button>
                         </div>
+
+                        <div class="retrain-card" style="border-color: rgba(112, 0, 255, 0.35); background: rgba(112, 0, 255, 0.04);">
+                            <h3 style="display:flex; align-items:center; gap:0.5rem;">
+                                <i class="fab fa-github" style="color: var(--primary);"></i> 4. GitHub CI/CD Pipeline
+                            </h3>
+                            <p>Triggers the full automated pipeline on GitHub Actions: Validate → Retrain → Evaluate → Commit model back to repo.</p>
+                            <div id="githubConfigWarning" style="display:none; background: rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:0.75rem; margin-bottom:1rem; font-size:0.8rem; color:var(--warning);">
+                                <i class="fas fa-exclamation-triangle"></i> Add <code>GITHUB_TOKEN</code> and <code>GITHUB_REPO</code> to your <code>.env</code> file to enable this feature.
+                            </div>
+                            <button class="btn btn-primary w-100" id="githubTriggerBtn" onclick="triggerGithubPipeline()" style="background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);">
+                                <i class="fab fa-github"></i> Trigger GitHub CI/CD
+                            </button>
+                        </div>
+
+                    </div>
+                    </div>
+
+                    <!-- GitHub Pipeline Run History -->
+                    <div class="card" style="grid-column: span 2; margin-bottom: 0; margin-top: 2rem;">
+                        <div class="card-header">
+                            <h2><i class="fab fa-github"></i> GitHub Actions — Pipeline Run History</h2>
+                            <button class="btn btn-secondary" style="padding:0.4rem 1rem; font-size:0.8rem;" onclick="loadGithubStatus()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                        <div id="githubRunsTable">
+                            <p style="color:var(--text-dim); text-align:center; padding:2rem;">Loading pipeline history...</p>
+                        </div>
                     </div>
 
                     <!-- Interactive Terminal Box -->
@@ -963,26 +991,120 @@
         }
 
         async function triggerAccuracyTest() {
-            writeToConsole("\n> 📈 Running Stratified Accuracy Split Evaluation [retraining/test_accuracy.py]...");
+            writeToConsole("\n> Running Stratified Accuracy Split Evaluation [scripts/test_accuracy.py]...");
             try {
                 const res = await fetch('/api/admin/retrain/test', { method: 'POST' });
                 const result = await res.json();
                 
                 writeToConsole("=== SUBPROCESS TEST OUTPUT ===");
                 writeToConsole(result.stdout || "");
-                if(result.stderr) writeToConsole("⚠️ STDERR:\n" + result.stderr);
+                if(result.stderr) writeToConsole("STDERR:\n" + result.stderr);
                 writeToConsole("==============================");
                 
                 if(result.success) {
-                    writeToConsole("🎉 SUCCESS: Accuracy score evaluated perfectly.");
+                    writeToConsole("[SUCCESS] Accuracy score evaluated.");
                 } else {
-                    writeToConsole("❌ FAILURE: Accuracy evaluation aborted.");
+                    writeToConsole("[FAILURE] Accuracy evaluation aborted.");
                 }
                 loadRetrainStatus();
             } catch (err) {
-                writeToConsole("❌ Error sending accuracy test request.");
+                writeToConsole("[ERROR] Error sending accuracy test request.");
             }
         }
+
+        async function triggerGithubPipeline() {
+            const btn = document.getElementById('githubTriggerBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Triggering...';
+            btn.disabled = true;
+            writeToConsole("\n> [GitHub CI/CD] Dispatching workflow_dispatch to sync-model.yml...");
+            try {
+                const res = await fetch('/api/admin/retrain/github', { method: 'POST' });
+                const result = await res.json();
+                if (result.success) {
+                    writeToConsole("[SUCCESS] " + result.message);
+                    writeToConsole("> Workflow: " + result.workflow + " | Repo: " + result.repo);
+                    writeToConsole("> GitHub Actions is now running: Validate -> Retrain -> Accuracy -> Commit");
+                    writeToConsole("> Check the 'Pipeline Run History' section below or visit GitHub Actions tab.");
+                    // Poll for status after a few seconds
+                    setTimeout(loadGithubStatus, 4000);
+                } else {
+                    writeToConsole("[FAILURE] " + result.error);
+                    if (result.error.includes('GITHUB_TOKEN')) {
+                        document.getElementById('githubConfigWarning').style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                writeToConsole("[ERROR] Could not reach backend GitHub trigger endpoint.");
+            } finally {
+                btn.innerHTML = '<i class="fab fa-github"></i> Trigger GitHub CI/CD';
+                btn.disabled = false;
+            }
+        }
+
+        async function loadGithubStatus() {
+            try {
+                const res = await fetch('/api/admin/retrain/github/status');
+                const result = await res.json();
+                const container = document.getElementById('githubRunsTable');
+
+                if (!result.configured) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:2rem; color:var(--warning);">
+                            <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:1rem; display:block;"></i>
+                            <strong>GitHub CI/CD not configured.</strong><br>
+                            <span style="font-size:0.85rem; color:var(--text-dim);">Add <code>GITHUB_TOKEN</code> and <code>GITHUB_REPO</code> to your <code>.env</code> file.</span>
+                        </div>`;
+                    document.getElementById('githubConfigWarning').style.display = 'block';
+                    return;
+                }
+
+                if (!result.success || result.runs.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; color:var(--text-dim); padding:2rem;">No pipeline runs found yet. Trigger one above!</p>`;
+                    return;
+                }
+
+                const statusColors = { success: 'badge-active', failure: 'badge-danger', in_progress: 'badge-warning', queued: 'badge-info' };
+                const statusIcons = { success: 'fa-check-circle', failure: 'fa-times-circle', in_progress: 'fa-spinner fa-spin', queued: 'fa-clock', completed: 'fa-check' };
+
+                container.innerHTML = `
+                    <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                        <thead>
+                            <tr>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Run ID</th>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Status</th>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Conclusion</th>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Started</th>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Updated</th>
+                                <th style="padding:12px; color:var(--text-dim); border-bottom:1px solid var(--border);">Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${result.runs.map(r => `
+                                <tr style="border-bottom:1px solid var(--border);">
+                                    <td style="padding:12px; color:var(--text-dim); font-family:monospace;">#${r.id}</td>
+                                    <td style="padding:12px;"><span class="badge badge-info">${r.status}</span></td>
+                                    <td style="padding:12px;">
+                                        <span class="badge ${statusColors[r.conclusion] || 'badge-info'}">
+                                            <i class="fas ${statusIcons[r.conclusion || r.status] || 'fa-question'}"></i>
+                                            ${r.conclusion || r.status}
+                                        </span>
+                                    </td>
+                                    <td style="padding:12px; color:var(--text-dim);">${new Date(r.created_at).toLocaleString()}</td>
+                                    <td style="padding:12px; color:var(--text-dim);">${new Date(r.updated_at).toLocaleString()}</td>
+                                    <td style="padding:12px;">
+                                        <a href="${r.html_url}" target="_blank" style="color:var(--primary); text-decoration:none;">
+                                            <i class="fab fa-github"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('GitHub status error:', err);
+            }
+        }
+
 
         // Registered Doctor management functions
         async function loadDoctors() {
@@ -1122,6 +1244,7 @@
             loadDiseases();
             loadHistory();
             loadRetrainStatus();
+            loadGithubStatus();
         };
     </script>
 </body>
