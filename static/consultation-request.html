@@ -668,6 +668,160 @@
         .alternatives-section .section-title::before {
             background: var(--warning);
         }
+
+        /* Simulated Razorpay Modal CSS */
+        .razorpay-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .razorpay-modal {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .razorpay-overlay.active {
+            display: flex;
+        }
+
+        .razorpay-overlay.active .razorpay-modal {
+            transform: scale(1);
+        }
+
+        .rzp-header {
+            background: #2b80ff; /* Razorpay Blue */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .rzp-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .rzp-amount {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .rzp-body {
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .rzp-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .rzp-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            color: #666;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+
+        .rzp-tab.active {
+            color: #2b80ff;
+            border-bottom-color: #2b80ff;
+        }
+
+        .rzp-form-group {
+            margin-bottom: 15px;
+        }
+
+        .rzp-form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .rzp-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+        }
+
+        .rzp-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2b80ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .rzp-btn:hover {
+            background: #1a6be6;
+        }
+        
+        .rzp-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        .rzp-footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Razorpay simulated success mark */
+        .rzp-success-mark {
+            display: none;
+            color: #10b981;
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -782,6 +936,65 @@
             </div>
         </div>
     </div>
+
+    <!-- Simulated Razorpay Modal -->
+    <div class="razorpay-overlay" id="rzpOverlay">
+        <div class="razorpay-modal">
+            <div class="rzp-header">
+                <div class="rzp-close" onclick="closeRazorpay()">✕</div>
+                <div style="font-size: 14px; opacity: 0.9;">MediOps Consultation</div>
+                <div class="rzp-amount">₹500.00</div>
+                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Transaction ID: <span id="rzpTxId">Generating...</span></div>
+            </div>
+            
+            <div class="rzp-body" id="rzpBody">
+                <div class="rzp-tabs">
+                    <div class="rzp-tab active" onclick="switchRzpTab('upi')" id="tab-upi">UPI</div>
+                    <div class="rzp-tab" onclick="switchRzpTab('card')" id="tab-card">Card</div>
+                </div>
+                
+                <div id="rzp-upi-view">
+                    <div class="rzp-form-group">
+                        <label>UPI ID / VPA</label>
+                        <input type="text" class="rzp-input" id="rzpUpiId" placeholder="patient@okaxis" value="patient@ybl">
+                    </div>
+                </div>
+                
+                <div id="rzp-card-view" style="display: none;">
+                    <div class="rzp-form-group">
+                        <label>Card Number</label>
+                        <input type="text" class="rzp-input" placeholder="4111 1111 1111 1111" maxlength="19">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="rzp-form-group" style="flex: 1;">
+                            <label>Expiry</label>
+                            <input type="text" class="rzp-input" placeholder="MM/YY">
+                        </div>
+                        <div class="rzp-form-group" style="flex: 1;">
+                            <label>CVV</label>
+                            <input type="password" class="rzp-input" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="rzp-btn" id="rzpPayBtn" onclick="processRazorpayPayment()">
+                    <span id="rzpBtnText">Pay ₹500.00</span>
+                    <div class="rzp-spinner" id="rzpSpinner"></div>
+                </button>
+            </div>
+            
+            <div class="rzp-body" id="rzpSuccessView" style="display: none; text-align: center; padding: 40px 20px;">
+                <div class="rzp-success-mark" style="display: block;">✓</div>
+                <h3 style="color: #333; margin-bottom: 10px;">Payment Successful</h3>
+                <p style="color: #666; font-size: 14px;">Redirecting back to MediOps...</p>
+            </div>
+            
+            <div class="rzp-footer">
+                Secured by <strong>Razorpay (Simulated)</strong>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // Self-healing role check and session enforcement from token
@@ -1013,9 +1226,10 @@
 
             const btn = document.querySelector('.btn-primary');
             btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Submitting...';
+            btn.innerHTML = '<span class="loading"></span> Initializing Payment...';
 
             try {
+                // 1. Create the consultation request (will be in pending_payment status)
                 const response = await fetch('/api/consultations/request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1035,7 +1249,13 @@
 
                 if (data.success) {
                     currentConsultationId = data.consultation_id;
-                    showSuccessMessage(data);
+                    // 2. Open Razorpay Modal instead of showing success immediately
+                    document.getElementById('rzpTxId').textContent = 'req_' + Math.random().toString(36).substr(2, 9);
+                    document.getElementById('rzpOverlay').classList.add('active');
+                    
+                    // Reset button state behind modal
+                    btn.disabled = false;
+                    btn.innerHTML = '<span id="submitBtnText">Request Consultation</span>';
                 } else {
                     alert('Error: ' + data.error);
                     btn.disabled = false;
@@ -1043,11 +1263,95 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to submit consultation request');
+                alert('Failed to initialize payment');
                 btn.disabled = false;
                 btn.innerHTML = '<span id="submitBtnText">Request Consultation</span>';
             }
         }
+        
+        // --- RAZORPAY SIMULATION LOGIC ---
+        
+        let paymentDataRef = null;
+
+        function closeRazorpay() {
+            document.getElementById('rzpOverlay').classList.remove('active');
+        }
+
+        function switchRzpTab(tab) {
+            document.getElementById('tab-upi').classList.remove('active');
+            document.getElementById('tab-card').classList.remove('active');
+            document.getElementById('rzp-upi-view').style.display = 'none';
+            document.getElementById('rzp-card-view').style.display = 'none';
+            
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            document.getElementById(`rzp-${tab}-view`).style.display = 'block';
+        }
+
+        async function processRazorpayPayment() {
+            const btn = document.getElementById('rzpPayBtn');
+            const btnText = document.getElementById('rzpBtnText');
+            const spinner = document.getElementById('rzpSpinner');
+            
+            // UI Loading state
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            try {
+                // Determine payment method used
+                const method = document.getElementById('tab-upi').classList.contains('active') ? 'upi' : 'card';
+                
+                // Call backend to process the payment and confirm consultation
+                const response = await fetch('/api/payment/razorpay-sim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        consultation_id: currentConsultationId,
+                        payment_method: method,
+                        payment_details: { mock: true }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success view inside modal
+                    document.getElementById('rzpBody').style.display = 'none';
+                    document.getElementById('rzpSuccessView').style.display = 'block';
+                    
+                    // After 1.5 seconds, close modal and show main success message
+                    setTimeout(() => {
+                        closeRazorpay();
+                        // Refetch consultation details to show success message accurately
+                        fetch(`/api/consultations/${currentConsultationId}`)
+                            .then(res => res.json())
+                            .then(consData => {
+                                if(consData.success) {
+                                    showSuccessMessage({
+                                        consultation_id: currentConsultationId,
+                                        doctor_name: consData.doctor.name,
+                                        status: consData.status,
+                                        estimated_response_minutes: consData.estimated_response_minutes
+                                    });
+                                }
+                            });
+                    }, 1500);
+                } else {
+                    alert('Payment processing failed: ' + data.error);
+                    btn.disabled = false;
+                    btnText.style.display = 'block';
+                    spinner.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Payment Error:', error);
+                alert('Network error during payment processing.');
+                btn.disabled = false;
+                btnText.style.display = 'block';
+                spinner.style.display = 'none';
+            }
+        }
+
 
         function showSuccessMessage(data) {
             document.getElementById('consultationForm').style.display = 'none';

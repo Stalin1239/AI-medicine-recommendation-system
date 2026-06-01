@@ -186,6 +186,12 @@ class ConsultationHistory(Base):
     satisfaction_rating = Column(Integer, nullable=True)  # 1-5 stars
     patient_feedback = Column(Text, nullable=True)
     pdf_path = Column(String, nullable=True)
+    
+    # Payment Tracking
+    payment_status = Column(String, default="pending")
+    payment_amount = Column(Float, default=500.0)
+    transaction_id = Column(String, nullable=True)
+    
     completed_at = Column(DateTime, default=datetime.utcnow)
 
 class PrescriptionSchedule(Base):

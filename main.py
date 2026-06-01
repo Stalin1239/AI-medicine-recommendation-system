@@ -208,6 +208,12 @@ class ConsultationRating(BaseModel):
     feedback: Optional[str] = None
 
 
+class PaymentRequest(BaseModel):
+    consultation_id: int
+    payment_method: str  # e.g., 'upi', 'card'
+    payment_details: dict # Mock details
+
+
 class DiagnosisDraft(BaseModel):
     actual_diagnosis: Optional[str] = None
     patient_symptoms: Optional[str] = None
@@ -1360,6 +1366,46 @@ async def request_consultation(request: DoctorSelectionRequest):
         }
     except HTTPException:
         raise
+    except Exception as e:
+        session.rollback()
+        return {"success": False, "error": str(e)}
+
+
+import uuid
+
+@app.post("/api/payment/razorpay-sim")
+async def process_razorpay_payment(request: PaymentRequest):
+    """
+    Simulates a successful Razorpay payment processing and confirms the consultation.
+    """
+    try:
+        consultation = session.query(ConsultationRequest).filter(
+            ConsultationRequest.id == request.consultation_id
+        ).first()
+        
+        if not consultation:
+            raise HTTPException(status_code=404, detail="Consultation not found")
+            
+        if consultation.status != "pending_payment":
+            return {"success": False, "error": "Consultation is not pending payment."}
+            
+        # Simulate generating a Razorpay transaction ID (pay_XXXXX)
+        tx_id = f"pay_{uuid.uuid4().hex[:14].lower()}"
+        
+        # Update consultation with payment success
+        consultation.payment_status = "completed"
+        consultation.transaction_id = tx_id
+        consultation.status = "pending" # Now visible to doctor
+        
+        session.commit()
+        
+        return {
+            "success": True,
+            "message": "Payment successful",
+            "transaction_id": tx_id,
+            "amount_paid": consultation.payment_amount,
+            "consultation_status": consultation.status
+        }
     except Exception as e:
         session.rollback()
         return {"success": False, "error": str(e)}
