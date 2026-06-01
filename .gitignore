@@ -25,15 +25,17 @@ healthos.db
 backend/*.db
 !backend/health_app.db.example
 
-# Large Trained Model Binaries (MLOps artifacts are versioned in registries or bucket mounts)
-*.pkl
+# Large Trained Model Binaries
+# health_model.pkl is 216MB — too large for git, always ignored
 health_model.pkl
-health_model_v2.pkl
 mlb_transformer.pkl
-models/latest/*.pkl
-models/v*/*.pkl
-retraining/models/latest/*.pkl
-retraining/models/v*/*.pkl
+
+# health_model_v2.pkl is 2.5MB — tracked in git so CI/CD can commit it back
+# Do NOT add health_model_v2.pkl here
+
+# Version directories (versioned model copies — ignored, only latest tracked)
+models/versions/
+retraining/models/
 
 # Generated Patient Medical PDF Prescriptions & Exported Data Spreadsheets
 reports/*.pdf

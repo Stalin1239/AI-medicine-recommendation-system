@@ -1,17 +1,22 @@
-name: MediOps Dataset Validation
+name: "Step 1 — Dataset Validation"
 
 on:
   push:
     branches: [ main, master ]
     paths:
+      # Trigger when the main CSV at root is changed
+      - 'fedmedflow_accurate_dataset.csv'
+      # Also trigger when scripts/dataset folders are changed
       - 'dataset/**'
       - 'dataset_management/**'
       - 'scripts/validate_dataset.py'
   pull_request:
     branches: [ main, master ]
     paths:
+      - 'fedmedflow_accurate_dataset.csv'
       - 'dataset/**'
       - 'dataset_management/**'
+  # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
 
 jobs:
@@ -20,20 +25,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository Code
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python 3.11 Runtime
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        cache: 'pip'
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
 
-    - name: Run Schema Validation
-      run: |
-        python scripts/validate_dataset.py
+      - name: Run Schema Validation
+        run: python scripts/validate_dataset.py
+
+      - name: Upload Validation Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-log
+          path: logs/validation_logs/validation.log
+          retention-days: 7
+          if-no-files-found: ignore

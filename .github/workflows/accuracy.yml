@@ -1,42 +1,47 @@
-name: MediOps Accuracy Evaluation
+name: "Step 3 — Accuracy Evaluation"
 
 on:
+  # Automatically runs after Step 2 (Model Retraining) completes
   workflow_run:
-    workflows: ["MediOps Model Retraining"]
+    workflows: ["Step 2 — Model Retraining"]
     types:
       - completed
+  # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
 
 jobs:
   accuracy:
-    name: Run Accuracy & Threshold Tests
+    name: Evaluate Model Accuracy
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
-    - name: Checkout Repository Code
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python 3.11 Runtime
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        cache: 'pip'
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas scikit-learn
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn
 
-    - name: Run Accuracy Diagnostics
-      run: |
-        python scripts/test_accuracy.py
+      - name: Run Accuracy Evaluation
+        run: python scripts/test_accuracy.py
 
-    - name: Upload Accuracy Reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: MLOps-accuracy-reports
-        path: |
-          logs/accuracy_reports/*.json
-          models/version_metadata.json
-        retention-days: 5
+      - name: Upload Accuracy Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accuracy-reports
+          path: |
+            logs/accuracy_reports/
+            models/version_metadata.json
+          retention-days: 14
+          if-no-files-found: ignore

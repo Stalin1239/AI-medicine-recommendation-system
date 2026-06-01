@@ -1,42 +1,56 @@
-name: MediOps Model Retraining
+name: "Step 2 — Model Retraining"
 
 on:
+  # Automatically runs after Step 1 (Dataset Validation) passes
   workflow_run:
-    workflows: ["MediOps Dataset Validation"]
+    workflows: ["Step 1 — Dataset Validation"]
     types:
       - completed
+  # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
 
 jobs:
   retrain:
-    name: Execute Model Retraining
+    name: Retrain ML Model
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    # Only run if the upstream validation workflow succeeded (or if manually triggered)
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
-    - name: Checkout Repository Code
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python 3.11 Runtime
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        cache: 'pip'
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas scikit-learn
+      - name: Install ML Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn
 
-    - name: Run Model Retraining
-      run: |
-        python scripts/retrain_model.py
+      - name: Run Model Retraining Script
+        run: python scripts/retrain_model.py
 
-    - name: Upload Trained Model Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: trained-ml-model
-        path: |
-          models/latest/health_model_v2.pkl
-          models/version_metadata.json
-        retention-days: 5
+      - name: Upload Trained Model Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-ml-model
+          path: |
+            health_model_v2.pkl
+            models/latest/health_model_v2.pkl
+            models/version_metadata.json
+          retention-days: 7
+
+      - name: Upload Training Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: training-logs
+          path: logs/training_logs/
+          retention-days: 7
+          if-no-files-found: ignore
