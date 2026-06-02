@@ -1,0 +1,49 @@
+name: Deploy to AWS EC2 (Continuous Deployment)
+
+on:
+  workflow_run:
+    workflows: ["Sync Trained Model"] # This runs AFTER the MLOps pipeline finishes successfully
+    types:
+      - completed
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+    # Only run if it was a direct push, OR if the upstream workflow succeeded
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
+          script: |
+            cd /var/www/mediops
+            
+            echo "📥 Pulling latest changes from GitHub..."
+            # Reset hard to ensure no local conflicts
+            git fetch --all
+            git reset --hard origin/main
+            
+            echo "🐍 Updating dependencies (if any)..."
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            echo "🔄 Restarting FastAPI application..."
+            sudo systemctl restart mediops
+            
+            echo "✅ Deployment Successful!"
