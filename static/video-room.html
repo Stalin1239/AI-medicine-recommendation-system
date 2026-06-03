@@ -10,7 +10,7 @@
         :root {
             --bg-dark: #0a0e27;
             --bg-card: rgba(15, 23, 42, 0.7);
-            --primary: #00f0ff;
+            --primary: #0ea5e9;
             --secondary: #8338ec;
             --text-main: #f8fafc;
             --border: rgba(0, 240, 255, 0.2);
@@ -160,6 +160,39 @@
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc00; }
         .status-dot.connected { background: #00ff00; }
     </style>
+
+        .medical-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -999;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f1f5f9 100%);
+        }
+        
+        .med-icon {
+            position: absolute;
+            color: rgba(14, 165, 233, 0.12);
+            font-size: 5rem;
+            animation: float-med 20s infinite linear;
+            filter: drop-shadow(0 10px 15px rgba(14, 165, 233, 0.15));
+        }
+
+        .med-icon-1 { top: 10%; left: 10%; font-size: 8rem; animation-duration: 25s; }
+        .med-icon-2 { bottom: 15%; right: 10%; font-size: 12rem; animation-duration: 35s; animation-direction: reverse; color: rgba(37, 99, 235, 0.08); }
+        .med-icon-3 { top: 40%; left: 80%; font-size: 6rem; animation-duration: 22s; }
+        .med-icon-4 { bottom: 30%; left: 20%; font-size: 10rem; animation-duration: 30s; color: rgba(16, 185, 129, 0.08); }
+        .med-icon-5 { top: 20%; left: 45%; font-size: 5rem; animation-duration: 18s; animation-direction: reverse; }
+        .med-icon-6 { bottom: 10%; left: 50%; font-size: 7rem; animation-duration: 28s; }
+
+        @keyframes float-med {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
 </head>
 <body>
 
