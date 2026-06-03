@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediOps | Sign Up</title>
+    <title>HealthOS | Sign Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,30 +11,66 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        
+        }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: transparent; color: #0f172a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f4c75 50%, #1a1a2e 75%, #16213e 100%);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-        
+        }
 
-        
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
 
-        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(34, 197, 255, 0.4), rgba(14, 165, 233, 0.1));
+            animation: float 20s infinite ease-in-out;
+        }
 
-        
+        .blob1 {
+            width: 300px;
+            height: 300px;
+            top: -50px;
+            right: -50px;
+            animation-duration: 20s;
+        }
 
-        
+        .blob2 {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            left: -50px;
+            background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.3), rgba(109, 40, 217, 0.1));
+            animation-duration: 25s;
+        }
 
-        
+        .blob3 {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            left: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), rgba(29, 78, 216, 0.1));
+            animation-duration: 30s;
+        }
 
-        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
             25% {
                 transform: translate(30px, -30px) scale(1.05);
             }
@@ -55,7 +91,7 @@
         }
 
         .auth-box {
-            background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(148, 163, 184, 0.2);
             border-radius: 30px;
@@ -78,16 +114,16 @@
         .auth-section h2 {
             font-size: 28px;
             font-weight: 700;
-            color: #0f172a;
+            color: #e2e8f0;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            background: linear-gradient(135deg, #22c55e, #0ea5e9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .auth-section p {
-            color: #475569;
+            color: #94a3b8;
             margin-bottom: 30px;
             font-size: 14px;
         }
@@ -98,7 +134,7 @@
 
         .form-group label {
             display: block;
-            color: #0ea5e9;
+            color: #cbd5e1;
             font-size: 13px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -109,10 +145,10 @@
         .form-group input {
             width: 100%;
             padding: 12px 16px;
-            background: #ffffff;
+            background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(148, 163, 184, 0.3);
             border-radius: 12px;
-            color: #0f172a;
+            color: #f1f5f9;
             font-size: 14px;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
@@ -125,7 +161,7 @@
         .form-group input:focus {
             outline: none;
             border-color: #22c55e;
-            background: #ffffff;
+            background: rgba(30, 41, 59, 0.95);
             box-shadow: 0 0 20px rgba(34, 197, 82, 0.2);
         }
 
@@ -144,7 +180,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
             box-shadow: 0 10px 30px rgba(34, 197, 82, 0.3);
         }
@@ -176,7 +212,7 @@
             align-items: center;
             gap: 8px;
             margin: 0;
-            color: #475569;
+            color: #94a3b8;
             cursor: pointer;
             font-size: 13px;
         }
@@ -203,7 +239,7 @@
             background: rgba(148, 163, 184, 0.1);
             border: 1px solid rgba(148, 163, 184, 0.3);
             border-radius: 10px;
-            color: #0ea5e9;
+            color: #cbd5e1;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.3s ease;
@@ -221,7 +257,7 @@
 
         .toggle-form {
             text-align: center;
-            color: #475569;
+            color: #94a3b8;
             margin-top: 20px;
             font-size: 13px;
         }
@@ -250,7 +286,7 @@
         .logo-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            background: linear-gradient(135deg, #22c55e, #0ea5e9);
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -293,14 +329,14 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #475569;
+            color: #94a3b8;
             cursor: pointer;
             font-size: 14px;
             transition: color 0.3s ease;
         }
 
         .password-toggle-btn:hover {
-            color: #0ea5e9;
+            color: #cbd5e1;
         }
 
         .navbar {
@@ -319,14 +355,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #0f172a;
+            color: #e2e8f0;
             font-size: 20px;
             font-weight: 700;
         }
 
         .navbar-logo i {
             font-size: 24px;
-            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            background: linear-gradient(135deg, #22c55e, #0ea5e9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -349,210 +385,11 @@
                 font-size: 24px;
             }
         }
-    
-        
-        /* DARK MEDICAL CYBERPUNK CSS GUIDE */
-        :root {
-          /* Deep Dark Backgrounds */
-          --bg-base: #020617;       
-          --bg-card: rgba(2, 6, 23, 0.7); 
-          
-          /* Neon Accents */
-          --neon-primary: #00E5FF;  
-          --neon-secondary: #0077FF; 
-          
-          /* Text Colors */
-          --text-main: #FFFFFF;
-          --text-muted: rgba(255, 255, 255, 0.5);
-          
-          /* Reusable Glowing Shadows (Using RGB of #00E5FF) */
-          --glow-sm: 0 0 10px rgba(0, 229, 255, 0.3);
-          --glow-md: 0 0 20px rgba(0, 229, 255, 0.5), 0 0 40px rgba(0, 229, 255, 0.2);
-          --border-neon: rgba(0, 229, 255, 0.3);
-        }
-
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            min-height: 100vh;
-            margin: 0;
-            position: relative;
-        }
-
-        /* Dark Moody Background Image */
-        body::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          /* Using a high-quality dark medical/tech abstract image from Unsplash */
-          background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop');
-          background-size: cover;
-          background-position: center;
-          
-          /* CRITICAL: Darken heavily and boost colors */
-          filter: brightness(0.15) saturate(1.8);
-          
-          z-index: -2; 
-        }
-
-        /* Subtle CRT Scanlines Overlay */
-        body::after {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background: repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 3px,
-            rgba(0, 0, 0, 0.1) 3px,
-            rgba(0, 0, 0, 0.1) 4px
-          );
-          pointer-events: none; 
-          z-index: 9999;
-        }
-
-        /* Glassmorphism (Frosted Glass) for Cards */
-        .glass-card, .card, .form-card, .auth-box, .sidebar, .modal-content {
-          background: var(--bg-card) !important;
-          backdrop-filter: blur(16px) saturate(180%) !important;
-          -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-          
-          border: 1px solid var(--border-neon) !important;
-          border-radius: 16px !important;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-          
-          /* Remove clip-path from previous design */
-          clip-path: none !important; 
-        }
-
-        /* Neon Glowing Text */
-        .neon-heading, h1, h2, h3 {
-          color: #FFF !important;
-          font-weight: 800;
-          text-shadow: 
-            0 0 5px rgba(0, 229, 255, 0.8),
-            0 0 20px rgba(0, 229, 255, 0.5),
-            0 0 40px rgba(0, 229, 255, 0.3) !important;
-        }
-
-        /* Glowing Buttons */
-        .cyber-button, button, .btn {
-          background: transparent !important;
-          color: var(--neon-primary) !important;
-          border: 1px solid var(--neon-primary) !important;
-          padding: 12px 24px;
-          border-radius: 8px;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          font-weight: bold;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          clip-path: none !important; /* Remove old cyberpunk clip */
-        }
-        
-        .cyber-button:hover, button:hover, .btn:hover {
-          background: var(--neon-primary) !important;
-          color: var(--bg-base) !important;
-          box-shadow: var(--glow-md) !important;
-          transform: translateY(-2px);
-          animation: none !important; /* Remove glitch */
-        }
-
-        /* Floating Medical Equipment (Particles Effect) */
-        .medical-particles {
-          position: fixed;
-          inset: 0;
-          z-index: -1;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        
-        .particle {
-          position: absolute;
-          animation: floatMed var(--duration, 12s) var(--delay, 0s) ease-in-out infinite both;
-          opacity: var(--opacity, 0.3);
-          font-size: var(--size, 2rem);
-          filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.6));
-          will-change: transform;
-        }
-        
-        .particle:nth-child(1) { top: 10%; left: 5%;  --duration: 14s; --delay: 0s;  --size: 2.2rem; --opacity: 0.2; }
-        .particle:nth-child(2) { top: 25%; right: 8%; --duration: 10s; --delay: -3s; --size: 1.5rem; --opacity: 0.4; }
-        .particle:nth-child(3) { top: 55%; left: 15%; --duration: 16s; --delay: -7s; --size: 3rem;   --opacity: 0.15; }
-        .particle:nth-child(4) { top: 75%; right: 12%;--duration: 12s; --delay: -2s; --size: 1.8rem; --opacity: 0.3; }
-        .particle:nth-child(5) { top: 85%; left: 30%; --duration: 15s; --delay: -9s; --size: 2.5rem; --opacity: 0.25; }
-        .particle:nth-child(6) { top: 40%; right: 35%;--duration: 11s; --delay: -5s; --size: 1.2rem; --opacity: 0.5; }
-        
-        @keyframes floatMed {
-          0%   { transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
-          25%  { transform: translateY(-25px) translateX(15px) rotate(10deg) scale(1.1); }
-          50%  { transform: translateY(-10px) translateX(-20px) rotate(-5deg) scale(0.95); }
-          75%  { transform: translateY(-30px) translateX(10px) rotate(8deg) scale(1.05); }
-          100% { transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
-        }
-
-        /* The Pulsing Medical Cross */
-        .health-card {
-          position: relative;
-        }
-        .health-card::before,
-        .health-card::after {
-          content: '';
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          background: var(--neon-primary);
-          box-shadow: 0 0 15px var(--neon-primary);
-          border-radius: 2px;
-          animation: heartbeat 1.5s ease-in-out infinite;
-          z-index: 10;
-        }
-        .health-card::before { width: 6px; height: 24px; right: 29px; }
-        .health-card::after { width: 24px; height: 6px; top: 29px; }
-        
-        @keyframes heartbeat {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          15% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 25px var(--neon-primary); }
-          30% { transform: scale(1); opacity: 0.8; }
-          45% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 25px var(--neon-primary); }
-          60% { transform: scale(1); opacity: 0.8; }
-        }
-
-        /* EKG Sweep on Dashboards */
-        .medical-dashboard {
-          position: relative;
-          overflow: hidden;
-        }
-        .medical-dashboard::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: -100%;
-          width: 50%;
-          height: 3px;
-          background: linear-gradient(to right, transparent, var(--neon-primary), transparent);
-          box-shadow: 0 -2px 10px var(--neon-primary);
-          animation: ekgSweep 3s linear infinite;
-          z-index: 10;
-        }
-        
-        @keyframes ekgSweep {
-          0% { left: -100%; }
-          100% { left: 200%; }
-        }
-        
-        /* Inputs Fixes for Dark Theme */
-        input, select, textarea {
-            background: rgba(0,0,0,0.5) !important;
-            border: 1px solid var(--border-neon) !important;
-            color: var(--text-main) !important;
-        }
-
-</style>
+    </style>
 </head>
 <body>
-    
-    
+    <div class="animated-bg">
+        <div class="blob blob1"></div>
         <div class="blob blob2"></div>
         <div class="blob blob3"></div>
     </div>
@@ -560,7 +397,7 @@
     <nav class="navbar">
         <div class="navbar-logo">
             <i class="fa-solid fa-heart-pulse"></i>
-            MediOps
+            HealthOS
         </div>
         <div class="flex items-center gap-4">
             <a href="/login" class="text-sm text-cyan-400 hover:text-cyan-300 transition">Back to Login</a>
@@ -579,7 +416,7 @@
                         <i class="fa-solid fa-user-plus"></i>
                     </div>
                     <h2>Create Account</h2>
-                    <p>Join MediOps to manage your health</p>
+                    <p>Join HealthOS to manage your health</p>
                 </div>
 
                 <div class="status-message" id="signupStatus"></div>
