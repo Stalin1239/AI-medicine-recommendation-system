@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthOS | Doctor Portal Login</title>
+    <title>MediOps | Doctor Portal Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #050505 0%, #0a0a0a 25%, #051020 50%, #0a0515 75%, #050505 100%);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
@@ -73,9 +73,9 @@
         }
 
         .auth-box {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.4);
             border-radius: 28px;
             padding: 45px 40px;
             box-shadow: 0 25px 65px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.8);
@@ -96,7 +96,7 @@
         .logo-glow {
             width: 65px;
             height: 65px;
-            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            background: linear-gradient(135deg, #00f0ff, #b026ff);
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -137,12 +137,12 @@
 
         .demo-card:hover {
             border-color: #2563eb;
-            background: rgba(37, 99, 235, 0.1);
+            background: rgba(0, 240, 255, 0.15);
             transform: translateY(-2px);
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            background: linear-gradient(135deg, #00f0ff, #b026ff);
             color: #ffffff;
             font-weight: 700;
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
@@ -169,7 +169,7 @@
                 <div class="logo-glow">
                     <i class="fa-solid fa-user-md"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Clinical Console</h2>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">Clinical Console</h2>
                 <p class="text-slate-500 mt-2 text-sm">Access the Doctor Command & Diagnostics Center</p>
             </div>
 
@@ -187,7 +187,7 @@
                             <i class="fa-solid fa-envelope"></i>
                         </span>
                         <input type="email" id="doctorEmail" 
-                               class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-sm input-glow transition-all duration-300"
+                               class="w-full pl-11 pr-4 py-3 bg-black border border-cyan-500 rounded-xl text-white placeholder-cyan-700 text-sm input-glow transition-all duration-300"
                                placeholder="physician@healthos.org" required>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                             <i class="fa-solid fa-key"></i>
                         </span>
                         <input type="password" id="doctorPassword" 
-                               class="w-full pl-11 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-sm input-glow transition-all duration-300"
+                               class="w-full pl-11 pr-12 py-3 bg-black border border-cyan-500 rounded-xl text-white placeholder-cyan-700 text-sm input-glow transition-all duration-300"
                                placeholder="••••••••" required>
                         <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition">
                             <i id="passwordEye" class="fa-solid fa-eye"></i>
@@ -278,7 +278,7 @@
             const email = document.getElementById('doctorEmail').value;
             const password = document.getElementById('doctorPassword').value;
 
-            showStatus('⏳ Verification in progress... Connecting to HealthOS Mainframe.', 'success');
+            showStatus('⏳ Verification in progress... Connecting to MediOps Mainframe.', 'success');
 
             try {
                 const response = await fetch('/api/auth/login', {
