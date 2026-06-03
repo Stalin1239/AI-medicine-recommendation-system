@@ -9,22 +9,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
         :root {
-            --primary: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.3);
-            --secondary: #7000ff;
-            --bg-darker: #050811;
-            --bg-dark: #0a0f1d;
-            --bg-card: rgba(16, 24, 48, 0.65);
-            --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --secondary: #0ea5e9;
+            --bg-darker: #f8fafc;
+            --bg-dark: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-dim: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --border: rgba(255, 255, 255, 0.08);
-            --glass: rgba(255, 255, 255, 0.03);
+            --glass: rgba(255, 255, 255, 0.5);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --accent: #7000ff;
-            --light: #f1f5f9;
+            --light: #ffffff;
             
             /* Gray compatibility variables */
             --gray-50: rgba(255, 255, 255, 0.02);
@@ -47,7 +47,7 @@
 
         body {
             background-color: var(--bg-darker);
-            background-image: radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
+            background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
             padding: 40px 20px;
@@ -75,7 +75,7 @@
         .nav-bar .logo {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -89,7 +89,7 @@
 
         .header {
             text-align: center;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 40px;
             animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -142,7 +142,7 @@
 
         .section-title {
             font-size: 1.6rem;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 30px;
             display: flex;
             align-items: center;
@@ -163,7 +163,7 @@
         .disease-info {
             background: linear-gradient(135deg, rgba(112, 0, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%);
             border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #fff;
+            color: var(--text-main);
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 40px;
@@ -323,7 +323,7 @@
         .doctor-name {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 6px;
         }
 
@@ -359,7 +359,7 @@
         }
 
         .detail-value {
-            color: #fff;
+            color: var(--text-main);
             font-weight: 600;
         }
 
@@ -397,7 +397,7 @@
             padding: 12px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            color: #fff;
+            color: var(--text-main);
             border-radius: 10px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -454,7 +454,7 @@
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid var(--border);
             border-radius: 10px;
-            color: #fff;
+            color: var(--text-main);
             font-size: 0.95rem;
             outline: none;
             transition: var(--transition);
@@ -497,7 +497,7 @@
         .priority-option input[type="radio"]:checked+.priority-label {
             border-color: var(--primary);
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%);
-            color: #fff;
+            color: var(--text-main);
             font-weight: 600;
         }
 
@@ -538,7 +538,7 @@
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
-            color: #fff;
+            color: var(--text-main);
         }
 
         .btn-secondary:hover {
@@ -608,7 +608,7 @@
 
         .back-link:hover {
             gap: 12px;
-            color: #fff;
+            color: var(--text-main);
             text-shadow: 0 0 10px var(--primary-glow);
         }
 
@@ -716,7 +716,7 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            color: rgba(255,255,255,0.7);
+            color: var(--text-dim);
             cursor: pointer;
             font-size: 20px;
             line-height: 1;
@@ -1472,7 +1472,7 @@
                 details.innerHTML = `
                     <p><strong>Status:</strong> ${statusMessages[data.status]}</p>
                     <p><strong>Doctor:</strong> ${data.doctor_name}</p>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">
                         Last updated: ${new Date(data.timestamp).toLocaleTimeString()}
                     </p>
                 `;

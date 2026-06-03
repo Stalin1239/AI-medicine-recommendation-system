@@ -10,22 +10,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
         :root {
-            --primary: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.3);
-            --secondary: #7000ff;
-            --bg-darker: #050811;
-            --bg-dark: #0a0f1d;
-            --bg-card: rgba(16, 24, 48, 0.65);
-            --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --secondary: #0ea5e9;
+            --bg-darker: #f8fafc;
+            --bg-dark: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-dim: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --border: rgba(255, 255, 255, 0.08);
-            --glass: rgba(255, 255, 255, 0.03);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --accent: #7000ff;
-            --light: #f1f5f9;
+            --border: rgba(0, 0, 0, 0.08);
+            --glass: rgba(255, 255, 255, 0.5);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --accent: #3b82f6;
+            --light: #ffffff;
         }
 
         * {
@@ -37,7 +37,7 @@
 
         body {
             background-color: var(--bg-darker);
-            background-image: radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
+            background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
@@ -52,8 +52,8 @@
         /* Sidebar Navigation Glassmorphism */
         .sidebar {
             width: 280px;
-            background: rgba(10, 15, 29, 0.85);
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
             border-right: 1px solid var(--border);
             padding: 2.5rem 1.5rem;
             position: fixed;
@@ -83,7 +83,7 @@
             gap: 0.75rem;
             font-size: 1.6rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 3rem;
@@ -121,17 +121,17 @@
         }
 
         .sidebar-menu a:hover {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.05);
-            border-color: rgba(0, 240, 255, 0.12);
-            transform: translateX(3px);
+            color: var(--text-main);
+            background: rgba(37, 99, 235, 0.05);
+            border-color: rgba(37, 99, 235, 0.12);
+            transform: translateX(5px);
         }
 
         .sidebar-menu a.active {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.08);
-            border-color: rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+            color: var(--text-main);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.05);
         }
 
         .sidebar-menu a.active i {
@@ -175,7 +175,7 @@
         .header h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -204,7 +204,7 @@
 
         .user-greeting strong {
             font-size: 1.1rem;
-            color: #fff;
+            color: var(--text-main);
             font-weight: 600;
         }
 
@@ -232,7 +232,7 @@
 
         .tab-btn {
             padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.02);
             border: 1px solid var(--border);
             color: var(--text-dim);
             border-radius: 12px;
@@ -246,15 +246,15 @@
         }
 
         .tab-btn:hover {
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            border-color: rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .tab-btn.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border-color: transparent;
-            color: #fff;
+            color: var(--text-main);
             box-shadow: 0 4px 15px var(--primary-glow);
         }
 
@@ -300,7 +300,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.05), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
             transition: left 0.6s ease;
         }
 
@@ -309,9 +309,9 @@
         }
 
         .card:hover {
-            border-color: rgba(0, 240, 255, 0.25);
-            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.03);
-            transform: translateY(-3px);
+            border-color: rgba(37, 99, 235, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            transform: translateY(-5px);
         }
 
         .card-icon {
@@ -326,7 +326,7 @@
         .card-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 0.5rem;
         }
 
@@ -356,10 +356,10 @@
         .form-group select {
             width: 100%;
             padding: 0.8rem 1.25rem;
-            background: rgba(0, 0, 0, 0.35);
+            background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 10px;
-            color: #fff;
+            color: var(--text-main);
             font-size: 0.9rem;
             font-family: inherit;
             transition: var(--transition);
@@ -390,7 +390,7 @@
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: #fff;
+            color: var(--text-main);
             box-shadow: 0 4px 15px var(--primary-glow);
         }
 
@@ -401,7 +401,7 @@
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            color: var(--text-main);
             border: 1px solid var(--border);
         }
 
@@ -417,7 +417,7 @@
 
         .btn-danger:hover {
             background: var(--danger);
-            color: #fff;
+            color: var(--text-main);
         }
 
         /* List Styles */
@@ -451,7 +451,7 @@
 
         .list-item-title {
             font-weight: 600;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 0.25rem;
             font-size: 1rem;
         }
@@ -548,7 +548,7 @@
         .modal-header h2 {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #fff;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -564,7 +564,7 @@
         }
 
         .close-btn:hover {
-            color: #fff;
+            color: var(--text-main);
         }
 
         /* Responsive */
@@ -635,7 +635,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1rem 1.5rem;
-            color: #fff;
+            color: var(--text-main);
             z-index: 999;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -708,7 +708,7 @@
                 </div>
                 <div id="dashboard-loader" style="text-align:center; padding: 50px;">
                     <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
-                    <p style="color: rgba(255,255,255,0.6); margin-top: 15px;">Loading your health dashboard...</p>
+                    <p style="color: var(--text-dim); margin-top: 15px;">Loading your health dashboard...</p>
                 </div>
 
                 <div id="dashboard-content" style="display: none; grid-template-columns: 2fr 1fr; gap: 20px;">
@@ -720,10 +720,10 @@
                             style="display:none; background: linear-gradient(135deg, rgba(131, 56, 236, 0.2), rgba(0, 240, 255, 0.1)); border: 1px solid var(--secondary); border-radius: 15px; padding: 20px; box-shadow: 0 0 20px rgba(131, 56, 236, 0.15);">
                             <div style="display:flex; justify-content: space-between; align-items: flex-start;">
                                 <div>
-                                    <h3 style="margin:0 0 10px 0; color: #fff;"><i class="fas fa-user-md"
+                                    <h3 style="margin:0 0 10px 0; color: var(--text-main);"><i class="fas fa-user-md"
                                             style="color:var(--primary);"></i> Assigned Doctor: <span
                                             id="dash-doc-name"></span></h3>
-                                    <p style="margin:0 0 5px 0; color: rgba(255,255,255,0.7);"><i
+                                    <p style="margin:0 0 5px 0; color: var(--text-dim);"><i
                                             class="fas fa-stethoscope"></i> <span id="dash-doc-spec"></span></p>
                                     <p style="margin:0; font-size: 0.9rem; color: var(--primary);">Status: <strong
                                             id="dash-status"></strong></p>
@@ -737,7 +737,7 @@
                             <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;"><i
                                     class="fas fa-clipboard-prescription"></i> Current Treatment Plan</h3>
                             <div id="dash-rx-content">
-                                <p style="color: rgba(255,255,255,0.5);">No active prescriptions.</p>
+                                <p style="color: var(--text-dim);">No active prescriptions.</p>
                             </div>
                         </div>
 
@@ -747,7 +747,7 @@
                                     class="fas fa-pills"></i> Today's Medicine Tracker</h3>
                             <div id="dash-meds-list"
                                 style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                                <p style="color: rgba(255,255,255,0.5);">No medicines scheduled for today.</p>
+                                <p style="color: var(--text-dim);">No medicines scheduled for today.</p>
                             </div>
                         </div>
 
@@ -762,10 +762,10 @@
                             <h3 style="margin-top:0; color: #22c55e;"><i class="fas fa-chart-line"></i> Health Progress
                             </h3>
                             <div
-                                style="font-size: 2rem; font-weight: bold; color: #fff; text-align: center; margin: 15px 0;">
+                                style="font-size: 2rem; font-weight: bold; color: var(--text-main); text-align: center; margin: 15px 0;">
                                 <i class="fas fa-arrow-up" style="color: #22c55e; font-size: 1.2rem;"></i> Stable
                             </div>
-                            <p style="text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.6); margin:0;">
+                            <p style="text-align: center; font-size: 0.85rem; color: var(--text-dim); margin:0;">
                                 Keep following your treatment plan!</p>
                         </div>
 
@@ -775,7 +775,7 @@
                                     class="fas fa-bell"></i> Recent Alerts</h3>
                             <div id="dash-notifs"
                                 style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                                <p style="color: rgba(255,255,255,0.5);">No recent alerts.</p>
+                                <p style="color: var(--text-dim);">No recent alerts.</p>
                             </div>
                         </div>
 
@@ -811,7 +811,7 @@
                                 <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
                                         class="fas fa-comment-dots"></i> Describe your symptoms</label>
                                 <textarea id="triageSymptoms" placeholder="e.g., fever, cough, headache, body ache"
-                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff; font-size: 14px; resize: vertical;"
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: var(--text-main); font-size: 14px; resize: vertical;"
                                     rows="4" required></textarea>
                             </div>
 
@@ -821,7 +821,7 @@
                                         style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
                                             class="fas fa-birthday-cake"></i> Age (years)</label>
                                     <input type="number" id="triageAge" min="1" max="150" placeholder="25"
-                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: var(--text-main);"
                                         required>
                                 </div>
                                 <div>
@@ -829,7 +829,7 @@
                                         style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
                                             class="fas fa-weight"></i> Weight (kg)</label>
                                     <input type="number" id="triageWeight" min="1" max="300" step="0.1" placeholder="70"
-                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                        style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: var(--text-main);"
                                         required>
                                 </div>
                             </div>
@@ -838,7 +838,7 @@
                                 <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
                                         class="fas fa-map-marker-alt"></i> Location (City/Area)</label>
                                 <input type="text" id="triageLocation" placeholder="e.g., New York, Mumbai"
-                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;"
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: var(--text-main);"
                                     value="Unknown">
                             </div>
 
@@ -846,11 +846,11 @@
                                 <label style="display: block; color: #00f0ff; font-weight: 600; margin-bottom: 8px;"><i
                                         class="fas fa-leaf"></i> Home Remedy Tried (Optional)</label>
                                 <input type="text" id="triageRemedy" placeholder="e.g., ginger tea, rest"
-                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: #fff;">
+                                    style="width: 100%; padding: 12px; border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 8px; background: rgba(5, 8, 19, 0.8); color: var(--text-main);">
                             </div>
 
                             <button type="submit"
-                                style="padding: 14px 24px; background: linear-gradient(135deg, #00f0ff, #8338ec); border: none; color: #fff; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);">
+                                style="padding: 14px 24px; background: linear-gradient(135deg, #00f0ff, #8338ec); border: none; color: var(--text-main); font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);">
                                 <i class="fas fa-stethoscope"></i> Analyze Now
                             </button>
                         </form>
@@ -1729,7 +1729,7 @@
                             ${rx.pdf_path ? `<a href="/reports/download/${rx.pdf_path}" class="btn btn-outline" style="width:100%;"><i class="fas fa-file-pdf"></i> View Prescription PDF</a>` : ''}
                         `;
                     } else {
-                        rxContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No active prescriptions.</p>`;
+                        rxContainer.innerHTML = `<p style="color: var(--text-dim);">No active prescriptions.</p>`;
                     }
 
                     const meds = result.todays_medicines;
@@ -1747,7 +1747,7 @@
                             </div>
                         `).join('');
                     } else {
-                        medsContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No medicines scheduled for today.</p>`;
+                        medsContainer.innerHTML = `<p style="color: var(--text-dim);">No medicines scheduled for today.</p>`;
                     }
 
                     const notifs = result.recent_notifications;
@@ -1759,7 +1759,7 @@
                             </div>
                         `).join('');
                     } else {
-                        notifsContainer.innerHTML = `<p style="color: rgba(255,255,255,0.5);">No recent alerts.</p>`;
+                        notifsContainer.innerHTML = `<p style="color: var(--text-dim);">No recent alerts.</p>`;
                     }
                 }
             } catch (error) {

@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #090d16 0%, #0f172a 35%, #052e16 70%, #030712 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
@@ -73,12 +73,12 @@
         }
 
         .auth-box {
-            background: rgba(9, 15, 29, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(34, 197, 94, 0.25);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 28px;
             padding: 45px 40px;
-            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.8);
             position: relative;
             overflow: hidden;
         }
@@ -96,29 +96,29 @@
         .logo-glow {
             width: 65px;
             height: 65px;
-            background: linear-gradient(135deg, #22c55e, #10b981);
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 32px;
             margin: 0 auto 20px;
-            box-shadow: 0 0 25px rgba(34, 197, 94, 0.45);
-            color: #0d1527;
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.45);
+            color: #ffffff;
             animation: pulse-ring 2.5s infinite;
         }
 
         @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-            70% { box-shadow: 0 0 25px 8px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 25px 8px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
 
         .input-glow:focus {
             outline: none;
-            border-color: #22c55e;
-            box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
-            background: rgba(15, 23, 42, 0.95);
+            border-color: #2563eb;
+            box-shadow: 0 0 18px rgba(37, 99, 235, 0.15);
+            background: #ffffff;
         }
 
         .pulse-line {
@@ -130,28 +130,28 @@
         }
 
         .demo-card {
-            border: 1px dashed rgba(34, 197, 94, 0.3);
-            background: rgba(34, 197, 94, 0.05);
+            border: 1px dashed rgba(37, 99, 235, 0.3);
+            background: rgba(37, 99, 235, 0.05);
             transition: all 0.3s ease;
         }
 
         .demo-card:hover {
-            border-color: #22c55e;
-            background: rgba(34, 197, 94, 0.1);
+            border-color: #2563eb;
+            background: rgba(37, 99, 235, 0.1);
             transform: translateY(-2px);
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #22c55e, #10b981);
-            color: #0d1527;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #ffffff;
             font-weight: 700;
-            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.35);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
             transition: all 0.3s ease;
         }
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(34, 197, 94, 0.5);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4);
             filter: brightness(1.1);
         }
     </style>
@@ -169,8 +169,8 @@
                 <div class="logo-glow">
                     <i class="fa-solid fa-user-md"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold text-slate-100 tracking-tight">Clinical Console</h2>
-                <p class="text-slate-400 mt-2 text-sm">Access the Doctor Command & Diagnostics Center</p>
+                <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Clinical Console</h2>
+                <p class="text-slate-500 mt-2 text-sm">Access the Doctor Command & Diagnostics Center</p>
             </div>
 
             <!-- EKG Pulse Line Decoration -->
@@ -181,27 +181,27 @@
             <!-- Login Form -->
             <form onsubmit="handleDoctorLogin(event)" class="space-y-6">
                 <div>
-                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Professional Email</label>
+                    <label class="block text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Professional Email</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                             <i class="fa-solid fa-envelope"></i>
                         </span>
                         <input type="email" id="doctorEmail" 
-                               class="w-full pl-11 pr-4 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
+                               class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-sm input-glow transition-all duration-300"
                                placeholder="physician@healthos.org" required>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Access Token / Password</label>
+                    <label class="block text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Access Token / Password</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                             <i class="fa-solid fa-key"></i>
                         </span>
                         <input type="password" id="doctorPassword" 
-                               class="w-full pl-11 pr-12 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
+                               class="w-full pl-11 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-sm input-glow transition-all duration-300"
                                placeholder="••••••••" required>
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition">
                             <i id="passwordEye" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -214,17 +214,17 @@
 
             <!-- Quick Fill Demo Doctors Section -->
             <div class="mt-8 pt-6 border-t border-slate-800/80">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Demo Quick Fill Keys</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Demo Quick Fill Keys</p>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="quickFill('dr.sarah@mediops.com', 'password123')" 
                             class="demo-card p-3 rounded-xl text-left border transition">
-                        <div class="text-xs font-bold text-emerald-400">Dr. Sarah Johnson</div>
-                        <div class="text-[10px] text-slate-400">Dermatologist</div>
+                        <div class="text-xs font-bold text-blue-600">Dr. Sarah Johnson</div>
+                        <div class="text-[10px] text-slate-500">Dermatologist</div>
                     </button>
                     <button onclick="quickFill('dr.ahmed@mediops.com', 'password123')" 
                             class="demo-card p-3 rounded-xl text-left border transition">
-                        <div class="text-xs font-bold text-emerald-400">Dr. Ahmed Hassan</div>
-                        <div class="text-[10px] text-slate-400">Gastroenterologist</div>
+                        <div class="text-xs font-bold text-blue-600">Dr. Ahmed Hassan</div>
+                        <div class="text-[10px] text-slate-500">Gastroenterologist</div>
                     </button>
                 </div>
             </div>
