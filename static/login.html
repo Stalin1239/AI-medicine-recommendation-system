@@ -3,566 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthOS | Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="MediOps Patient Login">
+    <title>MediOps | Patient Login</title>
+    <link rel="stylesheet" href="/static/mediops.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f4c75 50%, #1a1a2e 75%, #16213e 100%);
-            background-attachment: fixed;
+        .split-layout {
+            display: flex;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.3;
         }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(34, 197, 255, 0.4), rgba(14, 165, 233, 0.1));
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .blob1 {
-            width: 300px;
-            height: 300px;
-            top: -50px;
-            right: -50px;
-            animation-duration: 20s;
-        }
-
-        .blob2 {
-            width: 200px;
-            height: 200px;
-            bottom: -50px;
-            left: -50px;
-            background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.3), rgba(109, 40, 217, 0.1));
-            animation-duration: 25s;
-        }
-
-        .blob3 {
-            width: 250px;
-            height: 250px;
-            top: 50%;
-            left: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), rgba(29, 78, 216, 0.1));
-            animation-duration: 30s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(30px, -30px) scale(1.05);
-            }
-            50% {
-                transform: translate(-20px, 20px) scale(0.95);
-            }
-            75% {
-                transform: translate(40px, 10px) scale(1.02);
-            }
-        }
-
-        .container-auth {
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
+        .panel-left {
+            flex: 1;
             position: relative;
-            z-index: 1;
-        }
-
-        .auth-box {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-section h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #e2e8f0;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .auth-section p {
-            color: #94a3b8;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #cbd5e1;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.3);
-            border-radius: 12px;
-            color: #f1f5f9;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .form-group select option {
-            background: #1e293b;
-            color: #f1f5f9;
-        }
-
-        .form-group input::placeholder {
-            color: #64748b;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #22c55e;
-            background: rgba(30, 41, 59, 0.95);
-            box-shadow: 0 0 20px rgba(34, 197, 82, 0.2);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white;
-            box-shadow: 0 10px 30px rgba(34, 197, 82, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(34, 197, 82, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-
-        .remember-forgot a {
-            color: #0ea5e9;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .remember-forgot a:hover {
-            color: #06b6d4;
-        }
-
-        .checkbox {
-            accent-color: #22c55e;
-            cursor: pointer;
-        }
-
-        .remember-forgot label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .social-login {
-            margin-top: 25px;
-        }
-
-        .social-login p {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 15px;
-            font-size: 12px;
-        }
-
-        .social-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .social-btn {
-            padding: 10px;
-            background: rgba(148, 163, 184, 0.1);
-            border: 1px solid rgba(148, 163, 184, 0.3);
-            border-radius: 10px;
-            color: #cbd5e1;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .social-btn:hover {
-            background: rgba(148, 163, 184, 0.2);
-            border-color: rgba(148, 163, 184, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .toggle-form {
-            text-align: center;
-            color: #94a3b8;
-            margin-top: 20px;
-            font-size: 13px;
-        }
-
-        .toggle-form a {
-            color: #0ea5e9;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .toggle-form a:hover {
-            color: #06b6d4;
-        }
-
-        .logo-section {
+            background: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800') center/cover no-repeat;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            text-align: center;
-            margin-bottom: 30px;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
         }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            border-radius: 15px;
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.8), rgba(255, 107, 157, 0.4));
+            mix-blend-mode: multiply;
+        }
+        .panel-right {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            margin-bottom: 15px;
-            box-shadow: 0 10px 30px rgba(34, 197, 82, 0.3);
-        }
-
-        .status-message {
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .status-message.success {
-            background: rgba(34, 197, 82, 0.1);
-            border: 1px solid rgba(34, 197, 82, 0.3);
-            color: #86efac;
-            display: block;
-        }
-
-        .status-message.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            display: block;
-        }
-
-        .password-toggle {
+            padding: 40px;
+            background: var(--bg-primary);
             position: relative;
         }
-
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-header .logo-icon {
+            margin: 0 auto 16px;
+        }
+        .auth-header h2 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .auth-header p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        .password-toggle { position: relative; }
         .password-toggle-btn {
             position: absolute;
-            right: 12px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #94a3b8;
+            color: var(--c-cyan);
             cursor: pointer;
             font-size: 14px;
-            transition: color 0.3s ease;
         }
-
-        .password-toggle-btn:hover {
-            color: #cbd5e1;
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
         }
-
-        .navbar {
+        .hologram-content {
+            position: relative;
+            z-index: 10;
+            color: white;
+            text-align: center;
+            max-width: 80%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-neon);
+        }
+        .hologram-content h1 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            margin-bottom: 16px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+        .hologram-content p {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .nav-links {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 40px;
+            top: 20px;
+            right: 40px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 20px;
             z-index: 100;
         }
-
-        .navbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #e2e8f0;
-            font-size: 20px;
+        .nav-links a {
+            color: var(--c-cyan-dark);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 12px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
         }
-
-        .navbar-logo i {
-            font-size: 24px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
+        .nav-links a:hover { color: var(--c-cyan); text-shadow: 0 0 10px rgba(0,212,255,0.5); }
+        
         @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 20px;
-            }
-
-            .auth-box {
-                padding: 30px 20px;
-            }
-
-            .container-auth {
-                padding: 100px 15px 20px;
-            }
-
-            .auth-section h2 {
-                font-size: 24px;
-            }
+            .split-layout { flex-direction: column; }
+            .panel-left { display: none; }
+            .nav-links { position: relative; top: 0; right: 0; justify-content: center; margin-bottom: 20px; }
         }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+    /* Font override — smooth Sora instead of blocky fonts */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .font-display, .cyber-label, .stat-label, .badge, .btn-neon,
+    .logo-text, .section-title, .page-title, .topbar-title, .modal-title,
+    .sidebar-user-name, .stat-value, h1, h2, h3, h4 {
+        font-family: 'Sora', sans-serif !important;
+        letter-spacing: normal !important;
+    }
     </style>
 </head>
 <body>
-    <div class="animated-bg">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-        <div class="blob blob3"></div>
-    </div>
-
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <i class="fa-solid fa-heart-pulse"></i>
-            HealthOS
+    <div class="scanline-overlay"></div>
+    
+    <div class="split-layout">
+        <!-- Left Panel: Hologram -->
+        <div class="panel-left">
+            <div class="heartbeat-line" style="position: absolute; top: 20%; width: 80%;">
+                <svg viewBox="0 0 800 60"><path d="M0 30 L300 30 L320 10 L340 50 L360 30 L800 30" /></svg>
+            </div>
+            
+            <div class="hologram-content">
+                <div class="dna-spinner mb-24"></div>
+                <h1>Intelligent Health</h1>
+                <p>Access your AI-powered medical profile, track diagnoses, and connect with specialists instantly.</p>
+            </div>
+            
+            <div class="heartbeat-line" style="position: absolute; bottom: 20%; width: 80%;">
+                <svg viewBox="0 0 800 60"><path d="M0 30 L400 30 L420 10 L440 50 L460 30 L800 30" /></svg>
+            </div>
         </div>
-        <div class="flex items-center gap-4">
-            <a href="/signup" class="text-sm text-cyan-400 hover:text-cyan-300 transition">Create Account</a>
-            <a href="/" class="text-sm text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i>
-                Home
-            </a>
-        </div>
-    </nav>
 
-    <div class="container-auth">
-        <div class="auth-box">
-            <div class="auth-section">
-                <div class="logo-section">
-                    <div class="logo-icon">
-                        <i class="fa-solid fa-sign-in-alt"></i>
-                    </div>
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to access your health profile</p>
+        <!-- Right Panel: Login Form -->
+        <div class="panel-right">
+            <div class="nav-links">
+                <a href="/"><i class="fa-solid fa-home"></i> Home</a>
+                <a href="/signup"><i class="fa-solid fa-user-plus"></i> Create Account</a>
+                <a href="/doctor/login" class="text-coral"><i class="fa-solid fa-user-md"></i> Doctor Portal</a>
+            </div>
+
+            <div class="login-card glass-card">
+                <div class="auth-header">
+                    <a href="/" class="mediops-logo" style="justify-content: center;">
+                        <div class="logo-icon"><i class="fa-solid fa-hospital"></i></div>
+                        <div>
+                            <div class="logo-text">MEDI<span>OPS</span></div>
+                            <div class="logo-sub">Intelligent Health Platform</div>
+                        </div>
+                    </a>
+                    <h2 class="mt-24">Sign In</h2>
+                    <p>Access your health dashboard</p>
                 </div>
 
-                <div class="status-message" id="loginStatus"></div>
+                <div id="loginStatus" class="toast" style="display: none; position: relative; top: 0; right: 0; max-width: 100%; margin-bottom: 20px; animation: none;"></div>
 
                 <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label>Login As</label>
-                        <select id="loginRole" class="form-control" required>
+                    <div class="input-group">
+                        <label class="cyber-label">Login As</label>
+                        <select id="loginRole" class="cyber-select" required>
                             <option value="patient">Patient / User</option>
                             <option value="doctor">Medical Doctor</option>
                             <option value="admin">System Administrator</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+
+                    <div class="input-group">
+                        <label class="cyber-label">Email Address</label>
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="loginEmail" class="cyber-input with-icon" placeholder="your@email.com" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Password</label>
+                    <div class="input-group">
+                        <label class="cyber-label">Password</label>
+                        <i class="fa-solid fa-lock input-icon"></i>
                         <div class="password-toggle">
-                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                            <input type="password" id="loginPassword" class="cyber-input with-icon" placeholder="••••••••" required>
                             <button type="button" class="password-toggle-btn" onclick="togglePassword('loginPassword')">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="remember-forgot">
-                        <label>
-                            <input type="checkbox" class="checkbox"> Remember me
+                    <div class="flex justify-between items-center mb-24 text-sm font-display text-muted">
+                        <label class="flex items-center gap-8 cursor-pointer">
+                            <input type="checkbox" style="accent-color: var(--c-cyan);"> Remember me
                         </label>
-                        <a href="#forgot">Forgot password?</a>
+                        <a href="#forgot" style="color: var(--c-cyan); text-decoration: none;">Forgot password?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Sign In</button>
+                    <button type="submit" class="btn-neon btn-neon-cyan w-full" style="justify-content: center;">
+                        Sign In <i class="fa-solid fa-arrow-right"></i>
+                    </button>
 
-                    <div class="social-login">
-                        <p>Or continue with</p>
+                    <div class="mt-24 text-center">
+                        <p class="cyber-label">Or continue with</p>
                         <div class="social-buttons">
-                            <button type="button" class="social-btn" onclick="loginWith('google')">
+                            <button type="button" class="btn-neon btn-neon-ghost" onclick="loginWith('google')" style="justify-content: center; padding: 10px;">
                                 <i class="fa-brands fa-google"></i> Google
                             </button>
-                            <button type="button" class="social-btn" onclick="loginWith('github')">
+                            <button type="button" class="btn-neon btn-neon-ghost" onclick="loginWith('github')" style="justify-content: center; padding: 10px;">
                                 <i class="fa-brands fa-github"></i> GitHub
                             </button>
                         </div>
                     </div>
                 </form>
-
-                <div class="toggle-form">
-                    Don't have an account? <a href="/signup">Sign up</a>
-                </div>
-                <div class="toggle-form" style="margin-top: 10px; font-size: 12px;">
-                    Are you a medical professional? <a href="/doctor/login" style="color: #22c55e; font-weight: bold;">Doctor Portal Login</a>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Floating Stickers JS
+        (function() {
+          const stickers = ['💊','🏥','🚑','🩺','🔬','💉','🧬','🫀','🩻','❤️','🌡️','🧪','💆','🏋️','⚕️'];
+          const container = document.createElement('div');
+          container.className = 'med-stickers-container';
+          document.body.appendChild(container);
+          function createSticker() {
+            const s = document.createElement('div');
+            s.className = 'med-sticker';
+            s.textContent = stickers[Math.floor(Math.random() * stickers.length)];
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.fontSize = (20 + Math.random() * 24) + 'px';
+            const dur = 12 + Math.random() * 20;
+            s.style.animationDuration = dur + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(s);
+            setTimeout(() => s.remove(), (dur + 5) * 1000);
+          }
+          for (let i = 0; i < 8; i++) setTimeout(createSticker, i * 800);
+          setInterval(createSticker, 2500);
+        })();
+
+        // Particles JS
+        (function() {
+          const pc = document.createElement('div');
+          pc.className = 'particles-container';
+          document.body.insertBefore(pc, document.body.firstChild);
+          for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.bottom = '-10px';
+            p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+            p.style.background = Math.random() > 0.5 ? '#00D4FF' : '#FF6B9D';
+            p.style.animationDuration = (8 + Math.random() * 15) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            pc.appendChild(p);
+          }
+        })();
+
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
             const isPassword = field.type === 'password';
             field.type = isPassword ? 'text' : 'password';
         }
-
         function handleLogin(event) {
             event.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const role = document.getElementById('loginRole').value;
             const statusDiv = document.getElementById('loginStatus');
-
-            // Show loading state
-            statusDiv.className = 'status-message success';
-            statusDiv.textContent = '⏳ Logging in...';
-
-            // Send request to backend
+            statusDiv.style.display = 'flex';
+            statusDiv.className = 'toast info';
+            statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ⏳ Logging in...';
             fetch('/api/auth/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                    role: role,
-                }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, password, role}),
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    statusDiv.className = 'status-message success';
-                    statusDiv.textContent = '✓ Login successful! Redirecting...';
+                    statusDiv.className = 'toast success';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-check-circle"></i> ✓ Login successful! Redirecting...';
                     const userId = data.token.split('_')[1] || '1';
                     localStorage.setItem('user_token', data.token);
                     localStorage.setItem('userId', userId);
-                    if (role === 'doctor') {
-                        localStorage.setItem('doctorId', userId);
-                    } else if (role === 'patient') {
-                        localStorage.setItem('patientId', userId);
-                    }
+                    if (role === 'doctor') localStorage.setItem('doctorId', userId);
+                    else if (role === 'patient') localStorage.setItem('patientId', userId);
                     if (data.user) {
                         localStorage.setItem('userName', data.user.full_name || 'Patient');
                         localStorage.setItem('userEmail', data.user.email || '');
                     }
                     setTimeout(() => {
-                        if (role === 'doctor') {
-                            window.location.href = '/doctor-dashboard';
-                        } else if (role === 'admin') {
-                            window.location.href = '/admin';
-                        } else {
-                            window.location.href = '/dashboard';
-                        }
+                        if (role === 'doctor') window.location.href = '/doctor-dashboard';
+                        else if (role === 'admin') window.location.href = '/admin';
+                        else window.location.href = '/dashboard';
                     }, 1500);
                 } else {
-                    statusDiv.className = 'status-message error';
-                    statusDiv.textContent = '✗ ' + (data.message || 'Login failed. Please try again.');
+                    statusDiv.className = 'toast error';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ ' + (data.message || 'Login failed.');
                 }
             })
             .catch(error => {
-                statusDiv.className = 'status-message error';
-                statusDiv.textContent = '✗ Error: ' + error.message;
+                statusDiv.className = 'toast error';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ Error: ' + error.message;
             });
         }
-
-        function loginWith(provider) {
-            alert(`Logging in with ${provider}...`);
-            // Implement OAuth/social login
-        }
+        function loginWith(provider) { alert(`Logging in with ${provider}...`); }
     </script>
+    <script src="/static/cyber-inject.js"></script>
 </body>
 </html>

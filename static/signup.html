@@ -3,490 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthOS | Sign Up</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="MediOps Create Account">
+    <title>MediOps | Create Account</title>
+    <link rel="stylesheet" href="/static/mediops.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f4c75 50%, #1a1a2e 75%, #16213e 100%);
-            background-attachment: fixed;
+        .split-layout {
+            display: flex;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.3;
         }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(34, 197, 255, 0.4), rgba(14, 165, 233, 0.1));
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .blob1 {
-            width: 300px;
-            height: 300px;
-            top: -50px;
-            right: -50px;
-            animation-duration: 20s;
-        }
-
-        .blob2 {
-            width: 200px;
-            height: 200px;
-            bottom: -50px;
-            left: -50px;
-            background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.3), rgba(109, 40, 217, 0.1));
-            animation-duration: 25s;
-        }
-
-        .blob3 {
-            width: 250px;
-            height: 250px;
-            top: 50%;
-            left: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), rgba(29, 78, 216, 0.1));
-            animation-duration: 30s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(30px, -30px) scale(1.05);
-            }
-            50% {
-                transform: translate(-20px, 20px) scale(0.95);
-            }
-            75% {
-                transform: translate(40px, 10px) scale(1.02);
-            }
-        }
-
-        .container-auth {
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
+        .panel-left {
+            flex: 1;
             position: relative;
-            z-index: 1;
-        }
-
-        .auth-box {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-section h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #e2e8f0;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .auth-section p {
-            color: #94a3b8;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #cbd5e1;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.3);
-            border-radius: 12px;
-            color: #f1f5f9;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .form-group input::placeholder {
-            color: #64748b;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #22c55e;
-            background: rgba(30, 41, 59, 0.95);
-            box-shadow: 0 0 20px rgba(34, 197, 82, 0.2);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white;
-            box-shadow: 0 10px 30px rgba(34, 197, 82, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(34, 197, 82, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-
-        .checkbox {
-            accent-color: #22c55e;
-            cursor: pointer;
-        }
-
-        .remember-forgot label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .social-login {
-            margin-top: 25px;
-        }
-
-        .social-login p {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 15px;
-            font-size: 12px;
-        }
-
-        .social-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .social-btn {
-            padding: 10px;
-            background: rgba(148, 163, 184, 0.1);
-            border: 1px solid rgba(148, 163, 184, 0.3);
-            border-radius: 10px;
-            color: #cbd5e1;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .social-btn:hover {
-            background: rgba(148, 163, 184, 0.2);
-            border-color: rgba(148, 163, 184, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .toggle-form {
-            text-align: center;
-            color: #94a3b8;
-            margin-top: 20px;
-            font-size: 13px;
-        }
-
-        .toggle-form a {
-            color: #0ea5e9;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .toggle-form a:hover {
-            color: #06b6d4;
-        }
-
-        .logo-section {
+            background: linear-gradient(135deg, var(--c-purple), var(--c-cyan));
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            text-align: center;
-            margin-bottom: 30px;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
         }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            border-radius: 15px;
+        .panel-right {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            margin-bottom: 15px;
-            box-shadow: 0 10px 30px rgba(34, 197, 82, 0.3);
-        }
-
-        .status-message {
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .status-message.success {
-            background: rgba(34, 197, 82, 0.1);
-            border: 1px solid rgba(34, 197, 82, 0.3);
-            color: #86efac;
-            display: block;
-        }
-
-        .status-message.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            display: block;
-        }
-
-        .password-toggle {
+            padding: 40px;
+            background: var(--bg-primary);
             position: relative;
         }
-
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-header .logo-icon {
+            margin: 0 auto 16px;
+        }
+        .auth-header h2 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .auth-header p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        .password-toggle { position: relative; }
         .password-toggle-btn {
             position: absolute;
-            right: 12px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #94a3b8;
+            color: var(--c-cyan);
             cursor: pointer;
             font-size: 14px;
-            transition: color 0.3s ease;
         }
-
-        .password-toggle-btn:hover {
-            color: #cbd5e1;
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
         }
-
-        .navbar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 40px;
+        .stats-panel {
+            position: relative;
+            z-index: 10;
+            color: white;
+            text-align: center;
+            max-width: 90%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-neon);
+        }
+        .stats-panel h1 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            margin-bottom: 32px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+        .stat-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .stat-text h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            margin: 0;
+        }
+        .stat-text p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin: 0;
+        }
+        .nav-links {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            gap: 20px;
             z-index: 100;
         }
-
-        .navbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #e2e8f0;
-            font-size: 20px;
+        .nav-links a {
+            color: var(--c-cyan-dark);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 12px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
         }
-
-        .navbar-logo i {
-            font-size: 24px;
-            background: linear-gradient(135deg, #22c55e, #0ea5e9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
+        .nav-links a:hover { color: var(--c-cyan); text-shadow: 0 0 10px rgba(0,212,255,0.5); }
+        
         @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 20px;
-            }
-
-            .auth-box {
-                padding: 30px 20px;
-            }
-
-            .container-auth {
-                padding: 100px 15px 20px;
-            }
-
-            .auth-section h2 {
-                font-size: 24px;
-            }
+            .split-layout { flex-direction: column; }
+            .panel-left { display: none; }
+            .nav-links { position: relative; top: 0; right: 0; justify-content: center; margin-bottom: 20px; }
         }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+    /* Font override — smooth Sora instead of blocky fonts */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .font-display, .cyber-label, .stat-label, .badge, .btn-neon,
+    .logo-text, .section-title, .page-title, .topbar-title, .modal-title,
+    .sidebar-user-name, .stat-value, h1, h2, h3, h4 {
+        font-family: 'Sora', sans-serif !important;
+        letter-spacing: normal !important;
+    }
     </style>
 </head>
 <body>
-    <div class="animated-bg">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-        <div class="blob blob3"></div>
-    </div>
-
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <i class="fa-solid fa-heart-pulse"></i>
-            HealthOS
-        </div>
-        <div class="flex items-center gap-4">
-            <a href="/login" class="text-sm text-cyan-400 hover:text-cyan-300 transition">Back to Login</a>
-            <a href="/" class="text-sm text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i>
-                Home
-            </a>
-        </div>
-    </nav>
-
-    <div class="container-auth">
-        <div class="auth-box">
-            <div class="auth-section">
-                <div class="logo-section">
-                    <div class="logo-icon">
-                        <i class="fa-solid fa-user-plus"></i>
+    <div class="scanline-overlay"></div>
+    
+    <div class="split-layout">
+        <!-- Left Panel: Stats -->
+        <div class="panel-left">
+            <div class="stats-panel">
+                <h1>Join the Revolution</h1>
+                
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-text">
+                        <h3>50K+ Patients</h3>
+                        <p>Active users worldwide</p>
                     </div>
-                    <h2>Create Account</h2>
-                    <p>Join HealthOS to manage your health</p>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="stat-text">
+                        <h3>99.2% Accuracy</h3>
+                        <p>AI Diagnosis precision</p>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="stat-text">
+                        <h3>2000+ Doctors</h3>
+                        <p>Verified medical professionals</p>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="stat-text">
+                        <h3>45 Cities</h3>
+                        <p>Global coverage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Signup Form -->
+        <div class="panel-right">
+            <div class="nav-links">
+                <a href="/"><i class="fa-solid fa-home"></i> Home</a>
+                <a href="/login"><i class="fa-solid fa-sign-in-alt"></i> Back to Login</a>
+            </div>
+
+            <div class="login-card glass-card">
+                <div class="auth-header">
+                    <a href="/" class="mediops-logo" style="justify-content: center;">
+                        <div class="logo-icon"><i class="fa-solid fa-user-plus"></i></div>
+                        <div>
+                            <div class="logo-text">MEDI<span>OPS</span></div>
+                            <div class="logo-sub">Intelligent Health Platform</div>
+                        </div>
+                    </a>
+                    <h2 class="mt-24">Create Account</h2>
+                    <p>Join the future of healthcare</p>
                 </div>
 
-                <div class="status-message" id="signupStatus"></div>
+                <div id="signupStatus" class="toast" style="display: none; position: relative; top: 0; right: 0; max-width: 100%; margin-bottom: 20px; animation: none;"></div>
 
                 <form onsubmit="handleSignup(event)">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="signupName" placeholder="John Doe" required>
+                    <div class="input-group">
+                        <label class="cyber-label">Full Name</label>
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="signupName" class="cyber-input with-icon" placeholder="John Doe" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                    <div class="input-group">
+                        <label class="cyber-label">Email Address</label>
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="signupEmail" class="cyber-input with-icon" placeholder="your@email.com" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Password</label>
+                    <div class="input-group">
+                        <label class="cyber-label">Password</label>
+                        <i class="fa-solid fa-lock input-icon"></i>
                         <div class="password-toggle">
-                            <input type="password" id="signupPassword" placeholder="••••••••" required>
+                            <input type="password" id="signupPassword" class="cyber-input with-icon" placeholder="••••••••" required>
                             <button type="button" class="password-toggle-btn" onclick="togglePassword('signupPassword')">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Confirm Password</label>
+                    
+                    <div class="input-group">
+                        <label class="cyber-label">Confirm Password</label>
+                        <i class="fa-solid fa-lock input-icon"></i>
                         <div class="password-toggle">
-                            <input type="password" id="signupConfirmPassword" placeholder="••••••••" required>
+                            <input type="password" id="signupConfirmPassword" class="cyber-input with-icon" placeholder="••••••••" required>
                             <button type="button" class="password-toggle-btn" onclick="togglePassword('signupConfirmPassword')">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="remember-forgot" style="margin-bottom: 20px;">
-                        <label>
-                            <input type="checkbox" class="checkbox" required> I agree to Terms & Conditions
+                    <div class="flex items-center mb-24 text-sm font-display text-muted">
+                        <label class="flex items-center gap-8 cursor-pointer">
+                            <input type="checkbox" required style="accent-color: var(--c-cyan);"> I agree to Terms & Conditions
                         </label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    <button type="submit" class="btn-neon btn-neon-purple w-full" style="justify-content: center;">
+                        Create Account <i class="fa-solid fa-user-plus"></i>
+                    </button>
 
-                    <div class="social-login">
-                        <p>Or sign up with</p>
+                    <div class="mt-24 text-center">
+                        <p class="cyber-label">Or sign up with</p>
                         <div class="social-buttons">
-                            <button type="button" class="social-btn" onclick="signupWith('google')">
+                            <button type="button" class="btn-neon btn-neon-ghost" onclick="signupWith('google')" style="justify-content: center; padding: 10px;">
                                 <i class="fa-brands fa-google"></i> Google
                             </button>
-                            <button type="button" class="social-btn" onclick="signupWith('github')">
+                            <button type="button" class="btn-neon btn-neon-ghost" onclick="signupWith('github')" style="justify-content: center; padding: 10px;">
                                 <i class="fa-brands fa-github"></i> GitHub
                             </button>
                         </div>
                     </div>
                 </form>
-
-                <div class="toggle-form">
-                    Already have an account? <a href="/login">Sign in</a>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Floating Stickers JS
+        (function() {
+          const stickers = ['💊','🏥','🚑','🩺','🔬','💉','🧬','🫀','🩻','❤️','🌡️','🧪','💆','🏋️','⚕️'];
+          const container = document.createElement('div');
+          container.className = 'med-stickers-container';
+          document.body.appendChild(container);
+          function createSticker() {
+            const s = document.createElement('div');
+            s.className = 'med-sticker';
+            s.textContent = stickers[Math.floor(Math.random() * stickers.length)];
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.fontSize = (20 + Math.random() * 24) + 'px';
+            const dur = 12 + Math.random() * 20;
+            s.style.animationDuration = dur + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(s);
+            setTimeout(() => s.remove(), (dur + 5) * 1000);
+          }
+          for (let i = 0; i < 8; i++) setTimeout(createSticker, i * 800);
+          setInterval(createSticker, 2500);
+        })();
+
+        // Particles JS
+        (function() {
+          const pc = document.createElement('div');
+          pc.className = 'particles-container';
+          document.body.insertBefore(pc, document.body.firstChild);
+          for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.bottom = '-10px';
+            p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+            p.style.background = Math.random() > 0.5 ? '#00D4FF' : '#FF6B9D';
+            p.style.animationDuration = (8 + Math.random() * 15) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            pc.appendChild(p);
+          }
+        })();
+
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
             const isPassword = field.type === 'password';
             field.type = isPassword ? 'text' : 'password';
         }
-
         function handleSignup(event) {
             event.preventDefault();
             const name = document.getElementById('signupName').value;
@@ -494,58 +339,44 @@
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
             const statusDiv = document.getElementById('signupStatus');
-
+            statusDiv.style.display = 'flex';
+            
             if (password !== confirmPassword) {
-                statusDiv.className = 'status-message error';
-                statusDiv.textContent = '✗ Passwords do not match';
+                statusDiv.className = 'toast error';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ Passwords do not match';
                 return;
             }
-
             if (password.length < 6) {
-                statusDiv.className = 'status-message error';
-                statusDiv.textContent = '✗ Password must be at least 6 characters';
+                statusDiv.className = 'toast error';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ Password must be at least 6 characters';
                 return;
             }
-
-            // Show loading state
-            statusDiv.className = 'status-message success';
-            statusDiv.textContent = '⏳ Creating account...';
-
-            // Send request to backend
+            
+            statusDiv.className = 'toast info';
+            statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ⏳ Creating account...';
             fetch('/api/auth/signup', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    full_name: name,
-                    email: email,
-                    password: password,
-                }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({full_name: name, email, password}),
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    statusDiv.className = 'status-message success';
-                    statusDiv.textContent = '✓ Account created! Redirecting to login...';
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 1500);
+                    statusDiv.className = 'toast success';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-check-circle"></i> ✓ Account created! Redirecting to login...';
+                    setTimeout(() => { window.location.href = '/login'; }, 1500);
                 } else {
-                    statusDiv.className = 'status-message error';
-                    statusDiv.textContent = '✗ ' + (data.message || 'Signup failed. Please try again.');
+                    statusDiv.className = 'toast error';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ ' + (data.message || 'Signup failed.');
                 }
             })
             .catch(error => {
-                statusDiv.className = 'status-message error';
-                statusDiv.textContent = '✗ Error: ' + error.message;
+                statusDiv.className = 'toast error';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ✗ Error: ' + error.message;
             });
         }
-
-        function signupWith(provider) {
-            alert(`Signing up with ${provider}...`);
-            // Implement OAuth/social signup
-        }
+        function signupWith(provider) { alert(`Signing up with ${provider}...`); }
     </script>
+    <script src="/static/cyber-inject.js"></script>
 </body>
 </html>

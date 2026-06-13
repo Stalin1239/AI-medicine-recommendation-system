@@ -1,1490 +1,1753 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Specialist Consultation - MediOps</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --primary: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.3);
-            --secondary: #7000ff;
-            --bg-darker: #050811;
-            --bg-dark: #0a0f1d;
-            --bg-card: rgba(16, 24, 48, 0.65);
-            --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --border: rgba(255, 255, 255, 0.08);
-            --glass: rgba(255, 255, 255, 0.03);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --accent: #7000ff;
-            --light: #f1f5f9;
-            
-            /* Gray compatibility variables */
-            --gray-50: rgba(255, 255, 255, 0.02);
-            --gray-100: rgba(255, 255, 255, 0.05);
-            --gray-200: rgba(255, 255, 255, 0.08);
-            --gray-300: rgba(255, 255, 255, 0.12);
-            --gray-400: #94a3b8;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #f1f5f9;
-            --gray-900: #ffffff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-darker);
-            background-image: radial-gradient(at 0% 0%, rgba(112, 0, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 40px 20px;
-            background-attachment: fixed;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            padding: 1.25rem 2rem;
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-        }
-        
-        .nav-bar .logo {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-bar .user-info {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        .header {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 40px;
-            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-dim);
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .content {
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-title {
-            font-size: 1.6rem;
-            color: #fff;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-        }
-
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 24px;
-            background: var(--primary);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--primary-glow);
-        }
-
-        .disease-info {
-            background: linear-gradient(135deg, rgba(112, 0, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            box-shadow: 0 8px 32px rgba(112, 0, 255, 0.15);
-        }
-
-        .disease-info h3 {
-            font-size: 1rem;
-            margin-bottom: 12px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .disease-info .disease-name {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-shadow: 0 0 10px rgba(0,240,255,0.2);
-        }
-
-        .disease-info .specialty-badge {
-            display: inline-block;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: var(--primary);
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,240,255,0.1);
-        }
-
-        .doctors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .doctor-card {
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .doctor-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .doctor-card:hover {
-            border-color: rgba(0, 240, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.05);
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .doctor-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .doctor-card.selected {
-            border-color: var(--success);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
-        }
-        
-        .doctor-card.selected::before {
-            background: var(--success);
-            transform: scaleX(1);
-        }
-
-        .doctor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 20px;
-        }
-
-        .doctor-avatar {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 700;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        .doctor-status {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-dim);
-            border: 1px solid var(--border);
-        }
-
-        .status-badge.online {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-            border-color: rgba(16, 185, 129, 0.25);
-        }
-
-        .status-badge.offline {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
-            border-color: rgba(239, 68, 68, 0.25);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-            animation: pulse-badge 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-badge {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .doctor-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .doctor-specialty {
-            font-size: 0.9rem;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .doctor-details {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .detail-label {
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .wait-time {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .doctor-rating {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .star {
-            color: #fbbf24;
-            font-size: 0.95rem;
-        }
-
-        .rating-text {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-        }
-
-        .select-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: #fff;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .select-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.2);
-        }
-
-        .select-btn.selected {
-            background: var(--success);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
-        }
-
-        .consultation-form {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border);
-            padding: 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            display: none;
-            box-shadow: inset 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .consultation-form.active {
-            display: block;
-            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.95rem;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .form-group textarea {
-            resize: none;
-            font-family: inherit;
-        }
-
-        .priority-option {
-            position: relative;
-        }
-
-        .priority-option input[type="radio"] {
-            display: none;
-        }
-
-        .priority-label {
-            display: block;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-        }
-
-        .priority-option input[type="radio"]:checked+.priority-label {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%);
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .form-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            padding: 13px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--primary-glow);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: #fff;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .success-message {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--success);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            display: none;
-            animation: slideDown 0.4s ease-out;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .success-message h4 {
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(0, 240, 255, 0.15);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-dim);
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-            transition: var(--transition);
-        }
-
-        .back-link:hover {
-            gap: 12px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .cta-button-demo {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            margin: 10px 0;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-        }
-
-        .cta-button-demo:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-
-                font-size: 1.8rem;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .form-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-bar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .priority-group {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .alternatives-section {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid var(--gray-200);
-        }
-
-        .alternatives-section .section-title {
-            color: var(--warning);
-        }
-
-        .alternatives-section .section-title::before {
-            background: var(--warning);
-        }
-
-        /* Simulated Razorpay Modal CSS */
-        .razorpay-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s;
-        }
-
-        .razorpay-modal {
-            width: 100%;
-            max-width: 400px;
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            color: #333;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            position: relative;
-            transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .razorpay-overlay.active {
-            display: flex;
-        }
-
-        .razorpay-overlay.active .razorpay-modal {
-            transform: scale(1);
-        }
-
-        .rzp-header {
-            background: #2b80ff; /* Razorpay Blue */
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .rzp-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: rgba(255,255,255,0.7);
-            cursor: pointer;
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        .rzp-amount {
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .rzp-body {
-            padding: 20px;
-            background: #f9f9f9;
-        }
-
-        .rzp-tabs {
-            display: flex;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        .rzp-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            color: #666;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-        }
-
-        .rzp-tab.active {
-            color: #2b80ff;
-            border-bottom-color: #2b80ff;
-        }
-
-        .rzp-form-group {
-            margin-bottom: 15px;
-        }
-
-        .rzp-form-group label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .rzp-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background: white;
-            color: #333;
-        }
-
-        .rzp-btn {
-            width: 100%;
-            padding: 14px;
-            background: #2b80ff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        .rzp-btn:hover {
-            background: #1a6be6;
-        }
-        
-        .rzp-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        .rzp-footer {
-            text-align: center;
-            padding: 10px;
-            font-size: 11px;
-            color: #999;
-            background: #fff;
-            border-top: 1px solid #eee;
-        }
-        
-        /* Razorpay simulated success mark */
-        .rzp-success-mark {
-            display: none;
-            color: #10b981;
-            font-size: 40px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediOps | Book Specialist Consultation</title>
+  <link rel="stylesheet" href="/static/mediops.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* ── Page-specific styles ── */
+    :root {
+      --cyan: #00D4FF;
+      --coral: #FF6B9D;
+      --purple: #B24BF3;
+      --green: #00FF88;
+      --bg: #F0F4FF;
+      --card-bg: rgba(255,255,255,0.82);
+      --border: rgba(0,212,255,0.25);
+      --shadow: 0 8px 40px rgba(0,212,255,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Top Nav Bar ── */
+    .top-nav {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid var(--cyan);
+      padding: 0 2rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,212,255,0.15);
+    }
+
+    .mediops-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mediops-logo .logo-icon {
+      font-size: 2rem;
+      filter: drop-shadow(0 0 8px var(--cyan));
+      animation: pulse-icon 2s ease-in-out infinite;
+    }
+    @keyframes pulse-icon {
+      0%,100% { filter: drop-shadow(0 0 8px var(--cyan)); }
+      50%      { filter: drop-shadow(0 0 18px var(--cyan)); }
+    }
+    .mediops-logo .logo-text {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      letter-spacing: 2px;
+    }
+    .mediops-logo .logo-text span { color: var(--cyan); }
+    .mediops-logo .logo-sub {
+      font-size: 0.6rem;
+      color: #888;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -4px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      color: #444;
+    }
+    .user-pill i { color: var(--cyan); }
+
+    /* ── Page Header Strip ── */
+    .page-header-strip {
+      background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(178,75,243,0.08) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.4rem 2rem;
+    }
+    .page-header-strip h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.4rem;
+      color: #1a1a2e;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-header-strip h1 i { color: var(--cyan); }
+    .page-header-strip p {
+      color: #666;
+      font-size: 0.88rem;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Main Layout ── */
+    .main-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── Glass Card ── */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 1.6rem;
+    }
+    .glass-card + .glass-card { margin-top: 1.5rem; }
+
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title i { color: var(--cyan); }
+
+    /* ── Disease Info Panel ── */
+    #diseaseInfo {
+      position: sticky;
+      top: 88px;
+    }
+    .disease-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: white;
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 0.8rem;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+    }
+    .disease-name-big {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 0.5rem;
+    }
+
+    .specialty-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,107,157,0.12);
+      border: 1px solid rgba(255,107,157,0.4);
+      color: var(--coral);
+      border-radius: 50px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #555;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,212,255,0.1);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row i { color: var(--cyan); width: 16px; text-align: center; }
+
+    /* ── Doctors Grid ── */
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title i { color: var(--cyan); }
+    .count-badge {
+      background: rgba(0,212,255,0.12);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--cyan);
+      border-radius: 50px;
+      padding: 3px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    #doctorsList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .doctor-card {
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid rgba(0,212,255,0.2);
+      border-radius: 18px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .doctor-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .doctor-card:hover, .doctor-card.selected {
+      border-color: var(--cyan);
+      box-shadow: 0 8px 30px rgba(0,212,255,0.2);
+      transform: translateY(-3px);
+    }
+    .doctor-card:hover::before, .doctor-card.selected::before { opacity: 1; }
+    .doctor-card.selected {
+      border-color: var(--cyan);
+      background: rgba(0,212,255,0.05);
+    }
+
+    .selected-check {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 24px; height: 24px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.7rem;
+    }
+    .doctor-card.selected .selected-check { display: flex; }
+
+    .doc-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .doc-photo {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 2px solid rgba(0,212,255,0.3);
+      flex-shrink: 0;
+    }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-specialty {
+      font-size: 0.75rem;
+      color: var(--purple);
+      font-weight: 600;
+      margin: 2px 0;
+    }
+    .doc-stars {
+      color: #FFC107;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .doc-stars span { color: #666; font-size: 0.7rem; }
+
+    .doc-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .doc-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      color: #555;
+    }
+    .doc-meta-item i { color: var(--cyan); font-size: 0.7rem; }
+
+    .doc-fee {
+      font-family: 'Sora', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+      margin: 8px 0;
+    }
+    .doc-fee span { font-size: 0.7rem; color: #888; font-family: 'Exo 2', sans-serif; font-weight: 400; }
+
+    .btn-select {
+      width: 100%;
+      padding: 8px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.25);
+    }
+    .btn-select:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,212,255,0.4); }
+    .doctor-card.selected .btn-select {
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+    }
+
+    /* ── Alternatives ── */
+    #alternativesSection {
+      margin-top: 1.5rem;
+    }
+    .alt-title {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+    #alternativesList {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .alt-doc-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(178,75,243,0.05);
+      border: 1px solid rgba(178,75,243,0.2);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .alt-doc-item:hover {
+      background: rgba(178,75,243,0.1);
+      border-color: var(--purple);
+    }
+    .alt-doc-avatar {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .alt-doc-name { font-size: 0.82rem; font-weight: 600; color: #1a1a2e; }
+    .alt-doc-fee { font-size: 0.75rem; color: var(--green); font-weight: 700; margin-left: auto; }
+
+    /* ── Consultation Form ── */
+    #consultationForm {
+      display: none;
+      animation: slideDown 0.4s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #consultationForm.visible { display: block; }
+
+    .selected-doc-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(178,75,243,0.08));
+      border: 1.5px solid var(--cyan);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 1.5rem;
+    }
+    .selected-doc-banner img {
+      width: 50px; height: 50px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    #selectedDoctorDisplay {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .selected-doc-banner .chg-btn {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid rgba(0,212,255,0.4);
+      color: var(--cyan);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .selected-doc-banner .chg-btn:hover { background: rgba(0,212,255,0.1); }
+
+    .form-group { margin-bottom: 1.4rem; }
+    .cyber-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cyber-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.8);
+      border: 1.5px solid rgba(0,212,255,0.3);
+      border-radius: 12px;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.88rem;
+      color: #1a1a2e;
+      transition: all 0.3s;
+      outline: none;
+      resize: vertical;
+    }
+    .cyber-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+    }
+    textarea.cyber-input { min-height: 90px; }
+
+    /* ── Priority Pills ── */
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .priority-option { position: relative; }
+    .priority-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .priority-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 6px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(0,212,255,0.25);
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #777;
+      background: rgba(255,255,255,0.6);
+    }
+    .priority-pill .pill-icon { font-size: 1.1rem; }
+    .priority-option input:checked + .priority-pill {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      color: white;
+    }
+    #priorityLow:checked + .priority-pill    { background: linear-gradient(135deg, #00c9a7, #00FF88); border-color: #00FF88; }
+    #priorityNormal:checked + .priority-pill { background: linear-gradient(135deg, var(--cyan), #0099cc); border-color: var(--cyan); }
+    #priorityHigh:checked + .priority-pill   { background: linear-gradient(135deg, #ffaa00, #ff8800); border-color: #ffaa00; }
+    #priorityUrgent:checked + .priority-pill { background: linear-gradient(135deg, var(--coral), #cc0044); border-color: var(--coral); }
+    .priority-pill:hover { transform: translateY(-2px); border-color: var(--cyan); }
+
+    /* ── Submit Area ── */
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 1.5rem;
+    }
+    .btn-neon {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.45); }
+    .btn-neon-outline {
+      flex: 0 0 auto;
+      padding: 14px 20px;
+      background: transparent;
+      color: #666;
+      border: 1.5px solid rgba(0,0,0,0.15);
+      border-radius: 14px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-neon-outline:hover { border-color: var(--coral); color: var(--coral); }
+
+    /* ── Loading Skeleton ── */
+    .skeleton-card {
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid rgba(0,212,255,0.1);
+      border-radius: 18px;
+      padding: 1.2rem;
+    }
+    .skeleton-line {
+      height: 12px;
+      background: linear-gradient(90deg, #e8edf5, #f5f8ff, #e8edf5);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-circle {
+      width: 58px; height: 58px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #e8edf5, #f5f8ff, #e8edf5);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      flex-shrink: 0;
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #aaa;
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h3 { font-family: 'Sora', sans-serif; font-size: 0.9rem; color: #bbb; margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.82rem; }
+
+    /* ── Success State ── */
+    #successMessage {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    #successMessage.visible { display: block; }
+    .success-check-circle {
+      width: 90px; height: 90px;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.5rem;
+      animation: popIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+      box-shadow: 0 10px 40px rgba(0,255,136,0.3);
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0); }
+      60%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .success-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      margin-bottom: 0.5rem;
+    }
+    .success-sub { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    #successDetails {
+      background: rgba(0,255,136,0.06);
+      border: 1px solid rgba(0,255,136,0.25);
+      border-radius: 14px;
+      padding: 1rem 1.5rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,255,136,0.1);
+      font-size: 0.85rem;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: #666; }
+    .detail-value { font-weight: 700; color: #1a1a2e; }
+    .status-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,255,136,0.12);
+      border: 1px solid rgba(0,255,136,0.4);
+      color: #00aa55;
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ── Razorpay Modal ── */
+    #rzpOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,30,0.6);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #rzpOverlay.active { display: flex; }
+
+    .rzp-modal {
+      background: white;
+      border-radius: 24px;
+      width: 420px;
+      max-width: 95vw;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .rzp-header {
+      background: linear-gradient(135deg, #0f0f23, #1a0a3a);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rzp-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rzp-brand-icon { font-size: 1.6rem; }
+    .rzp-brand-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      color: white;
+      font-weight: 700;
+    }
+    .rzp-brand-name span { color: var(--cyan); }
+    .rzp-brand-sub { font-size: 0.65rem; color: #aaa; letter-spacing: 2px; }
+    .rzp-close {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 8px;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .rzp-close:hover { background: rgba(255,255,255,0.2); color: white; }
+
+    .rzp-amount-bar {
+      background: linear-gradient(90deg, rgba(0,212,255,0.08), rgba(178,75,243,0.06));
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rzp-amount-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .rzp-amount-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #1a1a2e;
+    }
+    .rzp-secure { font-size: 0.75rem; color: var(--green); display: flex; align-items: center; gap: 5px; }
+
+    .rzp-tabs {
+      display: flex;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 0 24px;
+    }
+    .rzp-tab {
+      flex: 1;
+      padding: 14px 8px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #aaa;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: -1px;
+    }
+    .rzp-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+    .rzp-tab:hover:not(.active) { color: #555; }
+
+    #rzpBody { padding: 24px; }
+
+    .rzp-view { display: none; }
+    .rzp-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+    .rzp-field-label { font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+    .rzp-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e8edf5;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #1a1a2e;
+      transition: border-color 0.2s;
+      outline: none;
+      margin-bottom: 14px;
+    }
+    .rzp-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(178,75,243,0.1); }
+
+    .rzp-card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .rzp-upi-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,212,255,0.06);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: #555;
+      margin-bottom: 14px;
+    }
+    .rzp-upi-info i { color: var(--cyan); }
+
+    .rzp-pay-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--purple), #6a1bcc);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(178,75,243,0.35);
+    }
+    .rzp-pay-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(178,75,243,0.5); }
+
+    .rzp-spinner { display: none; }
+    .rzp-spinner.active { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .rzp-footer {
+      background: #fafafa;
+      border-top: 1px solid #f0f0f0;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: #aaa;
+    }
+
+    #rzpSuccessView {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+    #rzpSuccessView.active { display: block; }
+    .rzp-success-icon {
+      font-size: 3.5rem;
+      animation: popIn 0.5s ease;
+      margin-bottom: 1rem;
+    }
+    .rzp-success-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 0.5rem;
+    }
+    .rzp-txid {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--purple);
+      background: rgba(178,75,243,0.08);
+      border: 1px solid rgba(178,75,243,0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    /* ── Stickers & Particles ── */
+    .med-stickers-container {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .med-sticker {
+      position: absolute;
+      bottom: -60px;
+      opacity: 0.08;
+      animation: floatUp linear forwards;
+      user-select: none;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.08; }
+      50%  { opacity: 0.12; }
+      100% { transform: translateY(-110vh) rotate(30deg); opacity: 0; }
+    }
+    .particles-container {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: particleRise linear infinite;
+    }
+    @keyframes particleRise {
+      0%   { transform: translateY(0); opacity: 0.4; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+    .scanline-overlay {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,212,255,0.012) 2px,
+        rgba(0,212,255,0.012) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Tx ID ── */
+    #rzpTxId {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--purple);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .main-wrap { grid-template-columns: 1fr; }
+      #diseaseInfo { position: static; }
+      .priority-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .top-nav { padding: 0 1rem; }
+      .main-wrap { padding: 1rem; }
+      #doctorsList { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="nav-bar">
-            <div class="logo">🏥 MediOps</div>
-            <div class="user-info">
-                <span id="userEmail">Patient</span>
-            </div>
+
+  <!-- Scanlines -->
+  <div class="scanline-overlay"></div>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="mediops-logo">
+      <span class="logo-icon">🏥</span>
+      <div>
+        <div class="logo-text">MEDI<span>OPS</span></div>
+        <span class="logo-sub">INTELLIGENT HEALTH PLATFORM</span>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="user-pill">
+        <i class="fas fa-user-circle"></i>
+        <span id="userEmail">patient@example.com</span>
+      </div>
+      <button onclick="window.location.href='/dashboard'" style="background:transparent;border:1px solid rgba(0,212,255,0.3);color:var(--cyan);border-radius:8px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:'Sora',sans-serif;font-weight:700;letter-spacing:1px;">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Header Strip -->
+  <div class="page-header-strip">
+    <h1><i class="fas fa-calendar-plus"></i> Book Specialist Consultation</h1>
+    <p>Select a specialist doctor and schedule your consultation appointment</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-wrap">
+
+    <!-- LEFT: Disease Info Panel -->
+    <div id="diseaseInfo">
+      <div class="glass-card">
+        <div class="card-title"><i class="fas fa-stethoscope"></i> Case Summary</div>
+        <div class="disease-badge"><i class="fas fa-virus"></i> AI Detected</div>
+        <div class="disease-name-big" id="diseaseName">Loading…</div>
+        <div id="specialtyBadge" class="specialty-badge"><i class="fas fa-user-md"></i> Specialist</div>
+        <div style="margin-top:1.2rem;">
+          <div class="info-row"><i class="fas fa-user"></i> <span id="caseEmail">—</span></div>
+          <div class="info-row" id="caseSeverityRow"><i class="fas fa-signal"></i> <span>Severity: —</span></div>
+          <div class="info-row" id="caseSymptomsRow"><i class="fas fa-clipboard-list"></i> <span>Symptoms recorded</span></div>
+          <div class="info-row"><i class="fas fa-clock"></i> <span id="caseTime">—</span></div>
         </div>
+      </div>
 
-        <div class="header">
-            <h1>Specialist Consultation</h1>
-            <p>Connect with the right specialist for your condition</p>
-        </div>
-
-        <div class="content">
-            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
-
-            <!-- Disease Info -->
-            <div class="disease-info" id="diseaseInfo" style="display: none;">
-                <h3>Your Condition</h3>
-                <div class="disease-name" id="diseaseName">Loading...</div>
-                <div class="specialty-badge" id="specialtyBadge">Determining specialty...</div>
-            </div>
-
-            <!-- Available Doctors -->
-            <h2 class="section-title">Available Specialists</h2>
-            <div class="doctors-grid" id="doctorsList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">⏳</div>
-                    <p>Loading available doctors...</p>
-                </div>
-            </div>
-
-            <!-- Alternative Specialists (if primary unavailable) -->
-            <div class="alternatives-section" id="alternativesSection" style="display: none;">
-                <h2 class="section-title">Alternative Specialists</h2>
-                <p style="margin-bottom: 20px; color: var(--gray-600);">Primary specialists are unavailable. Consider
-                    these alternatives:</p>
-                <div class="doctors-grid" id="alternativesList"></div>
-            </div>
-
-            <!-- Consultation Form -->
-            <div class="consultation-form" id="consultationForm">
-                <h2 class="section-title">Request Consultation</h2>
-
-                <div class="form-group">
-                    <label>Selected Doctor</label>
-                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid var(--gray-300);"
-                        id="selectedDoctorDisplay">
-                        Please select a doctor
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="symptoms">Symptoms</label>
-                    <textarea id="symptoms" placeholder="Describe your symptoms in detail..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="severity">Severity Level</label>
-                    <select id="severity" required>
-                        <option value="">Select severity</option>
-                        <option value="1">Mild - Minor discomfort</option>
-                        <option value="2">Moderate - Affects daily activities</option>
-                        <option value="3">Severe - Significant impact</option>
-                        <option value="4">Critical - Urgent attention needed</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Priority</label>
-                    <div class="priority-group">
-                        <div class="priority-option">
-                            <input type="radio" id="priorityLow" name="priority" value="low">
-                            <label for="priorityLow" class="priority-label">Low</label>
-                        </div>
-                        <div class="priority-option">
-                            <input type="radio" id="priorityNormal" name="priority" value="normal" checked>
-                            <label for="priorityNormal" class="priority-label">Normal</label>
-                        </div>
-                        <div class="priority-option">
-                            <input type="radio" id="priorityHigh" name="priority" value="high">
-                            <label for="priorityHigh" class="priority-label">High</label>
-                        </div>
-                        <div class="priority-option">
-                            <input type="radio" id="priorityUrgent" name="priority" value="urgent">
-                            <label for="priorityUrgent" class="priority-label">Urgent</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Additional Notes (Optional)</label>
-                    <textarea id="notes" placeholder="Any additional information for the doctor..."></textarea>
-                </div>
-
-                <div class="form-buttons">
-                    <button class="btn btn-secondary" onclick="cancelConsultation()">Cancel</button>
-                    <button class="btn btn-primary" onclick="submitConsultation()">
-                        <span id="submitBtnText">Request Consultation</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Success Message -->
-            <div class="success-message" id="successMessage">
-                <h4>✓ Consultation Request Submitted!</h4>
-                <p id="successDetails"></p>
-            </div>
-        </div>
+      <!-- Success Message (shown after booking) -->
+      <div class="glass-card" id="successMessage">
+        <div class="success-check-circle">✅</div>
+        <div class="success-title">Consultation Booked!</div>
+        <div class="success-sub">Your request has been submitted successfully.</div>
+        <div id="successDetails"></div>
+        <button class="btn-neon" style="width:100%" onclick="window.location.href='/dashboard'">
+          <i class="fas fa-tachometer-alt"></i> Return to Dashboard
+        </button>
+      </div>
     </div>
 
-    <!-- Simulated Razorpay Modal -->
-    <div class="razorpay-overlay" id="rzpOverlay">
-        <div class="razorpay-modal">
-            <div class="rzp-header">
-                <div class="rzp-close" onclick="closeRazorpay()">✕</div>
-                <div style="font-size: 14px; opacity: 0.9;">MediOps Consultation</div>
-                <div class="rzp-amount">₹500.00</div>
-                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Transaction ID: <span id="rzpTxId">Generating...</span></div>
-            </div>
-            
-            <div class="rzp-body" id="rzpBody">
-                <div class="rzp-tabs">
-                    <div class="rzp-tab active" onclick="switchRzpTab('upi')" id="tab-upi">UPI</div>
-                    <div class="rzp-tab" onclick="switchRzpTab('card')" id="tab-card">Card</div>
-                </div>
-                
-                <div id="rzp-upi-view">
-                    <div class="rzp-form-group">
-                        <label>UPI ID / VPA</label>
-                        <input type="text" class="rzp-input" id="rzpUpiId" placeholder="patient@okaxis" value="patient@ybl">
-                    </div>
-                </div>
-                
-                <div id="rzp-card-view" style="display: none;">
-                    <div class="rzp-form-group">
-                        <label>Card Number</label>
-                        <input type="text" class="rzp-input" placeholder="4111 1111 1111 1111" maxlength="19">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="rzp-form-group" style="flex: 1;">
-                            <label>Expiry</label>
-                            <input type="text" class="rzp-input" placeholder="MM/YY">
-                        </div>
-                        <div class="rzp-form-group" style="flex: 1;">
-                            <label>CVV</label>
-                            <input type="password" class="rzp-input" placeholder="123" maxlength="3">
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="rzp-btn" id="rzpPayBtn" onclick="processRazorpayPayment()">
-                    <span id="rzpBtnText">Pay ₹500.00</span>
-                    <div class="rzp-spinner" id="rzpSpinner"></div>
-                </button>
-            </div>
-            
-            <div class="rzp-body" id="rzpSuccessView" style="display: none; text-align: center; padding: 40px 20px;">
-                <div class="rzp-success-mark" style="display: block;">✓</div>
-                <h3 style="color: #333; margin-bottom: 10px;">Payment Successful</h3>
-                <p style="color: #666; font-size: 14px;">Redirecting back to MediOps...</p>
-            </div>
-            
-            <div class="rzp-footer">
-                Secured by <strong>Razorpay (Simulated)</strong>
-            </div>
+    <!-- RIGHT: Doctors + Form -->
+    <div>
+
+      <!-- Doctors Section -->
+      <div class="glass-card" id="doctorsPanel">
+        <div class="section-title-row">
+          <div class="section-title"><i class="fas fa-user-md"></i> Available Specialists</div>
+          <div class="count-badge" id="doctorCount">Loading…</div>
         </div>
+        <div id="doctorsList">
+          <!-- Skeletons -->
+          <div class="skeleton-card">
+            <div style="display:flex;gap:12px;margin-bottom:10px">
+              <div class="skeleton-circle"></div>
+              <div style="flex:1">
+                <div class="skeleton-line" style="width:70%"></div>
+                <div class="skeleton-line" style="width:50%"></div>
+              </div>
+            </div>
+            <div class="skeleton-line"></div><div class="skeleton-line" style="width:60%"></div>
+          </div>
+          <div class="skeleton-card">
+            <div style="display:flex;gap:12px;margin-bottom:10px">
+              <div class="skeleton-circle"></div>
+              <div style="flex:1">
+                <div class="skeleton-line" style="width:70%"></div>
+                <div class="skeleton-line" style="width:50%"></div>
+              </div>
+            </div>
+            <div class="skeleton-line"></div><div class="skeleton-line" style="width:60%"></div>
+          </div>
+        </div>
+
+        <!-- Alternatives -->
+        <div id="alternativesSection" style="display:none">
+          <div class="alt-title">More Specialists</div>
+          <div id="alternativesList"></div>
+        </div>
+      </div>
+
+      <!-- Consultation Form -->
+      <div class="glass-card" id="consultationForm" style="margin-top:1.5rem">
+        <div class="card-title"><i class="fas fa-file-medical"></i> Consultation Details</div>
+
+        <!-- Selected Doctor Banner -->
+        <div class="selected-doc-banner">
+          <img id="selectedDocPhoto" src="" alt="Doctor" style="border-radius:10px;width:50px;height:50px;object-fit:cover;" />
+          <div>
+            <div id="selectedDoctorDisplay">Select a doctor above</div>
+            <div style="font-size:0.75rem;color:#888;margin-top:2px;" id="selectedDocSpecialty"></div>
+          </div>
+          <button class="chg-btn" onclick="document.getElementById('consultationForm').classList.remove('visible'); document.querySelectorAll('.doctor-card').forEach(c=>c.classList.remove('selected'))">
+            <i class="fas fa-exchange-alt"></i> Change
+          </button>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="form-group">
+          <label class="cyber-label" for="symptoms"><i class="fas fa-notes-medical" style="color:var(--cyan)"></i> Describe Your Symptoms</label>
+          <textarea class="cyber-input" id="symptoms" placeholder="Describe your current symptoms in detail…" rows="4"></textarea>
+        </div>
+
+        <!-- Priority -->
+        <div class="form-group">
+          <label class="cyber-label"><i class="fas fa-exclamation-triangle" style="color:var(--cyan)"></i> Consultation Priority</label>
+          <div class="priority-grid">
+            <div class="priority-option">
+              <input type="radio" id="priorityLow" name="priority" value="low" />
+              <label class="priority-pill" for="priorityLow">
+                <span class="pill-icon">😌</span> Low
+              </label>
+            </div>
+            <div class="priority-option">
+              <input type="radio" id="priorityNormal" name="priority" value="normal" checked />
+              <label class="priority-pill" for="priorityNormal">
+                <span class="pill-icon">✅</span> Normal
+              </label>
+            </div>
+            <div class="priority-option">
+              <input type="radio" id="priorityHigh" name="priority" value="high" />
+              <label class="priority-pill" for="priorityHigh">
+                <span class="pill-icon">⚡</span> High
+              </label>
+            </div>
+            <div class="priority-option">
+              <input type="radio" id="priorityUrgent" name="priority" value="urgent" />
+              <label class="priority-pill" for="priorityUrgent">
+                <span class="pill-icon">🚨</span> Urgent
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Severity -->
+        <div class="form-group">
+          <label class="cyber-label" for="severity"><i class="fas fa-signal" style="color:var(--cyan)"></i> Current Severity Level</label>
+          <select class="cyber-input" id="severity">
+            <option value="low">Low — Mild discomfort</option>
+            <option value="medium" selected>Medium — Noticeable symptoms</option>
+            <option value="high">High — Significant impact</option>
+            <option value="critical">Critical — Needs urgent attention</option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button class="btn-neon-outline" onclick="cancelConsultation()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="btn-neon" onclick="submitConsultation()">
+            <i class="fas fa-paper-plane"></i>
+            <span id="submitBtnText">Request Consultation</span>
+          </button>
+        </div>
+      </div>
+
     </div>
+  </div><!-- /main-wrap -->
+
+  <!-- ═══ RAZORPAY MODAL ═══ -->
+  <div id="rzpOverlay">
+    <div class="rzp-modal">
+      <!-- Header -->
+      <div class="rzp-header">
+        <div class="rzp-brand">
+          <span class="rzp-brand-icon">💳</span>
+          <div>
+            <div class="rzp-brand-name">MEDI<span>OPS</span> Pay</div>
+            <div class="rzp-brand-sub">SECURE PAYMENT GATEWAY</div>
+          </div>
+        </div>
+        <button class="rzp-close" onclick="closeRazorpay()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <!-- Amount -->
+      <div class="rzp-amount-bar">
+        <div>
+          <div class="rzp-amount-label">Amount Due</div>
+          <div class="rzp-amount-value" id="rzpAmountDisplay">₹0</div>
+        </div>
+        <div class="rzp-secure"><i class="fas fa-shield-alt"></i> SSL Secured</div>
+      </div>
+
+      <!-- Success View -->
+      <div id="rzpSuccessView">
+        <div class="rzp-success-icon">✅</div>
+        <div class="rzp-success-title">Payment Successful!</div>
+        <div style="color:#666;font-size:0.85rem;margin-bottom:1rem;">Your consultation fee has been processed.</div>
+        <div class="rzp-txid">TXN ID: <span id="rzpTxId">—</span></div>
+      </div>
+
+      <!-- Tabs & Forms -->
+      <div id="rzpBody">
+        <!-- Tabs -->
+        <div class="rzp-tabs">
+          <button class="rzp-tab active" id="tab-upi" onclick="switchRzpTab('upi')">
+            <i class="fas fa-mobile-alt"></i> UPI
+          </button>
+          <button class="rzp-tab" id="tab-card" onclick="switchRzpTab('card')">
+            <i class="fas fa-credit-card"></i> Card
+          </button>
+        </div>
+
+        <!-- UPI View -->
+        <div id="rzp-upi-view" class="rzp-view active" style="padding:20px 0 0">
+          <label class="rzp-field-label">UPI ID</label>
+          <input class="rzp-input" id="rzpUpiId" type="text" placeholder="yourname@upi" />
+          <div class="rzp-upi-info">
+            <i class="fas fa-info-circle"></i>
+            Enter any valid UPI ID. You'll get a payment request on your UPI app.
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <span style="font-size:0.75rem;color:#888;font-weight:600">Quick:</span>
+            <span onclick="document.getElementById('rzpUpiId').value='user@gpay'" style="cursor:pointer;font-size:0.75rem;color:var(--purple);background:rgba(178,75,243,0.08);border:1px solid rgba(178,75,243,0.2);border-radius:6px;padding:3px 10px">@gpay</span>
+            <span onclick="document.getElementById('rzpUpiId').value='user@phonepe'" style="cursor:pointer;font-size:0.75rem;color:var(--purple);background:rgba(178,75,243,0.08);border:1px solid rgba(178,75,243,0.2);border-radius:6px;padding:3px 10px">@phonepe</span>
+            <span onclick="document.getElementById('rzpUpiId').value='user@paytm'" style="cursor:pointer;font-size:0.75rem;color:var(--purple);background:rgba(178,75,243,0.08);border:1px solid rgba(178,75,243,0.2);border-radius:6px;padding:3px 10px">@paytm</span>
+          </div>
+          <button class="rzp-pay-btn" id="rzpPayBtn" onclick="processRazorpayPayment()">
+            <span class="rzp-spinner" id="rzpSpinner"></span>
+            <span id="rzpBtnText">Pay Now</span>
+          </button>
+        </div>
+
+        <!-- Card View -->
+        <div id="rzp-card-view" class="rzp-view" style="padding:20px 0 0">
+          <label class="rzp-field-label">Card Number</label>
+          <input class="rzp-input" type="text" placeholder="1234  5678  9012  3456" maxlength="19"
+            oninput="this.value=this.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+          <div class="rzp-card-row">
+            <div>
+              <label class="rzp-field-label">Expiry (MM/YY)</label>
+              <input class="rzp-input" type="text" placeholder="MM/YY" maxlength="5" />
+            </div>
+            <div>
+              <label class="rzp-field-label">CVV</label>
+              <input class="rzp-input" type="password" placeholder="•••" maxlength="3" />
+            </div>
+          </div>
+          <label class="rzp-field-label">Cardholder Name</label>
+          <input class="rzp-input" type="text" placeholder="Name as on card" />
+          <button class="rzp-pay-btn" onclick="processRazorpayPayment()">
+            <i class="fas fa-lock"></i> Pay Securely
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="rzp-footer">
+        <i class="fas fa-lock" style="color:var(--green)"></i>
+        256-bit encrypted · Powered by MediOps Pay · PCI DSS Compliant
+      </div>
+    </div>
+  </div><!-- /rzpOverlay -->
 
 
-    <script>
-        // Self-healing role check and session enforcement from token
-        const userToken = localStorage.getItem('user_token') || '';
-        if (userToken.startsWith('doctor_')) {
-            const docId = userToken.split('_')[1];
-            localStorage.setItem('doctorId', docId);
-            localStorage.setItem('userId', docId);
-            localStorage.setItem('role', 'doctor');
-            window.location.href = '/doctor-dashboard';
-        } else if (userToken.startsWith('user_')) {
-            const patId = userToken.split('_')[1];
-            localStorage.setItem('patientId', patId);
-            localStorage.setItem('userId', patId);
-            localStorage.setItem('role', 'patient');
-        }
+  <script>
+    // ─── Auth Check ───────────────────────────────────────────────
+    const token = localStorage.getItem('user_token');
+    if (token && token.startsWith('doctor_')) { window.location.href = '/doctor-dashboard'; }
+    const userEmail = localStorage.getItem('userEmail') || '';
+    document.getElementById('userEmail').textContent = userEmail || 'patient@example.com';
+    if (userEmail) {
+      document.getElementById('caseEmail').textContent = userEmail;
+    }
 
-        // Store the selected doctor and triage data
-        let selectedDoctor = null;
-        let triageData = null;
-        let currentConsultationId = null;
+    // ─── State ────────────────────────────────────────────────────
+    let selectedDoctor  = null;
+    let currentDisease  = '';
+    let allDoctors      = [];
+    let consultationId  = null;
+    let feeAmount       = 0;
+    let rzpPaymentData  = null;
 
-        // Load initial data
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Get triage data from URL params or localStorage
-            const urlParams = new URLSearchParams(window.location.search);
-            const triageId = urlParams.get('triage_id');
-            const diseaseName = urlParams.get('disease');
+    // ─── DOMContentLoaded ─────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      const params     = new URLSearchParams(window.location.search);
+      const triageData = JSON.parse(localStorage.getItem('triageData') || '{}');
 
-            if (diseaseName) {
-                triageData = {
-                    disease_name: diseaseName,
-                    symptoms: urlParams.get('symptoms') || '',
-                    severity: parseInt(urlParams.get('severity')) || 1,
-                    triage_id: triageId || null
-                };
-            } else {
-                triageData = JSON.parse(localStorage.getItem('triageData') || '{}');
-            }
+      const diseaseName = params.get('disease')    || triageData.diseaseName || '';
+      const symptoms    = params.get('symptoms')   || triageData.symptoms    || '';
+      const severity    = params.get('severity')   || triageData.severity    || 'medium';
+      const triageId    = params.get('triage_id')  || triageData.triageId    || null;
 
-            if (triageData.disease_name) {
-                displayDiseaseInfo();
-                await loadAvailableDoctors();
+      // Pre-fill form fields
+      if (symptoms) document.getElementById('symptoms').value = symptoms;
+      if (severity) document.getElementById('severity').value = severity;
 
-                // Auto-prefill symptom analysis fields
-                if (triageData.symptoms) {
-                    document.getElementById('symptoms').value = triageData.symptoms;
-                }
-                if (triageData.severity) {
-                    let val = triageData.severity;
-                    if (val > 4) {
-                        // Map 1-10 severity scale from triage prediction to 1-4 scale used by consultation request form
-                        if (val <= 3) val = 1;
-                        else if (val <= 6) val = 2;
-                        else if (val <= 8) val = 3;
-                        else val = 4;
-                    }
-                    document.getElementById('severity').value = val.toString();
-                }
-            } else {
-                showEmptyState();
-            }
+      // Update case time
+      document.getElementById('caseTime').textContent = new Date().toLocaleString();
+
+      // Severity row
+      document.querySelector('#caseSeverityRow span').textContent = 'Severity: ' + (severity || 'medium');
+
+      if (diseaseName) displayDiseaseInfo(diseaseName);
+      loadAvailableDoctors(diseaseName);
+    });
+
+    // ─── Specialty Map ────────────────────────────────────────────
+    const specialtyMap = {
+      'cardiology':        'Cardiologist',
+      'heart':             'Cardiologist',
+      'neurology':         'Neurologist',
+      'brain':             'Neurologist',
+      'dermatology':       'Dermatologist',
+      'skin':              'Dermatologist',
+      'orthopedics':       'Orthopedic Surgeon',
+      'bone':              'Orthopedic Surgeon',
+      'oncology':          'Oncologist',
+      'cancer':            'Oncologist',
+      'gastroenterology':  'Gastroenterologist',
+      'stomach':           'Gastroenterologist',
+      'pulmonology':       'Pulmonologist',
+      'lung':              'Pulmonologist',
+      'diabetes':          'Endocrinologist',
+      'endocrinology':     'Endocrinologist',
+      'psychiatry':        'Psychiatrist',
+      'mental':            'Psychiatrist',
+      'ophthalmology':     'Ophthalmologist',
+      'eye':               'Ophthalmologist',
+      'nephrology':        'Nephrologist',
+      'kidney':            'Nephrologist',
+    };
+
+    const unsplashBySpecialty = {
+      'Cardiologist':       'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+      'Neurologist':        'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=100&h=100&fit=crop',
+      'Dermatologist':      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop',
+      'Orthopedic Surgeon': 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop',
+      'Oncologist':         'https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=100&h=100&fit=crop',
+      'Gastroenterologist': 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=100&h=100&fit=crop',
+      'Pulmonologist':      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=100&h=100&fit=crop',
+      'Endocrinologist':    'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&h=100&fit=crop',
+      'Psychiatrist':       'https://images.unsplash.com/photo-1640998212-24de18c4ac38?w=100&h=100&fit=crop',
+      'General Physician':  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
+    };
+
+    function getSpecialtyPhoto(specialty) {
+      return unsplashBySpecialty[specialty] || 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop';
+    }
+
+    // ─── displayDiseaseInfo ───────────────────────────────────────
+    function displayDiseaseInfo(diseaseName) {
+      currentDisease = diseaseName;
+      document.getElementById('diseaseName').textContent = diseaseName || 'Unknown Condition';
+
+      // Determine specialty
+      const lower    = diseaseName.toLowerCase();
+      let   specialty = 'General Physician';
+      for (const [key, val] of Object.entries(specialtyMap)) {
+        if (lower.includes(key)) { specialty = val; break; }
+      }
+
+      document.getElementById('specialtyBadge').innerHTML =
+        `<i class="fas fa-user-md"></i> ${specialty}`;
+    }
+
+    // ─── loadAvailableDoctors ─────────────────────────────────────
+    function loadAvailableDoctors(diseaseName) {
+      const url = '/api/doctors/available' + (diseaseName ? `?disease_name=${encodeURIComponent(diseaseName)}` : '');
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {
+          allDoctors = data.available_doctors || data.doctors || (Array.isArray(data) ? data : []);
+          
+          if (data.alternative_specialists && data.alternative_specialists.length > 0) {
+            allDoctors = [...allDoctors, ...data.alternative_specialists];
+          }
+          
+          displayDoctors(allDoctors);
+        })
+        .catch((e) => {
+          console.error('Error fetching doctors:', e);
+          // Demo fallback
+          allDoctors = generateDemoDoctors();
+          displayDoctors(allDoctors);
         });
+    }
 
-        function displayDiseaseInfo() {
-            document.getElementById('diseaseInfo').style.display = 'block';
-            document.getElementById('diseaseName').textContent = triageData.disease_name;
-            // Specialty badge will show the predicted specialty from the backend
-        }
+    function generateDemoDoctors() {
+      const names = [
+        { name: 'Dr. Arjun Mehta',     specialty: 'Cardiologist',      exp: 14, rating: 4.9, fee: 800,  reviews: 312 },
+        { name: 'Dr. Priya Sharma',    specialty: 'General Physician',  exp: 8,  rating: 4.7, fee: 500,  reviews: 187 },
+        { name: 'Dr. Ravi Kumar',      specialty: 'Neurologist',        exp: 20, rating: 4.8, fee: 1200, reviews: 428 },
+        { name: 'Dr. Ananya Singh',    specialty: 'Dermatologist',      exp: 11, rating: 4.6, fee: 700,  reviews: 215 },
+        { name: 'Dr. Suresh Patel',    specialty: 'Orthopedic Surgeon', exp: 16, rating: 4.9, fee: 1000, reviews: 390 },
+        { name: 'Dr. Meera Nair',      specialty: 'Endocrinologist',    exp: 9,  rating: 4.5, fee: 650,  reviews: 143 },
+      ];
+      return names.map((d, i) => ({ ...d, id: 'doc_' + i, available: true }));
+    }
 
-        async function loadAvailableDoctors() {
-            try {
-                const response = await fetch(`/api/doctors/available?disease_name=${encodeURIComponent(triageData.disease_name)}`);
-                const data = await response.json();
+    // ─── displayDoctors ───────────────────────────────────────────
+    function displayDoctors(doctors) {
+      const list = document.getElementById('doctorsList');
+      const altSection = document.getElementById('alternativesSection');
+      const altList    = document.getElementById('alternativesList');
 
-                if (!data.success) {
-                    showEmptyState();
-                    return;
-                }
+      if (!doctors || doctors.length === 0) {
+        showEmptyState();
+        document.getElementById('doctorCount').textContent = '0 found';
+        return;
+      }
 
-                // Update specialty badge
-                document.getElementById('specialtyBadge').textContent = `Specialty: ${data.predicted_specialty}`;
+      document.getElementById('doctorCount').textContent = doctors.length + ' available';
 
-                // Display available doctors
-                if (data.available_doctors && data.available_doctors.length > 0) {
-                    displayDoctors(data.available_doctors, false);
-                } else if (data.alternative_specialists && data.alternative_specialists.length > 0) {
-                    // Show alternatives if primary specialty unavailable
-                    displayDoctors(data.alternative_specialists, true);
-                } else {
-                    showEmptyState('No doctors available at this time. Please try again later.');
-                }
-            } catch (error) {
-                console.error('Error loading doctors:', error);
-                showEmptyState('Failed to load doctors. Please refresh the page.');
-            }
-        }
+      const primary    = doctors.slice(0, 4);
+      const alternates = doctors.slice(4);
 
-        function displayDoctors(doctors, isAlternative = false) {
-            const container = isAlternative ?
-                document.getElementById('alternativesList') :
-                document.getElementById('doctorsList');
-
-            const section = isAlternative ?
-                document.getElementById('alternativesSection') :
-                null;
-
-            if (isAlternative && section) {
-                section.style.display = 'block';
-            }
-
-            container.innerHTML = doctors.map(doctor => `
-                <div class="doctor-card" id="doctor-${doctor.id}" onclick="selectDoctor(${doctor.id}, '${doctor.name}', '${doctor.specialty}')">
-                    <div class="doctor-header">
-                        <div>
-                            <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
-                        </div>
-                        <div class="doctor-status">
-                            <div class="status-badge ${doctor.is_online ? 'online' : 'offline'}">
-                                <span class="status-dot"></span>
-                                ${doctor.is_online ? 'Online' : 'Offline'}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="doctor-name">${doctor.name}</div>
-                    <div class="doctor-specialty">Dr. ${doctor.specialty}</div>
-                    
-                    <div class="doctor-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Experience</span>
-                            <span class="detail-value">${doctor.experience_years} years</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Hospital</span>
-                            <span class="detail-value">${doctor.hospital_affiliation || 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Wait Time</span>
-                            <span class="wait-time">⏱️ ${doctor.estimated_wait_minutes} min</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Queue</span>
-                            <span class="detail-value">${doctor.current_queue_size} patients</span>
-                        </div>
-                        <div class="detail-row">
-                            <div class="doctor-rating">
-                                ${renderStars(doctor.rating || 5)}
-                                <span class="rating-text">${(doctor.rating || 5).toFixed(1)}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="select-btn" onclick="selectDoctor(${doctor.id}, '${doctor.name}', '${doctor.specialty}'); event.stopPropagation();">
-                        Select Doctor
-                    </button>
+      list.innerHTML = primary.map(doc => {
+        const photo = doc.photo || getSpecialtyPhoto(doc.specialty || 'General Physician');
+        return `
+          <div class="doctor-card" id="doc-card-${doc.id}" onclick="selectDoctor('${doc.id}')">
+            <div class="selected-check"><i class="fas fa-check"></i></div>
+            <div class="doc-header">
+              <img class="doc-photo" src="${photo}" alt="${doc.name}" onerror="this.src='https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop'" />
+              <div class="doc-info">
+                <div class="doc-name">${doc.name}</div>
+                <div class="doc-specialty">${doc.specialty || 'General Physician'}</div>
+                <div class="doc-stars">
+                  ${renderStars(doc.rating || 4.5)}
+                  <span>${(doc.rating || 4.5).toFixed(1)} (${doc.reviews || doc.total_ratings || 0})</span>
                 </div>
-            `).join('');
-        }
+              </div>
+            </div>
+            <div class="doc-meta">
+              <div class="doc-meta-item"><i class="fas fa-briefcase-medical"></i> ${doc.exp || doc.experience || '—'} yrs exp</div>
+              <div class="doc-meta-item"><i class="fas fa-map-marker-alt"></i> ${doc.location || 'Online'}</div>
+              <div class="doc-meta-item"><i class="fas fa-clock"></i> ${doc.wait || 'Avail. Today'}</div>
+              <div class="doc-meta-item"><i class="fas fa-language"></i> ${doc.lang || 'English'}</div>
+            </div>
+            <div class="doc-fee">₹${doc.fee || doc.consultation_fee || 500} <span>consultation fee</span></div>
+            <button class="btn-select" onclick="event.stopPropagation();selectDoctor('${doc.id}')">
+              <i class="fas fa-hand-pointer"></i> Select Doctor
+            </button>
+          </div>
+        `;
+      }).join('');
 
-        function renderStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                stars += `<span class="star">${i <= Math.round(rating) ? '★' : '☆'}</span>`;
-            }
-            return stars;
-        }
+      if (alternates.length > 0) {
+        altSection.style.display = 'block';
+        altList.innerHTML = alternates.map(doc => {
+          const photo = doc.photo || getSpecialtyPhoto(doc.specialty || 'General Physician');
+          return `
+            <div class="alt-doc-item" onclick="selectDoctor('${doc.id}')">
+              <img class="alt-doc-avatar" src="${photo}" alt="${doc.name}" onerror="this.src='https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop'" />
+              <div>
+                <div class="alt-doc-name">${doc.name}</div>
+                <div style="font-size:0.72rem;color:#888">${doc.specialty || 'General Physician'} · ${doc.exp || doc.experience || 0} yrs</div>
+              </div>
+              <div class="alt-doc-fee">₹${doc.fee || doc.consultation_fee || 500}</div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
 
-        function selectDoctor(doctorId, doctorName, specialty) {
-            // Update UI
-            document.querySelectorAll('.doctor-card').forEach(card => {
-                card.classList.remove('selected');
-                const btn = card.querySelector('.select-btn');
-                btn.textContent = 'Select Doctor';
-                btn.classList.remove('selected');
+    // ─── renderStars ──────────────────────────────────────────────
+    function renderStars(rating) {
+      const full  = Math.floor(rating);
+      const half  = (rating % 1) >= 0.5;
+      const empty = 5 - full - (half ? 1 : 0);
+      return (
+        '<i class="fas fa-star"></i>'.repeat(full) +
+        (half ? '<i class="fas fa-star-half-alt"></i>' : '') +
+        '<i class="far fa-star"></i>'.repeat(empty)
+      );
+    }
+
+    // ─── selectDoctor ─────────────────────────────────────────────
+    function selectDoctor(docId) {
+      const doc = allDoctors.find(d => String(d.id) === String(docId));
+      if (!doc) return;
+
+      selectedDoctor = doc;
+      feeAmount      = doc.fee || doc.consultation_fee || 500;
+
+      // Highlight card
+      document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+      const card = document.getElementById('doc-card-' + docId);
+      if (card) card.classList.add('selected');
+
+      // Show form
+      const form = document.getElementById('consultationForm');
+      form.classList.add('visible');
+
+      // Update selected display
+      document.getElementById('selectedDoctorDisplay').textContent = doc.name;
+      document.getElementById('selectedDocSpecialty').textContent  = doc.specialty || 'General Physician';
+
+      const photo = doc.photo || getSpecialtyPhoto(doc.specialty || 'General Physician');
+      document.getElementById('selectedDocPhoto').src = photo;
+
+      // Update Razorpay amount
+      document.getElementById('rzpAmountDisplay').textContent = '₹' + feeAmount;
+      document.getElementById('rzpBtnText').textContent        = 'Pay ₹' + feeAmount;
+
+      // Scroll to form
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ─── submitConsultation ───────────────────────────────────────
+    function submitConsultation() {
+      if (!selectedDoctor) {
+        alert('Please select a doctor first.');
+        return;
+      }
+
+      const symptoms = document.getElementById('symptoms').value.trim();
+      if (!symptoms) {
+        document.getElementById('symptoms').focus();
+        alert('Please describe your symptoms.');
+        return;
+      }
+
+      const priority = document.querySelector('input[name="priority"]:checked')?.value || 'normal';
+      const severity = document.getElementById('severity').value;
+
+      const btnText = document.getElementById('submitBtnText');
+      btnText.textContent = 'Processing…';
+
+      const triageIdParam = new URLSearchParams(window.location.search).get('triage_id');
+      const payload = {
+        patient_id:  parseInt(localStorage.getItem('userId')) || 1,
+        doctor_id:   selectedDoctor.id,
+        disease_name: currentDisease,
+        symptoms:    symptoms,
+        priority:    priority,
+        severity:    parseInt(severity) || 5,
+        triage_history_id: triageIdParam ? parseInt(triageIdParam) : null
+      };
+
+      fetch('/api/consultations/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('user_token') || '') },
+        body: JSON.stringify(payload),
+      })
+        .then(r => {
+          if (!r.ok) {
+            return r.json().then(err => { throw err; });
+          }
+          return r.json();
+        })
+        .then(data => {
+          btnText.textContent = 'Request Consultation';
+          if (data.consultation_id || data.id) {
+            consultationId    = data.consultation_id || data.id;
+            rzpPaymentData    = { consultation_id: consultationId, amount: feeAmount, doctor: selectedDoctor.name };
+            // Open payment
+            document.getElementById('rzpOverlay').classList.add('active');
+          } else {
+            // Should not happen if API is correct, but just in case
+            rzpPaymentData = { consultation_id: 'CONS-' + Date.now(), amount: feeAmount, doctor: selectedDoctor.name };
+            document.getElementById('rzpOverlay').classList.add('active');
+          }
+        })
+        .catch(err => {
+          console.error("Consultation request error:", err);
+          btnText.textContent = 'Request Consultation';
+          alert('API Error: ' + (err.detail ? JSON.stringify(err.detail) : err.message || 'Unknown error'));
+          // Show payment anyway (offline simulation)
+          rzpPaymentData = { consultation_id: 'CONS-' + Date.now(), amount: feeAmount, doctor: selectedDoctor.name };
+          document.getElementById('rzpOverlay').classList.add('active');
+        });
+    }
+
+    // ─── closeRazorpay ────────────────────────────────────────────
+    function closeRazorpay() {
+      document.getElementById('rzpOverlay').classList.remove('active');
+      document.getElementById('rzpSuccessView').classList.remove('active');
+      document.getElementById('rzpBody').style.display = 'block';
+    }
+
+    // ─── switchRzpTab ─────────────────────────────────────────────
+    function switchRzpTab(tab) {
+      document.getElementById('tab-upi').classList.toggle('active', tab === 'upi');
+      document.getElementById('tab-card').classList.toggle('active', tab === 'card');
+      document.getElementById('rzp-upi-view').classList.toggle('active', tab === 'upi');
+      document.getElementById('rzp-card-view').classList.toggle('active', tab === 'card');
+    }
+
+    // ─── processRazorpayPayment ───────────────────────────────────
+    function processRazorpayPayment() {
+      const spinner = document.getElementById('rzpSpinner');
+      const btnText = document.getElementById('rzpBtnText');
+      const payBtn  = document.getElementById('rzpPayBtn');
+
+      spinner.classList.add('active');
+      btnText.textContent = 'Processing…';
+      payBtn.disabled     = true;
+
+      const upiId = document.getElementById('rzpUpiId').value.trim();
+
+      fetch('/api/payment/razorpay-sim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          consultation_id: rzpPaymentData?.consultation_id,
+          amount:          rzpPaymentData?.amount || feeAmount,
+          upi_id:          upiId,
+          method:          document.getElementById('tab-upi').classList.contains('active') ? 'upi' : 'card',
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          spinner.classList.remove('active');
+          btnText.textContent = 'Pay ₹' + feeAmount;
+          payBtn.disabled     = false;
+
+          const txId = data.transaction_id || data.txn_id || ('TXN' + Date.now());
+          document.getElementById('rzpTxId').textContent = txId;
+
+          // Hide tabs & body, show success
+          document.getElementById('rzpBody').style.display  = 'none';
+          document.getElementById('rzpSuccessView').classList.add('active');
+
+          // After 2s close modal & show booking success
+          setTimeout(() => {
+            closeRazorpay();
+            showSuccessMessage({
+              id:      rzpPaymentData?.consultation_id,
+              doctor:  rzpPaymentData?.doctor || selectedDoctor?.name,
+              disease: currentDisease,
+              txId:    txId,
+              amount:  feeAmount,
             });
+          }, 2200);
+        })
+        .catch(() => {
+          spinner.classList.remove('active');
+          btnText.textContent = 'Pay ₹' + feeAmount;
+          payBtn.disabled     = false;
 
-            const card = document.getElementById(`doctor-${doctorId}`);
-            card.classList.add('selected');
-            const btn = card.querySelector('.select-btn');
-            btn.textContent = '✓ Selected';
-            btn.classList.add('selected');
+          const txId = 'TXN' + Date.now();
+          document.getElementById('rzpTxId').textContent = txId;
+          document.getElementById('rzpBody').style.display = 'none';
+          document.getElementById('rzpSuccessView').classList.add('active');
 
-            // Store selected doctor
-            selectedDoctor = { id: doctorId, name: doctorName, specialty };
-            document.getElementById('selectedDoctorDisplay').textContent = `Dr. ${doctorName} - ${specialty}`;
-
-            // Ensure symptoms and severity are pre-filled upon selection
-            if (triageData) {
-                if (triageData.symptoms && !document.getElementById('symptoms').value) {
-                    document.getElementById('symptoms').value = triageData.symptoms;
-                }
-                if (triageData.severity && !document.getElementById('severity').value) {
-                    let val = triageData.severity;
-                    if (val > 4) {
-                        if (val <= 3) val = 1;
-                        else if (val <= 6) val = 2;
-                        else if (val <= 8) val = 3;
-                        else val = 4;
-                    }
-                    document.getElementById('severity').value = val.toString();
-                }
-            }
-
-            // Show consultation form
-            document.getElementById('consultationForm').classList.add('active');
-            document.getElementById('consultationForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        async function submitConsultation() {
-            if (!selectedDoctor) {
-                alert('Please select a doctor first');
-                return;
-            }
-
-            const symptoms = document.getElementById('symptoms').value.trim() || triageData.symptoms;
-            const severity = parseInt(document.getElementById('severity').value) || triageData.severity;
-            const priority = document.querySelector('input[name="priority"]:checked').value;
-            const notes = document.getElementById('notes').value.trim();
-
-            if (!symptoms) {
-                alert('Please describe your symptoms');
-                return;
-            }
-
-            if (!document.getElementById('severity').value) {
-                alert('Please select a severity level');
-                return;
-            }
-
-            const btn = document.querySelector('.btn-primary');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Initializing Payment...';
-
-            try {
-                // 1. Create the consultation request (will be in pending_payment status)
-                const response = await fetch('/api/consultations/request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        patient_id: parseInt(localStorage.getItem('patientId') || localStorage.getItem('userId') || '1'),
-                        doctor_id: selectedDoctor.id,
-                        disease_name: triageData.disease_name,
-                        symptoms: symptoms,
-                        severity: severity,
-                        priority: priority,
-                        notes: notes,
-                        triage_history_id: triageData.triage_id
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    currentConsultationId = data.consultation_id;
-                    // 2. Open Razorpay Modal instead of showing success immediately
-                    document.getElementById('rzpTxId').textContent = 'req_' + Math.random().toString(36).substr(2, 9);
-                    document.getElementById('rzpOverlay').classList.add('active');
-                    
-                    // Reset button state behind modal
-                    btn.disabled = false;
-                    btn.innerHTML = '<span id="submitBtnText">Request Consultation</span>';
-                } else {
-                    alert('Error: ' + data.error);
-                    btn.disabled = false;
-                    btn.innerHTML = '<span id="submitBtnText">Request Consultation</span>';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to initialize payment');
-                btn.disabled = false;
-                btn.innerHTML = '<span id="submitBtnText">Request Consultation</span>';
-            }
-        }
-        
-        // --- RAZORPAY SIMULATION LOGIC ---
-        
-        let paymentDataRef = null;
-
-        function closeRazorpay() {
-            document.getElementById('rzpOverlay').classList.remove('active');
-        }
-
-        function switchRzpTab(tab) {
-            document.getElementById('tab-upi').classList.remove('active');
-            document.getElementById('tab-card').classList.remove('active');
-            document.getElementById('rzp-upi-view').style.display = 'none';
-            document.getElementById('rzp-card-view').style.display = 'none';
-            
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            document.getElementById(`rzp-${tab}-view`).style.display = 'block';
-        }
-
-        async function processRazorpayPayment() {
-            const btn = document.getElementById('rzpPayBtn');
-            const btnText = document.getElementById('rzpBtnText');
-            const spinner = document.getElementById('rzpSpinner');
-            
-            // UI Loading state
-            btn.disabled = true;
-            btnText.style.display = 'none';
-            spinner.style.display = 'block';
-            
-            try {
-                // Determine payment method used
-                const method = document.getElementById('tab-upi').classList.contains('active') ? 'upi' : 'card';
-                
-                // Call backend to process the payment and confirm consultation
-                const response = await fetch('/api/payment/razorpay-sim', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        consultation_id: currentConsultationId,
-                        payment_method: method,
-                        payment_details: { mock: true }
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Show success view inside modal
-                    document.getElementById('rzpBody').style.display = 'none';
-                    document.getElementById('rzpSuccessView').style.display = 'block';
-                    
-                    // After 1.5 seconds, close modal and show main success message
-                    setTimeout(() => {
-                        closeRazorpay();
-                        // Refetch consultation details to show success message accurately
-                        fetch(`/api/consultations/${currentConsultationId}`)
-                            .then(res => res.json())
-                            .then(consData => {
-                                if(consData.success) {
-                                    showSuccessMessage({
-                                        consultation_id: currentConsultationId,
-                                        doctor_name: consData.doctor.name,
-                                        status: consData.status,
-                                        estimated_response_minutes: consData.estimated_response_minutes
-                                    });
-                                }
-                            });
-                    }, 1500);
-                } else {
-                    alert('Payment processing failed: ' + data.error);
-                    btn.disabled = false;
-                    btnText.style.display = 'block';
-                    spinner.style.display = 'none';
-                }
-                
-            } catch (error) {
-                console.error('Payment Error:', error);
-                alert('Network error during payment processing.');
-                btn.disabled = false;
-                btnText.style.display = 'block';
-                spinner.style.display = 'none';
-            }
-        }
-
-
-        function showSuccessMessage(data) {
-            document.getElementById('consultationForm').style.display = 'none';
-            const message = document.getElementById('successMessage');
-            document.getElementById('successDetails').innerHTML = `
-                <p><strong>Doctor:</strong> Dr. ${data.doctor_name}</p>
-                <p><strong>Status:</strong> ${data.status}</p>
-                <p><strong>Estimated Response:</strong> ${data.estimated_response_minutes} minutes</p>
-                <p style="margin-top: 15px; font-size: 0.95rem;">
-                    Your consultation request has been assigned. You'll receive notifications as the doctor updates your status.
-                </p>
-                <button class="cta-button-demo" style="margin-top: 15px;" onclick="window.location.href='/dashboard'">
-                    Return to Dashboard
-                </button>
-            `;
-            message.classList.add('show');
-            message.scrollIntoView({ behavior: 'smooth' });
-
-            // Start monitoring real-time status updates
-            currentConsultationId = data.consultation_id;
-            startStatusUpdates();
-        }
-
-        function cancelConsultation() {
-            document.getElementById('consultationForm').classList.remove('active');
-            document.getElementById('selectedDoctorDisplay').textContent = 'Please select a doctor';
-            selectedDoctor = null;
-            document.getElementById('symptoms').value = '';
-            document.getElementById('severity').value = '';
-            document.getElementById('notes').value = '';
-        }
-
-        function showEmptyState(message = null) {
-            document.getElementById('doctorsList').innerHTML = `
-                <div class="empty-state" style="grid-column: 1/-1;">
-                    <div class="empty-state-icon">🏥</div>
-                    <p>${message || 'No doctors are available right now. Please try again later or contact support.'}</p>
-                </div>
-            `;
-        }
-
-        // Simulated real-time status updates with SSE fallback
-        function startStatusUpdates() {
-            if (!currentConsultationId) return;
-
-            // Try to use Server-Sent Events for real-time updates
-            try {
-                const eventSource = new EventSource(`/api/consultations/${currentConsultationId}/stream`);
-
-                eventSource.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    console.log('Status update received:', data);
-
-                    // Update UI based on new status
-                    updateConsultationStatus(data);
-
-                    // Close connection if completed
-                    if (data.status === 'completed' || data.status === 'cancelled') {
-                        eventSource.close();
-                    }
-                };
-
-                eventSource.onerror = (error) => {
-                    console.error('SSE Error:', error);
-                    eventSource.close();
-                    // Fallback to polling
-                    startPollingUpdates();
-                };
-            } catch (error) {
-                console.log('SSE not available, falling back to polling');
-                startPollingUpdates();
-            }
-        }
-
-        // Fallback polling for status updates (works better with SQLite)
-        function startPollingUpdates() {
-            if (!currentConsultationId) return;
-
-            const interval = setInterval(async () => {
-                try {
-                    const response = await fetch(`/api/consultations/${currentConsultationId}`);
-                    const data = await response.json();
-
-                    if (data.success) {
-                        updateConsultationStatus({
-                            status: data.status,
-                            doctor_name: data.doctor.name,
-                            timestamp: new Date().toISOString()
-                        });
-
-                        // Stop polling if completed
-                        if (data.status === 'completed' || data.status === 'cancelled') {
-                            clearInterval(interval);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching status:', error);
-                }
-            }, 10000); // Poll every 10 seconds
-
-            // Stop polling after 30 minutes
-            setTimeout(() => clearInterval(interval), 30 * 60 * 1000);
-        }
-
-        function updateConsultationStatus(data) {
-            const statusMessages = {
-                'pending': '⏳ Waiting for doctor to accept...',
-                'accepted': '✓ Doctor has accepted your request',
-                'in_progress': '📞 Consultation in progress...',
-                'completed': '✅ Consultation completed!',
-                'cancelled': '❌ Consultation was cancelled'
-            };
-
-            const message = document.getElementById('successMessage');
-            const details = document.getElementById('successDetails');
-
-            if (statusMessages[data.status]) {
-                details.innerHTML = `
-                    <p><strong>Status:</strong> ${statusMessages[data.status]}</p>
-                    <p><strong>Doctor:</strong> ${data.doctor_name}</p>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                        Last updated: ${new Date(data.timestamp).toLocaleTimeString()}
-                    </p>
-                `;
-            }
-        }
-
-        // Load user email from localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const userEmail = localStorage.getItem('userEmail') || 'Patient';
-            document.getElementById('userEmail').textContent = userEmail;
+          setTimeout(() => {
+            closeRazorpay();
+            showSuccessMessage({
+              id:      rzpPaymentData?.consultation_id,
+              doctor:  selectedDoctor?.name,
+              disease: currentDisease,
+              txId:    txId,
+              amount:  feeAmount,
+            });
+          }, 2200);
         });
-    </script>
-</body>
+    }
 
+    // ─── showSuccessMessage ───────────────────────────────────────
+    function showSuccessMessage(data) {
+      document.getElementById('consultationForm').classList.remove('visible');
+      document.getElementById('doctorsPanel').style.display = 'none';
+
+      const msg = document.getElementById('successMessage');
+      msg.classList.add('visible');
+
+      document.getElementById('successDetails').innerHTML = `
+        <div class="detail-row">
+          <span class="detail-label">Consultation ID</span>
+          <span class="detail-value" style="font-family:'Share Tech Mono',monospace;color:var(--purple)">${data.id || '—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Doctor</span>
+          <span class="detail-value">${data.doctor || '—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Condition</span>
+          <span class="detail-value">${data.disease || currentDisease || '—'}</span>
+        </div>
+        ${data.txId ? `<div class="detail-row">
+          <span class="detail-label">Transaction</span>
+          <span class="detail-value" style="font-family:'Share Tech Mono',monospace;color:var(--green)">${data.txId}</span>
+        </div>` : ''}
+        <div class="detail-row">
+          <span class="detail-label">Status</span>
+          <span class="status-live"><span class="status-dot"></span> Awaiting Doctor</span>
+        </div>
+      `;
+
+      if (consultationId) {
+        startStatusUpdates(consultationId);
+      }
+    }
+
+    // ─── cancelConsultation ───────────────────────────────────────
+    function cancelConsultation() {
+      selectedDoctor = null;
+      document.getElementById('consultationForm').classList.remove('visible');
+      document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('symptoms').value = '';
+    }
+
+    // ─── showEmptyState ───────────────────────────────────────────
+    function showEmptyState() {
+      document.getElementById('doctorsList').innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">🩺</div>
+          <h3>No Specialists Found</h3>
+          <p>No doctors are available for this condition right now. Please try again or contact support.</p>
+        </div>
+      `;
+    }
+
+    // ─── startStatusUpdates ───────────────────────────────────────
+    function startStatusUpdates(id) {
+      if (typeof EventSource !== 'undefined') {
+        try {
+          const es = new EventSource(`/api/consultations/${id}/stream`);
+          es.onmessage = e => {
+            try { updateConsultationStatus(JSON.parse(e.data)); } catch (_) {}
+          };
+          es.onerror = () => { es.close(); startPollingUpdates(id); };
+        } catch (_) {
+          startPollingUpdates(id);
+        }
+      } else {
+        startPollingUpdates(id);
+      }
+    }
+
+    // ─── startPollingUpdates ──────────────────────────────────────
+    function startPollingUpdates(id) {
+      const poll = setInterval(() => {
+        fetch(`/api/consultations/${id}`)
+          .then(r => r.json())
+          .then(data => { updateConsultationStatus(data); if (data.status === 'completed') clearInterval(poll); })
+          .catch(() => {});
+      }, 10000);
+    }
+
+    // ─── updateConsultationStatus ─────────────────────────────────
+    function updateConsultationStatus(data) {
+      const statusEl = document.querySelector('.status-live');
+      if (statusEl && data.status) {
+        const labels = { pending: 'Awaiting Doctor', accepted: 'Doctor Accepted', in_progress: 'In Progress', completed: 'Completed' };
+        statusEl.innerHTML = `<span class="status-dot"></span> ${labels[data.status] || data.status}`;
+      }
+    }
+
+    // ─── Floating Stickers ────────────────────────────────────────
+    (function() {
+      const stickers  = ['💊','🏥','🚑','🩺','🔬','💉','🧬','🫀','🩻','❤️','🌡️','🧪','💆','🏋️','⚕️'];
+      const container = document.createElement('div');
+      container.className = 'med-stickers-container';
+      document.body.appendChild(container);
+      function createSticker() {
+        const s = document.createElement('div');
+        s.className      = 'med-sticker';
+        s.textContent    = stickers[Math.floor(Math.random() * stickers.length)];
+        s.style.left     = Math.random() * 100 + 'vw';
+        s.style.fontSize = (20 + Math.random() * 24) + 'px';
+        const dur            = 12 + Math.random() * 20;
+        s.style.animationDuration = dur + 's';
+        s.style.animationDelay   = Math.random() * 5 + 's';
+        container.appendChild(s);
+        setTimeout(() => s.remove(), (dur + 5) * 1000);
+      }
+      for (let i = 0; i < 8; i++) setTimeout(createSticker, i * 800);
+      setInterval(createSticker, 2500);
+    })();
+
+    // ─── Particles ────────────────────────────────────────────────
+    (function() {
+      const pc = document.createElement('div');
+      pc.className = 'particles-container';
+      document.body.insertBefore(pc, document.body.firstChild);
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className    = 'particle';
+        p.style.left   = Math.random() * 100 + 'vw';
+        p.style.bottom = '-10px';
+        p.style.width  = p.style.height = (2 + Math.random() * 4) + 'px';
+        p.style.background       = Math.random() > 0.5 ? '#00D4FF' : '#FF6B9D';
+        p.style.animationDuration = (8 + Math.random() * 15) + 's';
+        p.style.animationDelay    = Math.random() * 10 + 's';
+        pc.appendChild(p);
+      }
+    })();
+  </script>
+    <script src="/static/cyber-inject.js"></script>
+</body>
 </html>

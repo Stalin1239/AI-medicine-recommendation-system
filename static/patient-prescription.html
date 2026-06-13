@@ -4,25 +4,25 @@
     <link rel="stylesheet" href="/static/mediops.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FedMedFlow | Diagnosis Center</title>
+    <title>MediOps | My Prescription Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.3);
-            --secondary: #7000ff;
-            --accent: #ff00c8;
-            --bg-darker: #050810;
-            --bg-dark: #0a0f1e;
-            --bg-card: rgba(16, 24, 48, 0.7);
-            --text-main: #e2e8f0;
-            --text-dim: #94a3b8;
+            --primary: #00d4ff;
+            --primary-glow: rgba(0, 212, 255, 0.3);
+            --secondary: #b24bf3;
+            --accent: #ff6b9d;
+            --bg-darker: #f8fafc;
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #1e293b;
+            --text-dim: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.6);
+            --border: rgba(0, 212, 255, 0.15);
         }
 
         * {
@@ -49,12 +49,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
-            background: rgba(5, 8, 16, 0.95);
+            background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
         .header-left {
@@ -77,6 +78,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text-main);
         }
 
         .status-badge {
@@ -177,7 +179,7 @@
 
         /* Left Column: Context */
         .context-item {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.5);
             padding: 1rem;
             border-radius: 12px;
             border: 1px solid var(--border);
@@ -194,12 +196,13 @@
         .context-value {
             font-size: 0.95rem;
             line-height: 1.5;
+            color: var(--text-main);
         }
 
         .image-viewer {
             width: 100%;
             height: 200px;
-            background: #000;
+            background: #f8fafc;
             border-radius: 12px;
             border: 1px solid var(--border);
             display: flex;
@@ -240,11 +243,11 @@
         }
 
         .form-input, .form-textarea, .form-select {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 12px;
-            color: white;
+            color: var(--text-main);
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
@@ -329,7 +332,7 @@
             flex-wrap: wrap;
         }
         .timing-btn {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--border);
             padding: 6px 12px;
             border-radius: 20px;
@@ -340,7 +343,7 @@
             user-select: none;
         }
         .timing-btn.active {
-            background: rgba(0, 240, 255, 0.2);
+            background: rgba(0, 212, 255, 0.1);
             border-color: var(--primary);
             color: var(--primary);
             font-weight: 600;
@@ -351,7 +354,7 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--bg-darker);
+            background: var(--bg-card);
             border: 1px solid var(--primary);
             border-radius: 8px;
             margin-top: 4px;
@@ -359,15 +362,16 @@
             max-height: 200px;
             overflow-y: auto;
             display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .autocomplete-item {
             padding: 10px 15px;
             cursor: pointer;
             transition: background 0.2s;
+            color: var(--text-main);
         }
         .autocomplete-item:hover {
-            background: rgba(0, 240, 255, 0.1);
+            background: rgba(0, 212, 255, 0.1);
             color: var(--primary);
         }
 
@@ -443,49 +447,13 @@
             <a href="#" id="download-pdf-btn" target="_blank" class="btn btn-outline" style="border-color: #00f0ff; color: #00f0ff;">
                 <i class="fas fa-file-pdf"></i> Download PDF
             </a>
-            <select id="status-select" class="form-select" style="width: auto; padding: 8px 12px; font-size: 0.8rem;" onchange="markDirty()">
-                <option value="pending">Pending</option>
-                <option value="under_review">Under Review</option>
-                <option value="follow_up_required">Follow-up Required</option>
-                <option value="emergency">Emergency</option>
-                <option value="accepted">Accepted</option>
-                <option value="completed">Completed</option>
-            </select>
-            <button class="btn btn-outline" id="preview-btn" onclick="showPreviewModal()">
-                <i class="fas fa-eye"></i> Preview Rx
-            </button>
-            <div class="autosave-indicator" id="autosave-status">
-                <i class="fas fa-cloud"></i> <span>Saved</span>
-            </div>
-            <button class="btn btn-primary" id="finalize-btn" onclick="finalizeDiagnosis()">
-                <i class="fas fa-check-circle"></i> Finalize
-            </button>
         </div>
     </header>
 
     <!-- Workspace -->
     <div class="workspace">
         <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <!-- Consultation Management Panel -->
-            <div class="panel" style="border-color: var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.1);">
-                <h2 class="panel-title"><i class="fas fa-headset"></i> Connect with Patient</h2>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="setupConsultation('online')"><i class="fas fa-video"></i> Online Session</button>
-                    <button class="btn btn-outline" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="openModal('clinicVisitModal')"><i class="fas fa-hospital"></i> Clinic Visit</button>
-                </div>
-            </div>
 
-            <!-- Follow-up Panel -->
-            <div class="panel" style="border-color: var(--warning); box-shadow: 0 0 15px rgba(255, 170, 0, 0.1);">
-                <h2 class="panel-title" style="color: var(--warning);"><i class="fas fa-calendar-plus"></i> Schedule Follow-Up</h2>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="date" id="follow-up-date" class="form-input" style="flex:1; border-color: rgba(255,170,0,0.5);">
-                        <button type="button" class="btn" style="background: var(--warning); color: #000;" onclick="scheduleFollowUp()"><i class="fas fa-paper-plane"></i> Send</button>
-                    </div>
-                    <textarea id="follow-up-notes" class="form-input" placeholder="Notes for the patient..." style="height: 60px; border-color: rgba(255,170,0,0.5); resize:none;"></textarea>
-                </div>
-            </div>
 
             <!-- Left: Context Panel -->
             <div class="panel">
@@ -537,59 +505,57 @@
             <form id="diagnosis-form" class="editor-grid">
                 
                 <div class="form-group full">
-                    <label class="form-label">Verified Symptoms</label>
-                    <textarea id="edit-symptoms" class="form-textarea" style="min-height: 60px;" placeholder="Edit or add verified symptoms here..." oninput="markDirty()"></textarea>
+                    <label class="form-label" style="color: var(--c-cyan); font-weight: 600;"><i class="fa fa-notes-medical"></i> Verified Symptoms</label>
+                    <div id="edit-symptoms" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02); min-height: 60px;"></div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Actual Diagnosis</label>
-                    <input type="text" id="actual-diagnosis" class="form-input" placeholder="e.g. Viral Pharyngitis" oninput="markDirty()">
+                    <label class="form-label" style="color: var(--c-cyan); font-weight: 600;"><i class="fa fa-stethoscope"></i> Actual Diagnosis</label>
+                    <div id="actual-diagnosis" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
-                        Severity Level 
-                        <span class="severity-display" id="severity-val">5/10</span>
+                    <label class="form-label" style="color: var(--c-cyan); font-weight: 600;">
+                        <i class="fa fa-exclamation-triangle"></i> Severity Level 
+                        <span class="severity-display" id="severity-val" style="background: var(--c-cyan); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-left: 8px;">5/10</span>
                     </label>
-                    <input type="range" id="severity-slider" class="range-slider" min="1" max="10" value="5" oninput="updateSeverity(this.value); markDirty()">
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <input type="range" id="severity-slider" class="range-slider" min="1" max="10" value="5" disabled style="width: 100%;">
+                    </div>
                 </div>
                 
                 <div class="form-group full">
-                    <label class="form-label">General Precautions</label>
-                    <textarea id="precautions" class="form-textarea" style="min-height: 60px;" placeholder="Dietary restrictions, rest, etc." oninput="markDirty()"></textarea>
+                    <label class="form-label" style="color: var(--c-cyan); font-weight: 600;"><i class="fa fa-shield-alt"></i> General Precautions</label>
+                    <div id="precautions" style="background: rgba(16, 185, 129, 0.05); border-left: 4px solid #10b981; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; min-height: 60px;"></div>
                 </div>
 
             </form>
             
             <!-- SMART PRESCRIPTION BUILDER -->
-            <h2 class="panel-title" style="margin-top: 1rem;"><i class="fas fa-prescription-bottle-alt"></i> Smart Prescription Builder</h2>
+            <h2 class="panel-title" style="margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;"><i class="fas fa-prescription-bottle-alt"></i> Medication Prescription</h2>
             
             <div id="medicine-list" class="medicine-list">
                 <!-- Medicines inserted here dynamically -->
             </div>
             
-            <button class="btn btn-outline" style="align-self: flex-start; margin-bottom: 1rem;" onclick="addMedicineRow()">
-                <i class="fas fa-plus"></i> Add Medicine
-            </button>
-            
             <!-- Additional Directives -->
-            <h2 class="panel-title" style="margin-top: 1rem;"><i class="fas fa-heartbeat"></i> Additional Directives</h2>
+            <h2 class="panel-title" style="margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;"><i class="fas fa-heartbeat"></i> Additional Directives</h2>
             <div class="editor-grid">
                 <div class="form-group full">
-                    <label class="form-label">Lab Tests Required</label>
-                    <input type="text" id="lab-tests" class="form-input" placeholder="e.g. CBC, LFT, Chest X-Ray..." oninput="markDirty()">
+                    <label class="form-label" style="color: var(--c-purple); font-weight: 600;"><i class="fa fa-vial"></i> Lab Tests Required</label>
+                    <div id="lab-tests" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></div>
                 </div>
                 <div class="form-group full">
-                    <label class="form-label">Diet Plan</label>
-                    <input type="text" id="diet-plan" class="form-input" placeholder="e.g. High protein, low sodium..." oninput="markDirty()">
+                    <label class="form-label" style="color: #f59e0b; font-weight: 600;"><i class="fa fa-apple-alt"></i> Diet Plan</label>
+                    <div id="diet-plan" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Exercise Recommendations</label>
-                    <input type="text" id="exercise" class="form-input" placeholder="e.g. Mild walking 20 mins/day..." oninput="markDirty()">
+                    <label class="form-label" style="color: #3b82f6; font-weight: 600;"><i class="fa fa-running"></i> Exercise Recommendations</label>
+                    <div id="exercise" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Follow-up Instructions</label>
-                    <input type="text" id="follow-up" class="form-input" placeholder="e.g. Return in 7 days..." oninput="markDirty()">
+                    <label class="form-label" style="color: var(--c-cyan); font-weight: 600;"><i class="fa fa-calendar-check"></i> Follow-up Instructions</label>
+                    <div id="follow-up" style="background: rgba(0, 212, 255, 0.05); border-left: 4px solid var(--c-cyan); border-radius: 8px; padding: 16px; font-size: 1.05rem; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></div>
                 </div>
             </div>
 
@@ -636,11 +602,6 @@
                 
                 if (result.success) {
                     populateUI(result.data);
-                    if (!isPatient) {
-                        setInterval(performAutoSave, 5000); 
-                    } else {
-                        applyReadOnlyMode();
-                    }
                 } else {
                     alert("Error loading case: " + result.detail);
                 }
@@ -650,11 +611,7 @@
         }
         
         function applyReadOnlyMode() {
-            // Hide Doctor controls
-            document.getElementById('status-select').style.display = 'none';
-            document.getElementById('preview-btn').style.display = 'none';
-            document.getElementById('autosave-status').style.display = 'none';
-            document.getElementById('finalize-btn').style.display = 'none';
+            // Doctor controls are not present in the patient view html.
             
             // Disable all inputs
             const inputs = document.querySelectorAll('input, textarea, select');
@@ -681,7 +638,6 @@
             
             document.getElementById('patient-name').textContent = data.patient_name;
             document.getElementById('current-status').textContent = data.status.toUpperCase().replace('_', ' ');
-            document.getElementById('status-select').value = data.status;
             
             document.getElementById('ai-disease').textContent = data.ai_predicted_disease;
             document.getElementById('initial-symptoms').textContent = data.patient_symptoms;
@@ -699,24 +655,24 @@
                 document.getElementById('disp-appointment-time').textContent = 'Not specified';
             }
 
-            document.getElementById('edit-symptoms').value = data.patient_symptoms || '';
-            document.getElementById('actual-diagnosis').value = data.actual_diagnosis || data.ai_predicted_disease || '';
+            document.getElementById('edit-symptoms').textContent = data.patient_symptoms || '';
+            document.getElementById('actual-diagnosis').textContent = data.actual_diagnosis || data.ai_predicted_disease || '';
             
             const sev = data.severity || 5;
             document.getElementById('severity-slider').value = sev;
             updateSeverity(sev);
 
-            document.getElementById('precautions').value = data.precautions || '';
-            document.getElementById('follow-up').value = data.follow_up_instructions || '';
+            document.getElementById('precautions').textContent = data.precautions || '';
+            document.getElementById('follow-up').textContent = data.follow_up_instructions || '';
             
             // Handle prescription data
             if (data.prescription_data) {
                 // Determine if it's JSON or just text timing
                 try {
                     const parsed = JSON.parse(data.prescription_data);
-                    document.getElementById('lab-tests').value = parsed.lab_tests || '';
-                    document.getElementById('diet-plan').value = parsed.diet_plan || '';
-                    document.getElementById('exercise').value = parsed.exercise || '';
+                    document.getElementById('lab-tests').textContent = parsed.lab_tests || '';
+                    document.getElementById('diet-plan').textContent = parsed.diet_plan || '';
+                    document.getElementById('exercise').textContent = parsed.exercise || '';
                     document.getElementById('disp-medicine-timing').textContent = 'See detailed Smart Prescription table';
                     
                     if (parsed.medicines && parsed.medicines.length > 0) {
@@ -727,11 +683,8 @@
                     }
                 } catch(e) {
                     // Not JSON, probably just simple text string from the Doctor Dashboard quick-submit
-                    document.getElementById('disp-medicine-timing').textContent = data.prescription_data;
-                    addMedicineRow();
+                    document.getElementById('medicine-list').innerHTML = `<div style="background: rgba(0,212,255,0.05); border-left: 4px solid var(--c-cyan); padding: 20px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"><h4 style="color: #1e293b; margin-bottom: 8px; font-size: 1.1rem;"><i class="fa fa-pills" style="color: var(--c-cyan);"></i> General Prescription</h4><p style="font-size: 1.15rem; color: #334155; font-weight: 500;">${data.prescription_data}</p></div>`;
                 }
-            } else {
-                addMedicineRow();
             }
         }
         
@@ -794,55 +747,51 @@
                 const isNight = med.timings.includes('Night');
                 
                 const card = document.createElement('div');
-                card.className = 'medicine-card';
+                card.style.background = '#ffffff';
+                card.style.border = '1px solid #e2e8f0';
+                card.style.borderLeft = '4px solid var(--c-purple)';
+                card.style.borderRadius = '8px';
+                card.style.padding = '16px';
+                card.style.marginBottom = '16px';
+                card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                
                 card.innerHTML = `
-                    <button class="remove-btn" onclick="removeMedicineRow('${med.id}')" title="Remove Medicine"><i class="fas fa-times"></i></button>
-                    
-                    <div class="form-group full">
-                        <label class="form-label">Medicine Name (Auto-complete)</label>
-                        <input type="text" class="form-input" value="${med.name}" placeholder="Start typing..." 
-                            oninput="updateMedicine('${med.id}', 'name', this.value); debounceSearch(this, '${med.id}')"
-                            onfocus="debounceSearch(this, '${med.id}')">
-                        <div class="autocomplete-results" id="ac-${med.id}"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Type</label>
-                        <select class="form-select" onchange="updateMedicine('${med.id}', 'type', this.value)">
-                            <option value="Tablet" ${med.type === 'Tablet' ? 'selected' : ''}>Tablet</option>
-                            <option value="Capsule" ${med.type === 'Capsule' ? 'selected' : ''}>Capsule</option>
-                            <option value="Syrup" ${med.type === 'Syrup' ? 'selected' : ''}>Syrup</option>
-                            <option value="Injection" ${med.type === 'Injection' ? 'selected' : ''}>Injection</option>
-                            <option value="Drops" ${med.type === 'Drops' ? 'selected' : ''}>Drops</option>
-                            <option value="Ointment" ${med.type === 'Ointment' ? 'selected' : ''}>Ointment</option>
-                            <option value="Other" ${med.type === 'Other' ? 'selected' : ''}>Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Dosage (e.g. 500mg, 10ml)</label>
-                        <input type="text" class="form-input" value="${med.dosage}" oninput="updateMedicine('${med.id}', 'dosage', this.value)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Duration</label>
-                        <input type="text" class="form-input" placeholder="e.g. 5 days, 1 month" value="${med.duration}" oninput="updateMedicine('${med.id}', 'duration', this.value)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Timing</label>
-                        <div class="timing-options">
-                            <span class="timing-btn ${isMorning ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Morning')">Morning</span>
-                            <span class="timing-btn ${isAfternoon ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Afternoon')">Afternoon</span>
-                            <span class="timing-btn ${isEvening ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Evening')">Evening</span>
-                            <span class="timing-btn ${isNight ? 'active' : ''}" onclick="toggleTiming('${med.id}', 'Night')">Night</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Medicine Name</div>
+                            <div style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-top: 4px;"><i class="fa fa-pills" style="color: var(--c-purple);"></i> ${med.name || 'N/A'}</div>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Type</div>
+                            <div style="font-size: 1.05rem; color: #334155; margin-top: 4px;">${med.type || 'N/A'}</div>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Dosage</div>
+                            <div style="font-size: 1.05rem; color: #334155; margin-top: 4px; font-weight: 600;">${med.dosage || 'N/A'}</div>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Duration</div>
+                            <div style="font-size: 1.05rem; color: #334155; margin-top: 4px;">${med.duration || 'N/A'}</div>
                         </div>
                     </div>
                     
-                    <div class="form-group full">
-                        <label class="form-label">Instructions & Special Notes</label>
-                        <input type="text" class="form-input" placeholder="e.g. After meals, avoid alcohol..." value="${med.instructions}" oninput="updateMedicine('${med.id}', 'instructions', this.value)">
+                    <div style="margin-top: 16px; border-top: 1px dashed #e2e8f0; padding-top: 16px;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Schedule</div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            ${isMorning ? `<span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid #10b981; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;"><i class="fa fa-sun"></i> Morning</span>` : ''}
+                            ${isAfternoon ? `<span style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid #f59e0b; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;"><i class="fa fa-cloud-sun"></i> Afternoon</span>` : ''}
+                            ${isEvening ? `<span style="background: rgba(59,130,246,0.1); color: #3b82f6; border: 1px solid #3b82f6; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;"><i class="fa fa-cloud-moon"></i> Evening</span>` : ''}
+                            ${isNight ? `<span style="background: rgba(99,102,241,0.1); color: #6366f1; border: 1px solid #6366f1; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;"><i class="fa fa-moon"></i> Night</span>` : ''}
+                            ${!isMorning && !isAfternoon && !isEvening && !isNight ? `<span style="color: var(--text-muted); font-style: italic;">No specific schedule set</span>` : ''}
+                        </div>
                     </div>
+                    
+                    ${med.instructions ? `
+                    <div style="margin-top: 16px; background: #f8fafc; border-radius: 6px; padding: 12px;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Instructions</div>
+                        <div style="font-size: 1rem; color: #475569;">${med.instructions}</div>
+                    </div>
+                    ` : ''}
                 `;
                 container.appendChild(card);
             });

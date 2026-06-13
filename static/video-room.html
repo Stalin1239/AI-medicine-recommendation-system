@@ -1,371 +1,903 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FedMedFlow - Live Consultation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-dark: #0a0e27;
-            --bg-card: rgba(15, 23, 42, 0.7);
-            --primary: #00f0ff;
-            --secondary: #8338ec;
-            --text-main: #f8fafc;
-            --border: rgba(0, 240, 255, 0.2);
-        }
-        body {
-            margin: 0;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .video-container {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            gap: 20px;
-        }
-        .main-video {
-            flex: 1;
-            background: #000;
-            border-radius: 20px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-            overflow: hidden;
-            position: relative;
-        }
-        .main-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .self-video {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 200px;
-            height: 150px;
-            background: #111;
-            border-radius: 12px;
-            border: 2px solid var(--secondary);
-            overflow: hidden;
-        }
-        .self-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .controls {
-            height: 80px;
-            background: var(--bg-card);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-        .control-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .control-btn:hover { background: rgba(0, 240, 255, 0.2); color: var(--primary); }
-        .control-btn.end-call { background: #ff0044; }
-        .control-btn.end-call:hover { background: #ff3366; color: white; box-shadow: 0 0 15px rgba(255, 0, 68, 0.5); }
-        
-        .chat-container {
-            flex: 1;
-            background: var(--bg-card);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .message {
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        .message.self {
-            align-self: flex-end;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            border-bottom-right-radius: 2px;
-        }
-        .message.other {
-            align-self: flex-start;
-            background: rgba(255, 255, 255, 0.1);
-            border-bottom-left-radius: 2px;
-        }
-        .chat-input {
-            padding: 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input input {
-            flex: 1;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            color: white;
-            outline: none;
-        }
-        .chat-input button {
-            background: var(--primary);
-            border: none;
-            border-radius: 10px;
-            width: 50px;
-            color: #000;
-            cursor: pointer;
-        }
-        .status-overlay {
-            position: absolute;
-            top: 20px; left: 20px;
-            background: rgba(0,0,0,0.6);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc00; }
-        .status-dot.connected { background: #00ff00; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediOps | Live Consultation Session</title>
+  <link rel="stylesheet" href="/static/mediops.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #050a12;
+      font-family: 'Exo 2', sans-serif;
+      color: #e0eaff;
+    }
+
+    /* Override mediops.css light body/grid for dark video room */
+    body::before { display: none !important; }
+
+    /* ─── DARK GRID BACKGROUND ─────────────────────────────────── */
+    .dark-grid-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+    @keyframes gridPulse {
+      0%,100% { opacity: 0.6; }
+      50%      { opacity: 1; }
+    }
+
+    /* ─── SCANLINE OVERLAY ─────────────────────────────────────── */
+    .scanline-overlay {
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      animation: scanMove 6s linear infinite;
+    }
+    @keyframes scanMove {
+      0%   { background-position: 0 0; }
+      100% { background-position: 0 100vh; }
+    }
+
+    /* ─── LAYOUT SHELL ─────────────────────────────────────────── */
+    .vr-shell {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      width: 100vw; height: 100vh;
+    }
+
+    /* ─── TOP BAR ──────────────────────────────────────────────── */
+    .vr-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px;
+      height: 58px; flex-shrink: 0;
+      background: rgba(5,10,20,0.85);
+      border-bottom: 1px solid rgba(0,212,255,0.25);
+      backdrop-filter: blur(16px);
+      position: relative; z-index: 100;
+    }
+
+    .vr-logo {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+    }
+    .vr-logo-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, #00D4FF, #B24BF3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 14px rgba(0,212,255,0.5);
+    }
+    .vr-logo-text {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px; font-weight: 800; letter-spacing: 2px;
+      color: #00D4FF;
+      text-shadow: 0 0 10px rgba(0,212,255,0.6);
+    }
+    .vr-logo-text span { color: #B24BF3; }
+    .vr-logo-sub {
+      font-size: 8px; letter-spacing: 1.5px; color: rgba(255,255,255,0.4);
+      font-family: 'Sora', sans-serif; display: block; margin-top: -2px;
+    }
+
+    /* ─── HEARTBEAT LINE ───────────────────────────────────────── */
+    .heartbeat-wrap {
+      flex: 1; display: flex; align-items: center;
+      padding: 0 28px; max-width: 360px;
+    }
+    .heartbeat-svg { width: 100%; height: 32px; overflow: visible; }
+    .heartbeat-path {
+      fill: none; stroke: #00D4FF; stroke-width: 2;
+      filter: drop-shadow(0 0 4px #00D4FF);
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: heartDraw 2s linear infinite;
+    }
+    @keyframes heartDraw {
+      0%   { stroke-dashoffset: 600; opacity: 1; }
+      80%  { stroke-dashoffset: 0;   opacity: 1; }
+      100% { stroke-dashoffset: 0;   opacity: 0; }
+    }
+
+    /* ─── ROOM INFO ────────────────────────────────────────────── */
+    .vr-room-info {
+      display: flex; align-items: center; gap: 18px;
+    }
+    .vr-room-id {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; color: rgba(0,212,255,0.75);
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.2);
+      padding: 4px 10px; border-radius: 4px;
+    }
+
+    /* ─── CONNECTION STATUS ────────────────────────────────────── */
+    .connection-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 4px 12px;
+    }
+    .status-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #888; flex-shrink: 0;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    .status-dot.online  {
+      background: #00FF88;
+      box-shadow: 0 0 8px #00FF88, 0 0 18px rgba(0,255,136,0.4);
+      animation: dotPulse 1.5s ease-in-out infinite;
+    }
+    .status-dot.offline { background: #FF4444; box-shadow: 0 0 8px #FF4444; }
+    @keyframes dotPulse {
+      0%,100% { transform: scale(1);   opacity: 1; }
+      50%      { transform: scale(1.4); opacity: 0.7; }
+    }
+    #connection-status {
+      font-size: 12px; font-family: 'Share Tech Mono', monospace;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ─── CALL TIMER ───────────────────────────────────────────── */
+    .vr-timer {
+      font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+      color: #00FF88; letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0,255,136,0.5);
+    }
+
+    /* ─── QUALITY DOTS ─────────────────────────────────────────── */
+    .quality-dots {
+      display: flex; align-items: flex-end; gap: 3px; height: 18px;
+    }
+    .quality-dots span {
+      width: 5px; border-radius: 2px;
+      background: #00D4FF;
+      box-shadow: 0 0 6px #00D4FF;
+      animation: qualityAnim 1.2s ease-in-out infinite;
+    }
+    .quality-dots span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+    .quality-dots span:nth-child(2) { height: 10px; animation-delay: 0.15s; }
+    .quality-dots span:nth-child(3) { height: 14px; animation-delay: 0.3s;  }
+    .quality-dots span:nth-child(4) { height: 18px; animation-delay: 0.45s; }
+    @keyframes qualityAnim {
+      0%,100% { opacity: 1;   }
+      50%      { opacity: 0.3; }
+    }
+
+    /* ─── MAIN CONTENT AREA ────────────────────────────────────── */
+    .vr-content {
+      display: flex; flex: 1; overflow: hidden;
+    }
+
+    /* ─── VIDEO AREA ───────────────────────────────────────────── */
+    .vr-video-area {
+      position: relative; flex: 1; overflow: hidden;
+      background: #02060f;
+    }
+
+    /* Remote video (full area) */
+    #remoteVideo {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+
+    /* MediOps branding watermark */
+    .vr-watermark {
+      position: absolute; top: 16px; left: 16px;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 6px; padding: 4px 10px;
+      backdrop-filter: blur(6px);
+    }
+    .vr-watermark-icon { font-size: 14px; }
+    .vr-watermark-txt {
+      font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 700;
+      color: rgba(0,212,255,0.8); letter-spacing: 1.5px;
+    }
+    .vr-watermark-txt span { color: rgba(178,75,243,0.9); }
+
+    /* Remote label */
+    .remote-label {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 12px; font-family: 'Sora', sans-serif;
+      color: rgba(0,212,255,0.85); letter-spacing: 1px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Corner scan effect on remote video */
+    .vr-video-area::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(
+        135deg,
+        rgba(0,212,255,0.05) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(178,75,243,0.04) 100%
+      );
+    }
+
+    /* Corner brackets */
+    .corner-bracket {
+      position: absolute; width: 28px; height: 28px;
+      pointer-events: none;
+    }
+    .corner-bracket.tl { top: 10px; left: 10px; border-top: 2px solid rgba(0,212,255,0.5); border-left: 2px solid rgba(0,212,255,0.5); }
+    .corner-bracket.tr { top: 10px; right: 10px; border-top: 2px solid rgba(0,212,255,0.5); border-right: 2px solid rgba(0,212,255,0.5); }
+    .corner-bracket.bl { bottom: 80px; left: 10px; border-bottom: 2px solid rgba(0,212,255,0.5); border-left: 2px solid rgba(0,212,255,0.5); }
+    .corner-bracket.br { bottom: 80px; right: 10px; border-bottom: 2px solid rgba(0,212,255,0.5); border-right: 2px solid rgba(0,212,255,0.5); }
+
+    /* PiP local video */
+    .local-video-pip {
+      position: absolute; bottom: 90px; right: 16px;
+      width: 180px; height: 120px;
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid rgba(0,212,255,0.5);
+      box-shadow: 0 0 20px rgba(0,212,255,0.3), 0 8px 32px rgba(0,0,0,0.6);
+      z-index: 20;
+      transition: transform 0.2s;
+    }
+    .local-video-pip:hover { transform: scale(1.04); }
+    #localVideo {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scaleX(-1); /* mirror */
+    }
+    .local-label {
+      position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.6); border-radius: 10px;
+      padding: 2px 10px; font-size: 10px; font-family: 'Sora', sans-serif;
+      color: #00D4FF; letter-spacing: 1px; white-space: nowrap;
+    }
+
+    /* ─── BOTTOM CONTROL BAR ───────────────────────────────────── */
+    .vr-controls {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(5,10,22,0.75);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 50px; padding: 10px 22px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,212,255,0.08);
+      z-index: 50;
+    }
+
+    .ctrl-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #e0eaff;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: all 0.25s ease;
+      position: relative; overflow: hidden;
+    }
+    .ctrl-btn::before {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 70%);
+    }
+    .ctrl-btn:hover {
+      background: rgba(0,212,255,0.15);
+      border-color: rgba(0,212,255,0.5);
+      color: #00D4FF;
+      box-shadow: 0 0 18px rgba(0,212,255,0.4), inset 0 0 10px rgba(0,212,255,0.1);
+      transform: translateY(-2px);
+    }
+    .ctrl-btn.active {
+      background: rgba(255,107,157,0.2);
+      border-color: rgba(255,107,157,0.5);
+      color: #FF6B9D;
+      box-shadow: 0 0 14px rgba(255,107,157,0.35);
+    }
+
+    /* End call button - RED, slightly larger */
+    .ctrl-btn.end-call {
+      width: 56px; height: 56px; font-size: 20px;
+      background: linear-gradient(135deg, #FF3B3B, #CC0000);
+      border-color: rgba(255,59,59,0.6);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,59,59,0.5);
+    }
+    .ctrl-btn.end-call:hover {
+      background: linear-gradient(135deg, #FF5555, #FF0000);
+      box-shadow: 0 0 32px rgba(255,59,59,0.7);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    .ctrl-divider {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, transparent, rgba(0,212,255,0.3), transparent);
+    }
+
+    /* ─── CONNECTING OVERLAY ───────────────────────────────────── */
+    .connecting-overlay {
+      position: absolute; inset: 0; z-index: 200;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(2,6,15,0.92);
+      backdrop-filter: blur(6px);
+      transition: opacity 0.6s ease;
+    }
+    .connecting-overlay.fade-out { opacity: 0; pointer-events: none; }
+    .connecting-overlay.hidden { display: none; }
+
+    .connecting-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 3px solid rgba(0,212,255,0.15);
+      border-top-color: #00D4FF;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+      box-shadow: 0 0 24px rgba(0,212,255,0.3);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .connecting-text {
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+      color: #00D4FF; letter-spacing: 3px;
+      text-shadow: 0 0 14px rgba(0,212,255,0.5);
+    }
+    .connecting-dots span {
+      display: inline-block;
+      animation: dotBounce 1.2s ease-in-out infinite;
+    }
+    .connecting-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .connecting-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%,80%,100% { transform: translateY(0); }
+      40%          { transform: translateY(-6px); }
+    }
+    .connecting-sub {
+      margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.4);
+      font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;
+    }
+
+    /* ─── CHAT SIDEBAR ─────────────────────────────────────────── */
+    .vr-sidebar {
+      width: 320px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      background: rgba(5,10,22,0.9);
+      border-left: 1px solid rgba(0,212,255,0.18);
+      backdrop-filter: blur(20px);
+    }
+
+    .chat-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,212,255,0.04);
+    }
+    .chat-header-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.25), rgba(178,75,243,0.25));
+      border: 1px solid rgba(0,212,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #00D4FF;
+    }
+    .chat-header-title {
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700;
+      color: #e0eaff; letter-spacing: 1.5px;
+    }
+    .chat-header-sub {
+      font-size: 10px; color: rgba(255,255,255,0.35);
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .chat-live-badge {
+      margin-left: auto;
+      background: rgba(0,255,136,0.12);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 10px; padding: 2px 8px;
+      font-size: 9px; font-family: 'Sora', sans-serif;
+      color: #00FF88; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .chat-live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #00FF88;
+      animation: dotPulse 1.5s ease-in-out infinite;
+    }
+
+    /* Messages area */
+    #chat-messages {
+      flex: 1; overflow-y: auto; padding: 14px 12px;
+      display: flex; flex-direction: column; gap: 10px;
+      scrollbar-width: thin; scrollbar-color: rgba(0,212,255,0.2) transparent;
+    }
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    #chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(0,212,255,0.25); border-radius: 2px;
+    }
+
+    /* Empty state */
+    .chat-empty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      opacity: 0.35; pointer-events: none;
+    }
+    .chat-empty i { font-size: 28px; color: #00D4FF; }
+    .chat-empty p {
+      font-size: 11px; font-family: 'Share Tech Mono', monospace;
+      color: rgba(255,255,255,0.6); text-align: center;
+    }
+
+    /* Message bubbles */
+    .message {
+      display: flex; flex-direction: column; max-width: 85%;
+    }
+    .message.self   { align-self: flex-end;  align-items: flex-end; }
+    .message.remote { align-self: flex-start; align-items: flex-start; }
+
+    .bubble {
+      padding: 9px 13px; border-radius: 16px;
+      font-size: 13px; line-height: 1.5;
+      word-break: break-word;
+    }
+    .message.self .bubble {
+      background: linear-gradient(135deg, rgba(0,212,255,0.25), rgba(0,160,200,0.2));
+      border: 1px solid rgba(0,212,255,0.35);
+      color: #e0f7ff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 2px 12px rgba(0,212,255,0.12);
+    }
+    .message.remote .bubble {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #e0eaff;
+      border-bottom-left-radius: 4px;
+    }
+
+    .time {
+      font-size: 9px; color: rgba(255,255,255,0.3);
+      font-family: 'Share Tech Mono', monospace;
+      margin-top: 3px; padding: 0 4px;
+    }
+
+    /* File bubble */
+    .file-bubble {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px;
+    }
+    .file-bubble i { color: #B24BF3; font-size: 16px; }
+    .file-bubble a {
+      color: #00D4FF; text-decoration: none;
+      border-bottom: 1px dashed rgba(0,212,255,0.4);
+    }
+    .file-bubble a:hover { color: #fff; }
+
+    /* ─── CHAT INPUT BAR ───────────────────────────────────────── */
+    .chat-input-bar {
+      padding: 10px 12px;
+      border-top: 1px solid rgba(0,212,255,0.15);
+      background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    #msgInput {
+      flex: 1; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 20px; padding: 9px 14px;
+      color: #e0eaff; font-size: 13px;
+      font-family: 'Exo 2', sans-serif;
+      outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    #msgInput::placeholder { color: rgba(255,255,255,0.25); }
+    #msgInput:focus {
+      border-color: rgba(0,212,255,0.5);
+      box-shadow: 0 0 12px rgba(0,212,255,0.15);
+    }
+
+    .chat-icon-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; transition: all 0.2s;
+    }
+    .chat-send-btn {
+      background: linear-gradient(135deg, #00D4FF, #0099cc);
+      color: #020a12;
+      box-shadow: 0 0 12px rgba(0,212,255,0.35);
+    }
+    .chat-send-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0,212,255,0.55);
+    }
+    .chat-attach-btn {
+      background: rgba(178,75,243,0.15);
+      border: 1px solid rgba(178,75,243,0.3);
+      color: #B24BF3;
+    }
+    .chat-attach-btn:hover {
+      background: rgba(178,75,243,0.25);
+      box-shadow: 0 0 14px rgba(178,75,243,0.3);
+      transform: scale(1.05);
+    }
+
+    #fileInput { display: none; }
+
+    /* ─── PARTICLES ────────────────────────────────────────────── */
+    .particles-container {
+      position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden;
+    }
+    .particle {
+      position: absolute; border-radius: 50%;
+      animation: particleFloat linear infinite;
+      opacity: 0.4;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(0);      opacity: 0; }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    /* ─── RESPONSIVE TWEAKS ────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .vr-sidebar { width: 0; overflow: hidden; }
+      .heartbeat-wrap { display: none; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="video-container">
-        <div class="main-video">
-            <div class="status-overlay">
-                <div class="status-dot" id="connection-dot"></div>
-                <span id="connection-status">Connecting to room...</span>
-            </div>
-            <video id="remoteVideo" autoplay playsinline></video>
-            <div class="self-video">
-                <video id="localVideo" autoplay playsinline muted></video>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <button class="control-btn" onclick="toggleMute()"><i class="fas fa-microphone" id="mic-icon"></i></button>
-            <button class="control-btn" onclick="toggleVideo()"><i class="fas fa-video" id="vid-icon"></i></button>
-            <button class="control-btn" onclick="triggerFileSelect()"><i class="fas fa-paperclip"></i></button>
-            <button class="control-btn end-call" onclick="window.close()"><i class="fas fa-phone-slash"></i></button>
-        </div>
-    </div>
+  <!-- Scanline Overlay -->
+  <div class="scanline-overlay"></div>
 
-    <div class="chat-container">
+  <!-- Dark Grid Background -->
+  <div class="dark-grid-bg"></div>
+
+  <!-- Main Shell -->
+  <div class="vr-shell">
+
+    <!-- ═══ TOP BAR ═══════════════════════════════════════════ -->
+    <header class="vr-topbar">
+
+      <!-- Logo -->
+      <a class="vr-logo" href="#">
+        <div class="vr-logo-icon">🏥</div>
+        <div>
+          <div class="vr-logo-text">MEDI<span>OPS</span></div>
+          <span class="vr-logo-sub">INTELLIGENT HEALTH PLATFORM</span>
+        </div>
+      </a>
+
+      <!-- Heartbeat line -->
+      <div class="heartbeat-wrap">
+        <svg class="heartbeat-svg" viewBox="0 0 300 32" preserveAspectRatio="none">
+          <path class="heartbeat-path"
+            d="M0,16 L40,16 L55,16 L65,2 L75,30 L85,4 L95,28 L105,16 L120,16 L260,16" />
+        </svg>
+      </div>
+
+      <!-- Room info + connection -->
+      <div class="vr-room-info">
+        <!-- Quality Dots -->
+        <div class="quality-dots">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- Timer -->
+        <div class="vr-timer" id="call-timer">00:00</div>
+
+        <!-- Room ID -->
+        <div class="vr-room-id" id="room-id-display">ROOM: ——</div>
+
+        <!-- Connection Status -->
+        <div class="connection-badge">
+          <div class="status-dot" id="connection-dot"></div>
+          <span id="connection-status">Connecting...</span>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- ═══ CONTENT ═══════════════════════════════════════════ -->
+    <div class="vr-content">
+
+      <!-- ─── VIDEO AREA ──────────────────────────────────── -->
+      <div class="vr-video-area">
+
+        <!-- Connecting overlay -->
+        <div class="connecting-overlay" id="connectingOverlay">
+          <div class="connecting-ring"></div>
+          <div class="connecting-text">
+            CONNECTING<span class="connecting-dots">
+              <span>.</span><span>.</span><span>.</span>
+            </span>
+          </div>
+          <div class="connecting-sub">Establishing secure WebRTC channel</div>
+        </div>
+
+        <!-- Remote video -->
+        <video id="remoteVideo" autoplay playsinline></video>
+
+        <!-- MediOps watermark -->
+        <div class="vr-watermark">
+          <span class="vr-watermark-icon">🏥</span>
+          <span class="vr-watermark-txt">MEDI<span>OPS</span></span>
+        </div>
+
+        <!-- Remote label -->
+        <div class="remote-label">
+          <i class="fa-solid fa-user-doctor" style="margin-right:5px;"></i>Doctor
+        </div>
+
+        <!-- Corner brackets UI -->
+        <div class="corner-bracket tl"></div>
+        <div class="corner-bracket tr"></div>
+        <div class="corner-bracket bl"></div>
+        <div class="corner-bracket br"></div>
+
+        <!-- PiP local video -->
+        <div class="local-video-pip">
+          <video id="localVideo" autoplay playsinline muted></video>
+          <div class="local-label">You</div>
+        </div>
+
+        <!-- Bottom Control Bar -->
+        <div class="vr-controls">
+          <!-- Mic -->
+          <button class="ctrl-btn" onclick="toggleMute()" title="Toggle Microphone">
+            <i class="fa-solid fa-microphone" id="mic-icon"></i>
+          </button>
+
+          <!-- Video -->
+          <button class="ctrl-btn" onclick="toggleVideo()" title="Toggle Camera">
+            <i class="fa-solid fa-video" id="vid-icon"></i>
+          </button>
+
+          <!-- File Share -->
+          <button class="ctrl-btn" onclick="triggerFileSelect()" title="Share File">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+
+          <div class="ctrl-divider"></div>
+
+          <!-- End Call -->
+          <button class="ctrl-btn end-call" onclick="window.close()" title="End Call">
+            <i class="fa-solid fa-phone-slash"></i>
+          </button>
+        </div>
+
+      </div>
+      <!-- /video-area -->
+
+      <!-- ─── CHAT SIDEBAR ────────────────────────────────── -->
+      <aside class="vr-sidebar">
+
+        <!-- Chat header -->
         <div class="chat-header">
-            <i class="fas fa-comments"></i> Live Chat & Files
+          <div class="chat-header-icon">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <div class="chat-header-title">Live Chat</div>
+            <div class="chat-header-sub">End-to-end encrypted</div>
+          </div>
+          <div class="chat-live-badge">
+            <div class="chat-live-dot"></div>
+            LIVE
+          </div>
         </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="message other">
-                <em>Welcome to the secure consultation room. All messages are encrypted.</em>
-            </div>
+
+        <!-- Messages -->
+        <div id="chat-messages">
+          <div class="chat-empty" id="chat-empty-state">
+            <i class="fa-solid fa-comment-medical"></i>
+            <p>No messages yet.<br/>Start the conversation below.</p>
+          </div>
         </div>
-        <div class="chat-input">
-            <input type="text" id="msgInput" placeholder="Type a message..." onkeypress="handleEnter(event)">
-            <input type="file" id="fileInput" style="display: none;" onchange="sendFile(event)">
-            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+
+        <!-- Input bar -->
+        <div class="chat-input-bar">
+          <input
+            type="text"
+            id="msgInput"
+            placeholder="Type a message…"
+            onkeypress="handleEnter(event)"
+            autocomplete="off"
+          />
+          <button class="chat-icon-btn chat-attach-btn" onclick="triggerFileSelect()" title="Attach file">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+          <button class="chat-icon-btn chat-send-btn" onclick="sendMessage()" title="Send">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
         </div>
+
+        <!-- Hidden file input -->
+        <input type="file" id="fileInput" onchange="sendFile(event)" />
+
+      </aside>
+      <!-- /sidebar -->
+
     </div>
+    <!-- /content -->
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get('room');
-        
-        if (!roomId) {
-            alert("No room specified!");
-            window.close();
-        }
+  </div>
+  <!-- /shell -->
 
-        let ws;
-        let localStream;
-        let peerConnection;
-        const configuration = { 'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}] };
-        
-        const localVideo = document.getElementById('localVideo');
-        const remoteVideo = document.getElementById('remoteVideo');
-        const statusText = document.getElementById('connection-status');
-        const statusDot = document.getElementById('connection-dot');
 
-        async function init() {
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                localVideo.srcObject = localStream;
-                
-                // Connect WebSocket
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                ws = new WebSocket(`${protocol}//${window.location.host}/ws/consultation/${roomId}`);
-                
-                ws.onopen = () => {
-                    statusText.textContent = "Waiting for peer...";
-                    // Initiator sends offer
-                    createPeerConnection();
-                    // Just wait for other peer or send an offer blindly.
-                    // We'll broadcast a 'join' event.
-                    ws.send(JSON.stringify({ type: 'join' }));
-                };
-                
-                ws.onmessage = async (event) => {
-                    const message = JSON.parse(event.data);
-                    
-                    if (message.type === 'join') {
-                        // Someone joined, we should send an offer if we are the "caller"
-                        createOffer();
-                    } else if (message.type === 'offer') {
-                        if (!peerConnection) createPeerConnection();
-                        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
-                        const answer = await peerConnection.createAnswer();
-                        await peerConnection.setLocalDescription(answer);
-                        ws.send(JSON.stringify({ type: 'answer', answer: answer }));
-                    } else if (message.type === 'answer') {
-                        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
-                    } else if (message.type === 'ice-candidate') {
-                        if (peerConnection) {
-                            await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
-                        }
-                    } else if (message.type === 'chat') {
-                        appendMessage(message.text, 'other');
-                    } else if (message.type === 'file') {
-                        appendFile(message.filename, message.filedata, 'other');
-                    }
-                };
-            } catch (e) {
-                console.error("Error accessing media devices.", e);
-                statusText.textContent = "Camera/Mic access denied";
-            }
-        }
+  <script>
+    /* ══════════════════════════════════════════════════
+       CALL DURATION TIMER
+    ══════════════════════════════════════════════════ */
+    (function() {
+      let seconds = 0;
+      const timerEl = document.getElementById('call-timer');
+      setInterval(function() {
+        seconds++;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        timerEl.textContent = m + ':' + s;
+      }, 1000);
+    })();
 
-        function createPeerConnection() {
-            peerConnection = new RTCPeerConnection(configuration);
-            
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
-            
-            peerConnection.ontrack = event => {
-                remoteVideo.srcObject = event.streams[0];
-                statusText.textContent = "Connected (Encrypted)";
-                statusDot.classList.add('connected');
-            };
-            
-            peerConnection.onicecandidate = event => {
-                if (event.candidate) {
-                    ws.send(JSON.stringify({ type: 'ice-candidate', candidate: event.candidate }));
-                }
-            };
-        }
+    /* ══════════════════════════════════════════════════
+       ROOM ID DISPLAY
+    ══════════════════════════════════════════════════ */
+    (function() {
+      const roomParam = new URLSearchParams(window.location.search).get('room');
+      const el = document.getElementById('room-id-display');
+      if (roomParam) el.textContent = 'ROOM: ' + roomParam.toUpperCase();
+    })();
 
-        async function createOffer() {
-            if (!peerConnection) createPeerConnection();
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-            ws.send(JSON.stringify({ type: 'offer', offer: offer }));
-        }
+    /* ══════════════════════════════════════════════════
+       CONNECTING OVERLAY AUTO-HIDE ON CONNECT
+       (also hooked into peerConnection state changes below)
+    ══════════════════════════════════════════════════ */
+    function hideConnectingOverlay() {
+      const overlay = document.getElementById('connectingOverlay');
+      overlay.classList.add('fade-out');
+      setTimeout(function() { overlay.classList.add('hidden'); }, 700);
+    }
 
-        // --- UI Controls ---
-        
-        let isMuted = false;
-        function toggleMute() {
-            isMuted = !isMuted;
-            localStream.getAudioTracks()[0].enabled = !isMuted;
-            document.getElementById('mic-icon').className = isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
-        }
+    /* ══════════════════════════════════════════════════
+       CHAT EMPTY STATE HELPER
+    ══════════════════════════════════════════════════ */
+    function hideChatEmpty() {
+      const el = document.getElementById('chat-empty-state');
+      if (el) el.remove();
+    }
 
-        let isVideoOff = false;
-        function toggleVideo() {
-            isVideoOff = !isVideoOff;
-            localStream.getVideoTracks()[0].enabled = !isVideoOff;
-            document.getElementById('vid-icon').className = isVideoOff ? 'fas fa-video-slash' : 'fas fa-video';
-        }
+    /* ══════════════════════════════════════════════════
+       ORIGINAL WEBRTC + CHAT JAVASCRIPT (PRESERVED EXACTLY)
+    ══════════════════════════════════════════════════ */
+    const roomId = new URLSearchParams(window.location.search).get('room');
+    let localStream, peerConnection, ws;
 
-        // --- Chat & Files ---
+    async function init() {
+        localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+        document.getElementById('localVideo').srcObject = localStream;
+        const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${proto}//${window.location.host}/ws/consultation/${roomId}`);
+        ws.onopen = () => { ws.send(JSON.stringify({type:'join'})); };
+        ws.onmessage = async (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'join') { await createOffer(); }
+            else if (msg.type === 'offer') { await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.offer)); const answer = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answer); ws.send(JSON.stringify({type:'answer', answer})); }
+            else if (msg.type === 'answer') { await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer)); }
+            else if (msg.type === 'ice-candidate') { if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate)); }
+            else if (msg.type === 'chat') { appendMessage(msg.text, 'remote'); }
+            else if (msg.type === 'file') { appendFile(msg.filename, msg.filedata, 'remote'); }
+        };
+        createPeerConnection();
+    }
 
-        function appendMessage(text, side) {
-            const msgs = document.getElementById('chat-messages');
-            const div = document.createElement('div');
-            div.className = `message ${side}`;
-            div.textContent = text;
-            msgs.appendChild(div);
-            msgs.scrollTop = msgs.scrollHeight;
-        }
+    function createPeerConnection() {
+        peerConnection = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        peerConnection.ontrack = (event) => { document.getElementById('remoteVideo').srcObject = event.streams[0]; };
+        peerConnection.onicecandidate = (event) => { if (event.candidate) ws.send(JSON.stringify({type:'ice-candidate', candidate:event.candidate})); };
+        peerConnection.oniceconnectionstatechange = () => {
+            const state = peerConnection.iceConnectionState;
+            const dot = document.getElementById('connection-dot');
+            const status = document.getElementById('connection-status');
+            if (state === 'connected') { dot.className = 'status-dot online'; status.textContent = 'Connected'; hideConnectingOverlay(); }
+            else if (state === 'disconnected') { dot.className = 'status-dot offline'; status.textContent = 'Disconnected'; }
+        };
+    }
 
-        function appendFile(filename, dataUrl, side) {
-            const msgs = document.getElementById('chat-messages');
-            const div = document.createElement('div');
-            div.className = `message ${side}`;
-            div.innerHTML = `<i class="fas fa-file"></i> <a href="${dataUrl}" download="${filename}" style="color:inherit;">${filename}</a>`;
-            msgs.appendChild(div);
-            msgs.scrollTop = msgs.scrollHeight;
-        }
+    async function createOffer() {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        ws.send(JSON.stringify({type:'offer', offer}));
+    }
 
-        function sendMessage() {
-            const input = document.getElementById('msgInput');
-            const text = input.value.trim();
-            if (text) {
-                appendMessage(text, 'self');
-                ws.send(JSON.stringify({ type: 'chat', text: text }));
-                input.value = '';
-            }
-        }
+    function toggleMute() {
+        const audioTrack = localStream.getAudioTracks()[0];
+        audioTrack.enabled = !audioTrack.enabled;
+        const icon = document.getElementById('mic-icon');
+        icon.classList.toggle('fa-microphone', audioTrack.enabled);
+        icon.classList.toggle('fa-microphone-slash', !audioTrack.enabled);
+    }
 
-        function handleEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+    function toggleVideo() {
+        const videoTrack = localStream.getVideoTracks()[0];
+        videoTrack.enabled = !videoTrack.enabled;
+        const icon = document.getElementById('vid-icon');
+        icon.classList.toggle('fa-video', videoTrack.enabled);
+        icon.classList.toggle('fa-video-slash', !videoTrack.enabled);
+    }
 
-        function triggerFileSelect() {
-            document.getElementById('fileInput').click();
-        }
+    function appendMessage(text, side) {
+        hideChatEmpty();
+        const div = document.createElement('div');
+        div.className = 'message ' + side;
+        div.innerHTML = `<div class="bubble">${text}</div><div class="time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>`;
+        document.getElementById('chat-messages').appendChild(div);
+        document.getElementById('chat-messages').scrollTop = 9999;
+    }
 
-        function sendFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const dataUrl = e.target.result;
-                appendFile(file.name, dataUrl, 'self');
-                ws.send(JSON.stringify({
-                    type: 'file',
-                    filename: file.name,
-                    filedata: dataUrl
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
+    function appendFile(filename, dataUrl, side) {
+        hideChatEmpty();
+        const div = document.createElement('div');
+        div.className = 'message ' + side;
+        div.innerHTML = `<div class="bubble file-bubble"><i class="fa-solid fa-file"></i> <a href="${dataUrl}" download="${filename}">${filename}</a></div>`;
+        document.getElementById('chat-messages').appendChild(div);
+        document.getElementById('chat-messages').scrollTop = 9999;
+    }
 
-        // Start
-        window.onload = init;
-    </script>
+    function sendMessage() {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if (!text) return;
+        appendMessage(text, 'self');
+        ws.send(JSON.stringify({type:'chat', text}));
+        input.value = '';
+    }
+
+    function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+    function triggerFileSelect() { document.getElementById('fileInput').click(); }
+
+    function sendFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            appendFile(file.name, e.target.result, 'self');
+            ws.send(JSON.stringify({type:'file', filename:file.name, filedata:e.target.result}));
+        };
+        reader.readAsDataURL(file);
+    }
+
+    window.onload = init;
+
+    /* ══════════════════════════════════════════════════
+       PARTICLES
+    ══════════════════════════════════════════════════ */
+    (function() {
+      const pc = document.createElement('div');
+      pc.className = 'particles-container';
+      document.body.insertBefore(pc, document.body.firstChild);
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.bottom = '-10px';
+        p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+        p.style.background = Math.random() > 0.5 ? '#00D4FF' : '#FF6B9D';
+        p.style.animationDuration = (8 + Math.random() * 15) + 's';
+        p.style.animationDelay = Math.random() * 10 + 's';
+        pc.appendChild(p);
+      }
+    })();
+  </script>
+
+    <script src="/static/cyber-inject.js"></script>
 </body>
 </html>

@@ -3,242 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthOS | Doctor Portal Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="MediOps Doctor Portal Login">
+    <title>MediOps | Doctor Portal</title>
+    <link rel="stylesheet" href="/static/mediops.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #090d16 0%, #0f172a 35%, #052e16 70%, #030712 100%);
-            background-attachment: fixed;
+        .portal-layout {
+            display: flex;
             min-height: 100vh;
-            display: flex;
+            width: 100%;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.25;
-        }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.3), rgba(22, 163, 74, 0.05));
-            animation: float 22s infinite ease-in-out;
-        }
-
-        .blob1 {
-            width: 320px;
-            height: 320px;
-            top: -40px;
-            right: -20px;
-            animation-duration: 18s;
-        }
-
-        .blob2 {
-            width: 220px;
-            height: 220px;
-            bottom: -30px;
-            left: -40px;
-            background: radial-gradient(circle at 30% 30%, rgba(14, 165, 233, 0.3), rgba(2, 132, 199, 0.05));
-            animation-duration: 22s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(40px, -40px) scale(1.06); }
-            66% { transform: translate(-20px, 30px) scale(0.94); }
-        }
-
-        .auth-container {
-            width: 100%;
-            max-width: 520px;
+            background: var(--bg-primary);
+            position: relative;
             padding: 20px;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
-
-        .auth-box {
-            background: rgba(9, 15, 29, 0.8);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(34, 197, 94, 0.25);
-            border-radius: 28px;
-            padding: 45px 40px;
-            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08);
-            position: relative;
-            overflow: hidden;
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
-
-        .auth-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #22c55e, #10b981, #06b6d4);
-        }
-
-        .logo-glow {
-            width: 65px;
-            height: 65px;
-            background: linear-gradient(135deg, #22c55e, #10b981);
-            border-radius: 18px;
+        .auth-header .logo-icon {
+            margin: 0 auto 16px;
+            background: var(--grad-coral);
+            box-shadow: var(--shadow-coral);
+            width: 64px;
+            height: 64px;
+            font-size: 32px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 25px rgba(34, 197, 94, 0.45);
-            color: #0d1527;
-            animation: pulse-ring 2.5s infinite;
+            color: white;
         }
-
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-            70% { box-shadow: 0 0 25px 8px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        .auth-header h2 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-
-        .input-glow:focus {
-            outline: none;
-            border-color: #22c55e;
-            box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
-            background: rgba(15, 23, 42, 0.95);
+        .auth-header p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 14px;
         }
-
-        .pulse-line {
-            width: 100%;
-            height: 40px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' width='100%25' height='40'%3E%3Cpath d='M0 10 h40 l2 -5 l2 15 l3 -20 l2 15 l1 -5 h48' fill='none' stroke='%2322c55e' stroke-width='0.5' stroke-dasharray='100' stroke-dashoffset='100'/%3E%3C/svg%3E") repeat-x;
-            opacity: 0.15;
-            margin-bottom: 15px;
+        .password-toggle { position: relative; }
+        .password-toggle-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--c-coral);
+            cursor: pointer;
+            font-size: 14px;
         }
-
-        .demo-card {
-            border: 1px dashed rgba(34, 197, 94, 0.3);
-            background: rgba(34, 197, 94, 0.05);
-            transition: all 0.3s ease;
+        .nav-links {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 100;
         }
-
-        .demo-card:hover {
-            border-color: #22c55e;
-            background: rgba(34, 197, 94, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #22c55e, #10b981);
-            color: #0d1527;
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 12px;
             font-weight: 700;
-            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.35);
-            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
         }
-
-        .btn-submit:hover {
+        .nav-links a:hover { color: var(--c-cyan); }
+        .demo-section {
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--border-light);
+        }
+        .demo-card {
+            background: rgba(255,107,157,0.05);
+            border: 1px solid rgba(255,107,157,0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            width: 100%;
+        }
+        .demo-card:hover {
+            background: rgba(255,107,157,0.1);
+            border-color: rgba(255,107,157,0.4);
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(34, 197, 94, 0.5);
-            filter: brightness(1.1);
         }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+    /* Font override — smooth Sora instead of blocky fonts */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .font-display, .cyber-label, .stat-label, .badge, .btn-neon,
+    .logo-text, .section-title, .page-title, .topbar-title, .modal-title,
+    .sidebar-user-name, .stat-value, h1, h2, h3, h4 {
+        font-family: 'Sora', sans-serif !important;
+        letter-spacing: normal !important;
+    }
     </style>
 </head>
 <body>
-    <div class="animated-bg">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-    </div>
-
-    <div class="auth-container">
-        <div class="auth-box">
-            <!-- Medical Icon and Header -->
-            <div class="text-center mb-8">
-                <div class="logo-glow">
-                    <i class="fa-solid fa-user-md"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold text-slate-100 tracking-tight">Clinical Console</h2>
-                <p class="text-slate-400 mt-2 text-sm">Access the Doctor Command & Diagnostics Center</p>
+    <div class="scanline-overlay"></div>
+    
+    <div class="portal-layout">
+        <div class="nav-links">
+            <a href="/"><i class="fa-solid fa-home"></i> Home</a>
+            <a href="/login"><i class="fa-solid fa-arrow-left"></i> Patient Login</a>
+        </div>
+        
+        <div class="login-card glass-card coral-accent">
+            <div class="heartbeat-line" style="position: absolute; top: 0; left: 0; width: 100%; height: 40px; opacity: 0.5;">
+                <svg viewBox="0 0 800 60"><path d="M0 30 L300 30 L320 10 L340 50 L360 30 L800 30" stroke="#FF6B9D" /></svg>
+            </div>
+            
+            <div class="auth-header" style="margin-top: 20px;">
+                <div class="logo-icon text-white"><i class="fa-solid fa-stethoscope"></i></div>
+                <h2>Clinical Console</h2>
+                <p>Doctor Command & Diagnostics Center</p>
             </div>
 
-            <!-- EKG Pulse Line Decoration -->
-            <div class="pulse-line"></div>
+            <div id="statusMessage" class="toast" style="display: none; position: relative; top: 0; right: 0; max-width: 100%; margin-bottom: 20px; animation: none;"></div>
 
-            <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-sm border"></div>
-
-            <!-- Login Form -->
-            <form onsubmit="handleDoctorLogin(event)" class="space-y-6">
-                <div>
-                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Professional Email</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
-                            <i class="fa-solid fa-envelope"></i>
-                        </span>
-                        <input type="email" id="doctorEmail" 
-                               class="w-full pl-11 pr-4 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
-                               placeholder="physician@healthos.org" required>
-                    </div>
+            <form onsubmit="handleDoctorLogin(event)">
+                <div class="input-group">
+                    <label class="cyber-label text-coral">Professional Email</label>
+                    <i class="fa-solid fa-envelope input-icon text-coral"></i>
+                    <input type="email" id="doctorEmail" class="cyber-input with-icon" style="border-color: rgba(255,107,157,0.3);" placeholder="physician@mediops.org" required>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Access Token / Password</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
-                            <i class="fa-solid fa-key"></i>
-                        </span>
-                        <input type="password" id="doctorPassword" 
-                               class="w-full pl-11 pr-12 py-3 bg-slate-900/60 border border-slate-700/70 rounded-xl text-slate-100 placeholder-slate-500 text-sm input-glow transition-all duration-300"
-                               placeholder="••••••••" required>
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition">
+                <div class="input-group">
+                    <label class="cyber-label text-coral">Access Token / Password</label>
+                    <i class="fa-solid fa-key input-icon text-coral"></i>
+                    <div class="password-toggle">
+                        <input type="password" id="doctorPassword" class="cyber-input with-icon" style="border-color: rgba(255,107,157,0.3);" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
                             <i id="passwordEye" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-4 rounded-xl btn-submit text-sm uppercase tracking-wider">
-                    Verify & Connect Portal
+                <button type="submit" class="btn-neon btn-neon-coral w-full mt-16" style="justify-content: center;">
+                    Verify & Connect Portal <i class="fa-solid fa-unlock"></i>
                 </button>
             </form>
-
-            <!-- Quick Fill Demo Doctors Section -->
-            <div class="mt-8 pt-6 border-t border-slate-800/80">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Demo Quick Fill Keys</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="quickFill('dr.sarah@mediops.com', 'password123')" 
-                            class="demo-card p-3 rounded-xl text-left border transition">
-                        <div class="text-xs font-bold text-emerald-400">Dr. Sarah Johnson</div>
-                        <div class="text-[10px] text-slate-400">Dermatologist</div>
+            
+            <div class="demo-section">
+                <p class="cyber-label text-center mb-16">Demo Quick Fill Keys</p>
+                <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <button class="demo-card" onclick="quickFill('dr.sarah@mediops.com', 'password123')">
+                        <div class="font-display text-sm text-coral font-bold">Dr. Sarah Johnson</div>
+                        <div class="text-xs text-muted font-mono mt-8">Dermatologist</div>
                     </button>
-                    <button onclick="quickFill('dr.ahmed@mediops.com', 'password123')" 
-                            class="demo-card p-3 rounded-xl text-left border transition">
-                        <div class="text-xs font-bold text-emerald-400">Dr. Ahmed Hassan</div>
-                        <div class="text-[10px] text-slate-400">Gastroenterologist</div>
+                    <button class="demo-card" onclick="quickFill('dr.ahmed@mediops.com', 'password123')">
+                        <div class="font-display text-sm text-coral font-bold">Dr. Ahmed Hassan</div>
+                        <div class="text-xs text-muted font-mono mt-8">Gastroenterologist</div>
                     </button>
                 </div>
-            </div>
-
-            <!-- Footer Return Link -->
-            <div class="mt-6 text-center text-xs">
-                <a href="/login" class="text-slate-500 hover:text-slate-300 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> Return to Patient Console
-                </a>
             </div>
         </div>
     </div>
 
     <script>
+        // Floating Stickers JS
+        (function() {
+          const stickers = ['🩺','🔬','💊','🏥','🧬','🫀','🩻'];
+          const container = document.createElement('div');
+          container.className = 'med-stickers-container';
+          document.body.appendChild(container);
+          function createSticker() {
+            const s = document.createElement('div');
+            s.className = 'med-sticker';
+            s.textContent = stickers[Math.floor(Math.random() * stickers.length)];
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.fontSize = (24 + Math.random() * 30) + 'px';
+            const dur = 15 + Math.random() * 20;
+            s.style.animationDuration = dur + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(s);
+            setTimeout(() => s.remove(), (dur + 5) * 1000);
+          }
+          for (let i = 0; i < 6; i++) setTimeout(createSticker, i * 1000);
+          setInterval(createSticker, 3000);
+        })();
+
+        // Particles JS
+        (function() {
+          const pc = document.createElement('div');
+          pc.className = 'particles-container';
+          document.body.insertBefore(pc, document.body.firstChild);
+          for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.bottom = '-10px';
+            p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+            p.style.background = Math.random() > 0.5 ? '#FF6B9D' : '#B24BF3';
+            p.style.animationDuration = (8 + Math.random() * 15) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            pc.appendChild(p);
+          }
+        })();
+
         function togglePasswordVisibility() {
             const passwordField = document.getElementById('doctorPassword');
             const eyeIcon = document.getElementById('passwordEye');
@@ -252,58 +234,51 @@
                 eyeIcon.classList.add('fa-eye');
             }
         }
-
         function quickFill(email, password) {
             document.getElementById('doctorEmail').value = email;
             document.getElementById('doctorPassword').value = password;
             showStatus('Demo Credentials Loaded. Ready to connect.', 'success');
         }
-
         function showStatus(msg, type) {
             const statusDiv = document.getElementById('statusMessage');
-            statusDiv.classList.remove('hidden', 'bg-red-500/10', 'border-red-500/30', 'text-red-300', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
-            
+            statusDiv.style.display = 'flex';
+            statusDiv.className = 'toast';
             if (type === 'error') {
-                statusDiv.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-300');
+                statusDiv.style.borderColor = '#FF4757';
+                statusDiv.style.color = '#FF4757';
+                statusDiv.style.background = 'rgba(255,71,87,0.08)';
+                statusDiv.style.borderLeft = '4px solid #FF4757';
             } else {
-                statusDiv.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+                statusDiv.style.borderColor = '#00D4FF';
+                statusDiv.style.color = '#00A8CC';
+                statusDiv.style.background = 'rgba(0,212,255,0.08)';
+                statusDiv.style.borderLeft = '4px solid #00D4FF';
             }
-            
-            statusDiv.innerHTML = (type === 'error' ? '<i class="fa-solid fa-triangle-exclamation mr-2"></i>' : '<i class="fa-solid fa-circle-check mr-2"></i>') + msg;
-            statusDiv.classList.remove('hidden');
+            statusDiv.innerHTML = (type === 'error' ? '<i class="fa-solid fa-triangle-exclamation mr-8"></i>' : '<i class="fa-solid fa-circle-check mr-8"></i>') + msg;
         }
-
         async function handleDoctorLogin(event) {
             event.preventDefault();
             const email = document.getElementById('doctorEmail').value;
             const password = document.getElementById('doctorPassword').value;
-
-            showStatus('⏳ Verification in progress... Connecting to HealthOS Mainframe.', 'success');
-
+            showStatus('⏳ Verification in progress... Connecting to MediOps Mainframe.', 'success');
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, role: 'doctor' })
                 });
-                
                 const data = await response.json();
-
                 if (data.success) {
                     showStatus('✓ Secure link established! Transferring to Doctor Dashboard.', 'success');
-                    
                     const userId = data.token.split('_')[1] || '1';
                     localStorage.setItem('user_token', data.token);
                     localStorage.setItem('userId', userId);
-                    localStorage.setItem('doctorId', userId); // Store in dedicated role key
+                    localStorage.setItem('doctorId', userId);
                     if (data.user) {
                         localStorage.setItem('userName', data.user.full_name || 'Doctor');
                         localStorage.setItem('userEmail', data.user.email || '');
                     }
-
-                    setTimeout(() => {
-                        window.location.href = '/doctor-dashboard';
-                    }, 1500);
+                    setTimeout(() => { window.location.href = '/doctor-dashboard'; }, 1500);
                 } else {
                     showStatus(data.message || 'Verification failed. Credentials rejected.', 'error');
                 }
@@ -312,5 +287,6 @@
             }
         }
     </script>
+    <script src="/static/cyber-inject.js"></script>
 </body>
 </html>

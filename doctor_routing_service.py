@@ -95,8 +95,13 @@ def get_available_doctors(specialty: str) -> List[Dict]:
     sorted by estimated wait time and queue size.
     """
     # Find doctors with matching specialty
+    if specialty in ["General Practitioner", "General Physician"]:
+        specialties = ["General Practitioner", "General Physician"]
+    else:
+        specialties = [specialty]
+        
     doctors = session.query(Doctor).filter(
-        Doctor.specialty == specialty,
+        Doctor.specialty.in_(specialties),
         Doctor.is_active == True
     ).all()
     

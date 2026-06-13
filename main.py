@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
 load_dotenv()
-print("🤖 dotenv loaded")
+print("dotenv loaded")
 
 import asyncio
 import pickle
 import json
+import io
+from fpdf import FPDF
 from pathlib import Path
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, time
@@ -150,11 +152,17 @@ class DoctorPrescriptionRequest(BaseModel):
     action: str
     medicine_name: Optional[str] = None
     doctor_notes: Optional[str] = None
+    appointment_time: Optional[str] = None
+    clinic_address: Optional[str] = None
+    medicine_timing: Optional[str] = None
 
 class DoctorPrescriptionUpdate(BaseModel):
     action: str
     medicine_name: Optional[str] = None
     doctor_notes: Optional[str] = None
+    appointment_time: Optional[str] = None
+    clinic_address: Optional[str] = None
+    medicine_timing: Optional[str] = None
 
 class DoctorAnalyticsRequest(BaseModel):
     doctor_id: int
@@ -163,6 +171,9 @@ class DoctorPrescriptionAction(BaseModel):
     action: str  # "approve", "override", "complete"
     medicine_name: Optional[str] = None
     doctor_notes: Optional[str] = None
+    appointment_time: Optional[str] = None
+    clinic_address: Optional[str] = None
+    medicine_timing: Optional[str] = None
 
 
 # --- DOCTOR ROUTING MODELS ---
@@ -344,6 +355,12 @@ async def login(request: LoginRequest):
         doctor = session.query(Doctor).filter(Doctor.email == request.email).first()
         if not doctor or not verify_password(request.password, doctor.hashed_password):
             return {"success": False, "message": "Invalid email or password"}
+            
+        avail = session.query(DoctorAvailability).filter(DoctorAvailability.doctor_id == doctor.id).first()
+        if avail:
+            avail.is_online = True
+            session.commit()
+            
         return {
             "success": True,
             "token": f"doctor_{doctor.id}",
@@ -498,6 +515,7 @@ async def triage_endpoint(
                     "confidence": fallback_res["confidence"],
                     "local_verified_data": fallback_res["local_verified_data"],
                     "disease_name": fallback_res["disease_name"],
+                    "disease": fallback_res["disease_name"],
                     "recommended_medicine": fallback_res["recommended_medicine"],
                     "dosage": fallback_res["dosage"],
                     "safe_tip": fallback_res["safe_tip"],
@@ -505,6 +523,8 @@ async def triage_endpoint(
                     "medical_support": medical_support,
                     "outbreak_alert": outbreak_alert,
                     "ai_insight": ai_insight,
+                    "insight": ai_insight,
+                    "severity": fallback_res["local_verified_data"]["severity"],
                     "is_fallback": True
                 }
         except Exception as fe:
@@ -537,8 +557,11 @@ async def triage_endpoint(
             "status": "Success",
             "message": "Symptoms too vague, but you can still request a doctor.",
             "disease_name": prediction,
+            "disease": prediction,
             "confidence": confidence,
             "ai_insight": ai_insight,
+            "insight": ai_insight,
+            "severity": disease.severity if disease else 0,
             "triage_id": triage_record.id,
             "is_verified": False
         }
@@ -551,8 +574,11 @@ async def triage_endpoint(
             "status": "Success",
             "message": "Condition not in local knowledge base, but you can consult a doctor.",
             "disease_name": prediction,
+            "disease": prediction,
             "confidence": confidence,
             "ai_insight": ai_insight,
+            "insight": ai_insight,
+            "severity": disease.severity if disease else 0,
             "triage_id": triage_record.id,
             "is_verified": False
         }
@@ -586,6 +612,7 @@ async def triage_endpoint(
         "confidence": confidence,
         "local_verified_data": local_data,
         "disease_name": local_data["disease_name"],
+        "disease": local_data["disease_name"],
         "recommended_medicine": local_data.get("standard_medicine"),
         "dosage": str(local_data.get("calculated_dosage")),
         "safe_tip": local_data.get("safe_tip"),
@@ -593,6 +620,8 @@ async def triage_endpoint(
         "medical_support": medical_support,
         "outbreak_alert": outbreak_alert,
         "ai_insight": ai_insight,
+        "insight": ai_insight,
+        "severity": local_data.get("severity"),
         "is_fallback": False
     }
 
@@ -846,8 +875,12 @@ async def doctor_dashboard(doctor_id: int):
         ConsultationRequest.priority.in_(["urgent", "high"])
     ).count()
 
+    all_consultations = session.query(ConsultationRequest).filter(
+        ConsultationRequest.doctor_id == doctor_id
+    ).order_by(ConsultationRequest.created_at.desc()).all()
+
     cases = []
-    for consultation in pending_consultations:
+    for consultation in all_consultations:
         patient = session.query(User).filter(User.id == consultation.patient_id).first()
         triage = None
         if consultation.triage_history_id:
@@ -1004,12 +1037,20 @@ async def doctor_prescription_endpoint(request: DoctorPrescriptionRequest):
             return await update_doctor_prescription(consultation.id, DoctorPrescriptionUpdate(
                 action=request.action,
                 medicine_name=request.medicine_name,
-                doctor_notes=request.doctor_notes
+                doctor_notes=request.doctor_notes,
+                appointment_time=request.appointment_time,
+                clinic_address=request.clinic_address,
+                medicine_timing=request.medicine_timing
             ))
         raise HTTPException(status_code=404, detail="Case not found")
 
     action = request.action.lower()
-    triage.doctor_prescription = request.medicine_name
+    
+    med_prescription = request.medicine_name
+    if request.medicine_timing:
+        med_prescription += f" (Timing: {request.medicine_timing})"
+        
+    triage.doctor_prescription = med_prescription
     triage.doctor_comment = request.doctor_notes
     triage.doctor_status = "completed" if action in ["approve", "override", "complete"] else "in_progress"
     
@@ -1017,6 +1058,17 @@ async def doctor_prescription_endpoint(request: DoctorPrescriptionRequest):
     consultation = session.query(ConsultationRequest).filter(ConsultationRequest.triage_history_id == triage.id).first()
     if consultation:
         consultation.status = "completed" if action in ["approve", "override", "complete"] else "in_progress"
+        
+        if request.clinic_address:
+            consultation.clinic_address = request.clinic_address
+        if request.appointment_time:
+            # Parse datetime string correctly (remove trailing 'Z' if present before fromisoformat)
+            try:
+                time_str = request.appointment_time.replace('Z', '')
+                consultation.appointment_time = datetime.fromisoformat(time_str)
+            except ValueError:
+                pass
+                
         if action in ["approve", "override", "complete"]:
             consultation.completed_at = datetime.utcnow()
             
@@ -1026,9 +1078,10 @@ async def doctor_prescription_endpoint(request: DoctorPrescriptionRequest):
                 patient_id=consultation.patient_id,
                 doctor_id=consultation.doctor_id,
                 disease_name=consultation.disease_name,
-                prescription=request.medicine_name,
+                prescription=med_prescription,
                 doctor_diagnosis=request.doctor_notes,
-                completed_at=datetime.utcnow()
+                completed_at=datetime.utcnow(),
+                recommendations=f"Follow-up: {request.appointment_time} at {request.clinic_address}" if request.appointment_time else None
             )
             session.add(history)
 
@@ -1052,10 +1105,24 @@ async def update_doctor_prescription(consultation_id: int, request: DoctorPrescr
         triage = session.query(TriageHistory).filter(TriageHistory.id == consultation.triage_history_id).first()
         if triage:
             triage.doctor_prescription = request.medicine_name
+            if request.medicine_timing:
+                triage.doctor_prescription += f" (Timing: {request.medicine_timing})"
             session.add(triage)
 
     if request.doctor_notes:
         consultation.notes_from_patient = request.doctor_notes
+
+    if request.clinic_address:
+        consultation.clinic_address = request.clinic_address
+
+    if request.appointment_time:
+        try:
+            consultation.appointment_time = datetime.fromisoformat(request.appointment_time.replace('Z', '+00:00'))
+        except ValueError:
+            pass
+            
+    if request.medicine_timing:
+        consultation.prescription_data = request.medicine_timing
 
     if action == "approve":
         consultation.status = "accepted"
@@ -1269,7 +1336,7 @@ async def read_consultation_page():
 
 
 @app.get("/api/doctors/available")
-async def get_doctors_for_disease(disease_name: str = Query(...)):
+async def get_doctors_for_disease(disease_name: str = Query("General Checkup")):
     """
     Get available doctors based on disease specialty prediction
     
@@ -1295,6 +1362,7 @@ async def get_doctors_for_disease(disease_name: str = Query(...)):
             "disease_name": disease_name,
             "predicted_specialty": predicted_specialty,
             "available_doctors": available,
+            "doctors": available,  # Backward compatibility for cached frontend JS
             "alternative_specialists": alternatives,
             "has_available": len(available) > 0
         }
@@ -1386,7 +1454,7 @@ async def process_razorpay_payment(request: PaymentRequest):
         if not consultation:
             raise HTTPException(status_code=404, detail="Consultation not found")
             
-        if consultation.status != "pending_payment":
+        if consultation.status not in ["pending_payment", "pending"]:
             return {"success": False, "error": "Consultation is not pending payment."}
             
         # Simulate generating a Razorpay transaction ID (pay_XXXXX)
@@ -1734,8 +1802,12 @@ async def stream_consultation_status(consultation_id: int):
 # --- DIAGNOSIS MODULE ENDPOINTS ---
 
 @app.get("/diagnosis/{consultation_id}")
-async def read_diagnosis_interface(consultation_id: int):
-    return FileResponse(Path("static") / "diagnosis-interface.html")
+async def get_diagnosis_page(consultation_id: int):
+    return FileResponse("static/diagnosis-interface.html")
+
+@app.get("/patient-prescription/{consultation_id}")
+async def get_patient_prescription_page(consultation_id: int):
+    return FileResponse("static/patient-prescription.html")
 
 
 @app.get("/api/consultations/{consultation_id}/diagnosis")
@@ -1762,14 +1834,138 @@ async def get_diagnosis_draft(consultation_id: int):
             "actual_diagnosis": consultation.actual_diagnosis,
             "severity": consultation.severity,
             "precautions": consultation.precautions,
-            "treatment_notes": consultation.treatment_notes,
-            "follow_up_instructions": consultation.follow_up_instructions,
-            "prescription_data": consultation.prescription_data,
+            "treatment_notes": consultation.treatment_notes or (triage.doctor_comment if triage else None),
+            "follow_up_instructions": consultation.follow_up_instructions or (triage.doctor_comment if triage else None),
+            "prescription_data": consultation.prescription_data or (triage.doctor_prescription if triage else None),
+            "clinic_address": consultation.clinic_address,
+            "appointment_time": consultation.appointment_time.isoformat() if consultation.appointment_time else None,
             "status": consultation.status,
             "created_at": consultation.created_at.isoformat()
         }
     }
 
+
+@app.get("/api/consultations/{consultation_id}/pdf")
+async def generate_consultation_pdf(consultation_id: int):
+    consultation = session.query(ConsultationRequest).filter(ConsultationRequest.id == consultation_id).first()
+    if not consultation:
+        raise HTTPException(status_code=404, detail="Consultation not found")
+        
+    patient = session.query(User).filter(User.id == consultation.patient_id).first()
+    doctor = session.query(Doctor).filter(Doctor.id == consultation.doctor_id).first()
+    
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    
+    # Header
+    pdf.set_font("Arial", 'B', 24)
+    pdf.set_text_color(0, 212, 255) # Cyan
+    pdf.cell(0, 15, "MediOps Clinic - Medical Report", ln=True, align='C')
+    pdf.set_font("Arial", '', 12)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 10, f"Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", ln=True, align='C')
+    pdf.ln(10)
+    
+    # Divider
+    pdf.set_draw_color(0, 212, 255)
+    pdf.set_line_width(0.5)
+    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+    pdf.ln(10)
+    
+    # Patient & Doctor Info
+    pdf.set_font("Arial", 'B', 14)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(100, 10, "Patient Details:", ln=False)
+    pdf.cell(90, 10, "Attending Physician:", ln=True)
+    
+    pdf.set_font("Arial", '', 12)
+    pdf.cell(100, 8, f"Name: {patient.full_name if patient else 'Unknown'}", ln=False)
+    pdf.cell(90, 8, f"Name: {doctor.name if doctor else 'Pending Assignment'}", ln=True)
+    pdf.cell(100, 8, f"ID: #{patient.id if patient else 'N/A'}", ln=False)
+    if doctor:
+        pdf.cell(90, 8, f"Specialty: {doctor.specialty}", ln=True)
+    else:
+        pdf.cell(90, 8, "", ln=True)
+    pdf.ln(10)
+    
+    # Diagnosis Details
+    pdf.set_font("Arial", 'B', 14)
+    pdf.cell(0, 10, "Diagnosis & Consultation Details", ln=True)
+    pdf.set_font("Arial", '', 12)
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, "Primary Concern: ", ln=True)
+    pdf.set_font("Arial", '', 12)
+    pdf.multi_cell(0, 8, str(consultation.disease_name or 'N/A'))
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, "Symptoms: ", ln=True)
+    pdf.set_font("Arial", '', 12)
+    pdf.multi_cell(0, 8, str(consultation.patient_symptoms or 'Not provided'))
+    
+    if consultation.actual_diagnosis:
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 8, "Final Diagnosis: ", ln=True)
+        pdf.set_font("Arial", '', 12)
+        pdf.multi_cell(0, 8, str(consultation.actual_diagnosis))
+        
+    if consultation.notes_from_patient:
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 8, "Doctor's Notes: ", ln=True)
+        pdf.set_font("Arial", '', 12)
+        pdf.multi_cell(0, 8, str(consultation.notes_from_patient))
+    pdf.ln(5)
+    
+    # Prescriptions
+    triage = None
+    if consultation.triage_history_id:
+        triage = session.query(TriageHistory).filter(TriageHistory.id == consultation.triage_history_id).first()
+        
+    medicine = triage.doctor_prescription if triage else "No medicine prescribed"
+    timing = consultation.prescription_data if consultation.prescription_data else "No timing instructions"
+    
+    pdf.set_font("Arial", 'B', 14)
+    pdf.cell(0, 10, "Prescription & Medication", ln=True)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, "Medication: ", ln=True)
+    pdf.set_font("Arial", '', 12)
+    pdf.multi_cell(0, 8, str(medicine))
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, "Instructions: ", ln=True)
+    pdf.set_font("Arial", '', 12)
+    pdf.multi_cell(0, 8, str(timing))
+    pdf.ln(5)
+    
+    # Appointment / Clinic
+    if consultation.clinic_address or consultation.appointment_time:
+        pdf.set_font("Arial", 'B', 14)
+        pdf.cell(0, 10, "Follow-up Appointment Details", ln=True)
+        if consultation.appointment_time:
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(0, 8, "Date & Time: ", ln=True)
+            pdf.set_font("Arial", '', 12)
+            pdf.cell(0, 8, str(consultation.appointment_time.strftime('%Y-%m-%d %H:%M')), ln=True)
+        if consultation.clinic_address:
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(0, 8, "Location: ", ln=True)
+            pdf.set_font("Arial", '', 12)
+            pdf.multi_cell(0, 8, str(consultation.clinic_address))
+    
+    # Footer
+    pdf.set_y(-30)
+    pdf.set_font("Arial", 'I', 10)
+    pdf.set_text_color(150, 150, 150)
+    pdf.cell(0, 10, "This is an electronically generated medical document. MediOps Platform.", ln=True, align='C')
+    
+    pdf_bytes = pdf.output(dest='S')
+    
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes), 
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=Prescription_{consultation.id}.pdf"}
+    )
 
 @app.post("/api/consultations/{consultation_id}/diagnosis/auto-save")
 async def auto_save_diagnosis(consultation_id: int, draft: DiagnosisDraft):
@@ -1956,14 +2152,18 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
 async def get_patient_consultations(patient_id: int):
     consultations = session.query(ConsultationRequest).filter(
         ConsultationRequest.patient_id == patient_id,
-        ConsultationRequest.status.in_(["pending", "under_review", "accepted", "in_progress"])
+        ConsultationRequest.status.in_(["pending", "under_review", "accepted", "in_progress", "diagnosed", "completed"])
     ).order_by(ConsultationRequest.id.desc()).all()
     
     data = []
     for c in consultations:
+        doctor = session.query(Doctor).filter(Doctor.id == c.doctor_id).first() if c.doctor_id else None
+        
         data.append({
             "id": c.id,
             "disease_name": c.disease_name,
+            "doctor_name": doctor.name if doctor else "Unassigned",
+            "specialty": doctor.specialty if doctor else "",
             "status": c.status,
             "type": getattr(c, 'consultation_type', 'online'),
             "clinic_address": getattr(c, 'clinic_address', None),
@@ -2362,7 +2562,18 @@ async def create_doctor(request: DoctorCreateRequest):
 async def get_all_doctors():
     try:
         doctors = session.query(Doctor).all()
-        return {"success": True, "data": [{"id": d.id, "name": d.name, "specialty": d.specialty, "email": d.email, "is_active": d.is_active} for d in doctors]}
+        doc_list = [{
+            "id": d.id,
+            "name": d.name,
+            "specialty": d.specialty,
+            "email": d.email,
+            "is_active": d.is_active
+        } for d in doctors]
+        return {
+            "success": True, 
+            "data": doc_list,
+            "doctors": doc_list # Backward compatibility for cached frontend JS
+        }
     except Exception as e:
         return {"success": False, "error": str(e)}
 
@@ -2384,7 +2595,7 @@ class DiseaseAdminRequest(BaseModel):
     base_dosage_mg: int
 
 @app.get("/api/admin/diseases")
-async def get_admin_diseases(search: Optional[str] = None, category: Optional[str] = None, severity: Optional[int] = None):
+async def get_admin_diseases(search: Optional[str] = None, category: Optional[str] = None, severity: Optional[str] = None):
     try:
         query = session.query(Disease)
         if search:
@@ -2392,7 +2603,10 @@ async def get_admin_diseases(search: Optional[str] = None, category: Optional[st
         if category:
             query = query.filter(Disease.category == category)
         if severity:
-            query = query.filter(Disease.severity == severity)
+            sev_map = {"Low": 1, "Medium": 2, "High": 3, "Critical": 4}
+            sev_int = sev_map.get(severity)
+            if sev_int is not None:
+                query = query.filter(Disease.severity == sev_int)
             
         diseases = query.order_by(Disease.name.asc()).all()
         return {
@@ -2412,6 +2626,36 @@ async def get_admin_diseases(search: Optional[str] = None, category: Optional[st
                     "base_dosage_mg": d.base_dosage_mg
                 }
                 for d in diseases
+            ]
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/admin/diseases/history")
+async def get_disease_update_history():
+    try:
+        logs = session.query(AdminUpdateHistory).order_by(AdminUpdateHistory.timestamp.desc()).all()
+        return {
+            "success": True,
+            "data": [
+                {
+                    "id": log.id,
+                    "action": log.action,
+                    "disease_name": log.disease_name,
+                    "details": log.details,
+                    "timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                }
+                for log in logs
+            ],
+            "history": [
+                {
+                    "id": log.id,
+                    "action": log.action,
+                    "disease_name": log.disease_name,
+                    "details": log.details,
+                    "timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                }
+                for log in logs
             ]
         }
     except Exception as e:
@@ -2553,25 +2797,6 @@ async def delete_admin_disease(id: int):
     except Exception as e:
         session.rollback()
         return {"success": False, "error": str(e)}
-
-@app.get("/api/admin/diseases/history")
-async def get_disease_update_history():
-    try:
-        logs = session.query(AdminUpdateHistory).order_by(AdminUpdateHistory.timestamp.desc()).all()
-        return {
-            "success": True,
-            "data": [
-                {
-                    "id": log.id,
-                    "action": log.action,
-                    "disease_name": log.disease_name,
-                    "details": log.details,
-                    "timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-                }
-                for log in logs
-            ]
-        }
-    except Exception as e:
         return {"success": False, "error": str(e)}
 
 @app.get("/api/admin/retrain/status")
