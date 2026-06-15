@@ -1,7 +1,7 @@
 {
-    "current_version": "1.0.2",
-    "build_number": 2,
-    "last_trained": "2026-06-15T00:06:30.105958",
+    "current_version": "1.0.3",
+    "build_number": 3,
+    "last_trained": "2026-06-15T00:57:50.539806",
     "accuracy": 0.6467661691542289,
     "fallback_active": false,
     "sync_status": "pending"
